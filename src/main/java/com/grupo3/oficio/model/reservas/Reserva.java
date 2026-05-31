@@ -1,5 +1,7 @@
 package com.grupo3.oficio.model.reservas;
 
+import com.grupo3.oficio.model.users.Cliente;
+import com.grupo3.oficio.model.users.Trabajador;
 import com.grupo3.oficio.utils.enums.EstadoReserva;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -15,12 +17,14 @@ public class Reserva {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-
+    @ManyToOne
     @Column(name = "id_trabajador")
-    private Integer idTrabajador;
+    private Trabajador trabajador;
+    @ManyToOne
     @Column(name = "id_cliente")
-    private Integer idCliente;
+    private Cliente cliente;
 
+    @Enumerated(EnumType.STRING)
     private EstadoReserva estadoReserva;
     private LocalDateTime fechaCreacion;
 }

@@ -17,21 +17,23 @@ public class ReservaController {
     public ReservaController(ReservaService reservaService) {
         this.reservaService = reservaService;
     }
+
+    //los get deben ir de específico a general, sino saltan errores al hacer las requests
+    @GetMapping("/estado/{estado}")
+    private ResponseEntity<?> mostrarReservasPorEstado(@PathVariable String estado){
+        EstadoReserva estadoReserva= EstadoReserva.valueOf(estado.toUpperCase());
+        return ResponseEntity.ok(reservaService.mostrarPorEstado(estadoReserva));
+    }
+    @GetMapping("/{id}")
+    public ResponseEntity<Reserva> mostrarReservaPorId(@PathVariable Integer id){
+        return ResponseEntity.ok(reservaService.buscarReservaPorId(id).orElseThrow(()->new NoSuchElementException("No se encontro la reserva con el id ingresado")));
+    }
     @GetMapping
     public ResponseEntity<?> mostrarTodasReservas(){
         if(reservaService.mostrarTodasReservas().isEmpty()){
             return ResponseEntity.ok("La lista de reservas esta vacia");
         }
         return ResponseEntity.ok(reservaService.mostrarTodasReservas());
-    }
-    @GetMapping("/{id}")
-    public ResponseEntity<Reserva> mostrarReservaPorId(@PathVariable Integer id){
-        return ResponseEntity.ok(reservaService.buscarReservaPorId(id).orElseThrow(()->new NoSuchElementException("No se encontro la reserva con el id ingresado")));
-    }
-    @GetMapping("/estado/{estado}")
-    private ResponseEntity<?> mostrarReservasPorEstado(@PathVariable String estado){
-        EstadoReserva estadoReserva= EstadoReserva.valueOf(estado.toUpperCase());
-        return ResponseEntity.ok(reservaService.mostrarPorEstado(estadoReserva));
     }
     @PostMapping
     public ResponseEntity<?> registrarUnaReserva(@RequestBody ReservaDTO reservaDTO){

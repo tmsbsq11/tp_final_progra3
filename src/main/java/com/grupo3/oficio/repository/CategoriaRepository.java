@@ -1,9 +1,9 @@
 package com.grupo3.oficio.repository;
 
-import com.grupo3.oficio.model.reservas.Reserva;
+import com.grupo3.oficio.model.Categoria;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface ReservaRepository extends JpaRepository<Reserva, Integer> {
+public interface CategoriaRepository extends JpaRepository<Categoria, Integer> {
 }

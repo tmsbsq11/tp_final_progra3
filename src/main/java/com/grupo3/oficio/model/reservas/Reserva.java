@@ -27,4 +27,5 @@ public class Reserva {
     @Enumerated(EnumType.STRING)
     private EstadoReserva estadoReserva;
     private LocalDateTime fechaCreacion;
+    private LocalDateTime fechaReservada;
 }

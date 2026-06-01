@@ -1,5 +1,7 @@
-package com.grupo3.oficio.model;
+package com.grupo3.oficio.model.resenias;
 
+import com.grupo3.oficio.model.users.Cliente;
+import com.grupo3.oficio.model.users.Trabajador;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -18,10 +20,10 @@ public class Resenia {
     private Integer id;
 
     @Column(name = "id_cliente")
-    private Integer idCliente;
+    private Cliente cliente;
 
     @Column(name = "id_trabajador")
-    private Integer idTrabajador;
+    private Trabajador trabajador;
 
     private Double puntaje;
     private String comentario;

@@ -1,6 +1,6 @@
 package com.grupo3.oficio.model.users;
 
-import com.grupo3.oficio.model.Resenia;
+import com.grupo3.oficio.model.resenias.Resenia;
 import com.grupo3.oficio.model.trabajos.Trabajo;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;

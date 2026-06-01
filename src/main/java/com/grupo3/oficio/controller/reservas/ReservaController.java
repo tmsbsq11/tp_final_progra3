@@ -1,16 +1,15 @@
-package com.grupo3.oficio.controller;
+package com.grupo3.oficio.controller.reservas;
 
 import com.grupo3.oficio.model.reservas.Reserva;
 import com.grupo3.oficio.model.reservas.ReservaDTO;
-import com.grupo3.oficio.service.ReservaService;
+import com.grupo3.oficio.service.reservas.ReservaService;
 import com.grupo3.oficio.utils.enums.EstadoReserva;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.NoSuchElementException;
-
 @RestController
 @RequestMapping("/api/reservas")
+@CrossOrigin("*")
 public class ReservaController {
     ReservaService reservaService;
 
@@ -26,7 +25,7 @@ public class ReservaController {
     }
     @GetMapping("/{id}")
     public ResponseEntity<Reserva> mostrarReservaPorId(@PathVariable Integer id){
-        return ResponseEntity.ok(reservaService.buscarReservaPorId(id).orElseThrow(()->new NoSuchElementException("No se encontro la reserva con el id ingresado")));
+        return ResponseEntity.ok(reservaService.buscarReservaPorId(id));
     }
     @GetMapping
     public ResponseEntity<?> mostrarTodasReservas(){
@@ -38,5 +37,10 @@ public class ReservaController {
     @PostMapping
     public ResponseEntity<?> registrarUnaReserva(@RequestBody ReservaDTO reservaDTO){
         return ResponseEntity.of(reservaService.registrarUnaReserva(reservaDTO));
+    }
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> eliminarUnaReserva(@PathVariable Integer id){
+        reservaService.eliminarReserva(reservaService.buscarReservaPorId(id));
+        return ResponseEntity.ok("La reserva se elimino correctamente");
     }
 }

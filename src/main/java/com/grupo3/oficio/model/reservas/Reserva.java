@@ -13,12 +13,12 @@ import java.time.LocalDateTime;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class Reserva {
+public class Reserva { //abstracto
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
     @ManyToOne
-    @Column(name = "id_trabajador")
+    @Column(name = "id_trabajador") //obviar, se llama desde el idTrabajo
     private Trabajador trabajador;
     @ManyToOne
     @Column(name = "id_cliente")

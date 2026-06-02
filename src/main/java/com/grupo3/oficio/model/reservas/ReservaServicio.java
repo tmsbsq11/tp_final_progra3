@@ -16,4 +16,5 @@ import java.time.LocalDateTime;
 public class ReservaServicio {
     private LocalDateTime inicio;
     private LocalDateTime fin;
+    //idTrabajo
 }

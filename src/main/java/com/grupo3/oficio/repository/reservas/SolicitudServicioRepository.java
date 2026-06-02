@@ -9,6 +9,6 @@ import java.time.LocalDateTime;
 import java.util.Optional;
 
 @Repository
-public interface ReservaRepository extends JpaRepository<Reserva, Integer> {
+public interface SolicitudServicioRepository extends JpaRepository<Reserva, Integer> {
     Optional<Reserva> findByFechaReservadaAndEstadoReserva(LocalDateTime fechaReservada, EstadoReserva EstadoReserva);
 }

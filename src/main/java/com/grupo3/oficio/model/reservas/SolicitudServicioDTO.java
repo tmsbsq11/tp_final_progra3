@@ -10,10 +10,11 @@ import java.time.LocalDateTime;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class ReservaDTO {
+public class SolicitudServicioDTO { //SolicitudServicioDTO
     private Integer id;
     private Integer idCliente;
     private Integer idTrabajador;
+    private Integer idTrabajo; //idServicio
     private EstadoReserva estadoReserva;
     private LocalDateTime fechaCreacion;
     private LocalDateTime fechaReservada;

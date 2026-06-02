@@ -37,7 +37,7 @@ public class ClienteController {
     }
 
     @PostMapping
-    public ResponseEntity<Cliente> crear(@RequestBody Cliente cliente) {
+    public ResponseEntity<Cliente> crear(@RequestBody Cliente cliente) { //utilizar JWT
         try {
             Cliente nuevo = clienteService.crear(cliente);
             return ResponseEntity.ok(nuevo);
@@ -47,7 +47,7 @@ public class ClienteController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Cliente> actualizar(@PathVariable Integer id, @RequestBody Cliente cliente) {
+    public ResponseEntity<Cliente> actualizar(@PathVariable Integer id, @RequestBody Cliente cliente) { //utilizar JWT
         try {
             Cliente actualizado = clienteService.actualizar(id, cliente);
             return ResponseEntity.ok(actualizado);

@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class Reserva {
+public abstract class Reserva { //abstract
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
@@ -23,6 +23,7 @@ public class Reserva {
     @ManyToOne
     @Column(name = "id_cliente")
     private Cliente cliente;
+
 
     @Enumerated(EnumType.STRING)
     private EstadoReserva estadoReserva;

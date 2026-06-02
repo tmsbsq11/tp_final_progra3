@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class Trabajo { //extiende servicio y producto
+public abstract class Trabajo { //extiende servicio y producto
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;

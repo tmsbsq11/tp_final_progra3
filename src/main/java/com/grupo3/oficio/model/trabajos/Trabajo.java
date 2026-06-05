@@ -18,15 +18,15 @@ public abstract class Trabajo { //extiende servicio y producto
 
     //bools
     private Boolean isActive;
-    private Boolean needsCertification;
+    // private Boolean needsCertification; Eso va en categoria
 
     //datos
     @OneToOne
-    @Column(name = "id_categoria")
+    @JoinColumn(name = "id_categoria")
     private Categoria categoria;
     private String titulo;
     private String descripcion;
     @ManyToOne
-    @Column(name = "id_trabajador")
+    @JoinColumn(name = "id_trabajador")
     private Trabajador trabajador;
 }

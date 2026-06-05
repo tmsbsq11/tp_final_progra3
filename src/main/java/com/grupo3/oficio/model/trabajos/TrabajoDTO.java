@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 public abstract class TrabajoDTO {
     private Integer id;
     private Boolean isActive;
-    private Boolean needsCertification;
+    // private Boolean needsCertification;
     private Integer idCategoria;
     private Integer idTrabajador;
 

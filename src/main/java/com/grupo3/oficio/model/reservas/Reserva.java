@@ -18,10 +18,10 @@ public class Reserva { //abstracto
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
     @ManyToOne
-    @Column(name = "id_trabajador") //obviar, se llama desde el idTrabajo
+    @JoinColumn(name = "id_trabajador") //obviar, se llama desde el idTrabajo
     private Trabajador trabajador;
     @ManyToOne
-    @Column(name = "id_cliente")
+    @JoinColumn(name = "id_cliente")
     private Cliente cliente;
 
     @Enumerated(EnumType.STRING)

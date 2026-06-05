@@ -19,10 +19,12 @@ public class Resenia {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Column(name = "id_cliente")
+    @OneToOne
+    @JoinColumn(name = "id_cliente")
     private Cliente cliente;
 
-    @Column(name = "id_trabajador")
+    @OneToOne
+    @JoinColumn(name = "id_trabajador")
     private Trabajador trabajador;
 
     private Double puntaje;

@@ -17,7 +17,7 @@ public class Categoria {
 
     //bools
     private Boolean isActive;
-    private Boolean isCertified;
+    private Boolean needsCertification;
 
     //datos
     private String nombre;

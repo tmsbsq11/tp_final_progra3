@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class Reserva { //abstracto
+public abstract class Reserva { //abstracto
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
@@ -27,5 +27,6 @@ public class Reserva { //abstracto
     @Enumerated(EnumType.STRING)
     private EstadoReserva estadoReserva;
     private LocalDateTime fechaCreacion;
+    @Column(unique = true)
     private LocalDateTime fechaReservada;
 }

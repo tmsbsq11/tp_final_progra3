@@ -13,8 +13,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Enabled
 @Table(name = "servicio_reservas")
-public class ReservaServicio {
+public class ServicioReserva extends Reserva {
     private LocalDateTime inicio;
     private LocalDateTime fin;
-    //idTrabajo
 }

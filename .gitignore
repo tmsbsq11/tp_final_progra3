@@ -1,0 +1,72 @@
+# =========================
+# IntelliJ IDEA
+# =========================
+.idea/
+*.iml
+*.ipr
+*.iws
+
+# =========================
+# Maven
+# =========================
+target/
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+pom.xml.next
+release.properties
+dependency-reduced-pom.xml
+
+# =========================
+# Java
+# =========================
+*.class
+*.jar
+*.war
+*.ear
+
+# =========================
+# Logs
+# =========================
+*.log
+logs/
+
+# =========================
+# OS Files
+# =========================
+
+# Windows
+Thumbs.db
+Desktop.ini
+
+# macOS
+.DS_Store
+
+# Linux
+*~
+
+# =========================
+# Environment files
+# =========================
+.env
+.env.*
+
+# =========================
+# Spring Boot
+# =========================
+application-local.properties
+application-local.yml
+application-dev.properties
+application-dev.yml
+
+# =========================
+# VS Code
+# =========================
+.vscode/
+
+# =========================
+# Generated files
+# =========================
+generated/
+out/
+bin/

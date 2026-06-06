@@ -8,12 +8,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/reservas")
+@RequestMapping("/api/servicio_reservas")
 @CrossOrigin("*")
-public class ReservaController {
+public class ServicioReservaController {
     ServicioReservaService servicioReservaService;
 
-    public ReservaController(ServicioReservaService servicioReservaService) {
+    public ServicioReservaController(ServicioReservaService servicioReservaService) {
         this.servicioReservaService = servicioReservaService;
     }
 
@@ -23,10 +23,12 @@ public class ReservaController {
         EstadoReserva estadoReserva= EstadoReserva.valueOf(estado.toUpperCase());//Puede tirar IllegalArgumentException
         return ResponseEntity.ok(servicioReservaService.mostrarPorEstado(estadoReserva));
     }
+
     @GetMapping("/{id}")
     public ResponseEntity<Reserva> mostrarReservaPorId(@PathVariable Integer id){
         return ResponseEntity.ok(servicioReservaService.buscarReservaPorId(id));
     }
+
     @GetMapping
     public ResponseEntity<?> mostrarTodasReservas(){
         if(servicioReservaService.mostrarTodasReservas().isEmpty()){
@@ -34,10 +36,12 @@ public class ReservaController {
         }
         return ResponseEntity.ok(servicioReservaService.mostrarTodasReservas());
     }
+
     @PostMapping
     public ResponseEntity<?> registrarUnaReserva(@RequestBody ServicioReservaDTO servicioReservaDTO){
         return ResponseEntity.of(servicioReservaService.registrarUnaReserva(servicioReservaDTO));
     }
+
     @DeleteMapping("/{id}")
     public ResponseEntity<?> eliminarUnaReserva(@PathVariable Integer id){
         servicioReservaService.eliminarReserva(servicioReservaService.buscarReservaPorId(id));

@@ -20,7 +20,7 @@ public class ReservaController {
     //los get deben ir de específico a general, sino saltan errores al hacer las requests
     @GetMapping("/estado/{estado}")
     private ResponseEntity<?> mostrarReservasPorEstado(@PathVariable String estado){
-        EstadoReserva estadoReserva= EstadoReserva.valueOf(estado.toUpperCase());
+        EstadoReserva estadoReserva= EstadoReserva.valueOf(estado.toUpperCase());//Puede tirar IllegalArgumentException
         return ResponseEntity.ok(reservaService.mostrarPorEstado(estadoReserva));
     }
     @GetMapping("/{id}")

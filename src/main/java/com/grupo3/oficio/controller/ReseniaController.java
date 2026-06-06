@@ -17,14 +17,15 @@ public class ReseniaController {
     public ReseniaController(ReseniaService reseniaServ) {
         this.reseniaServ = reseniaServ;
     }
-    @GetMapping
-    public ResponseEntity<List<Resenia>> listarResenias(){
-        return ResponseEntity.ok(reseniaServ.mostrarResenias());
-    }
     @GetMapping("/{id}")
     public ResponseEntity<Resenia> buscarReseniaPorId(@PathVariable Integer id){
         return ResponseEntity.ok(reseniaServ.buscarPorId(id));
     }
+    @GetMapping
+    public ResponseEntity<List<Resenia>> listarResenias(){
+        return ResponseEntity.ok(reseniaServ.mostrarResenias());
+    }
+
     @PostMapping
     public ResponseEntity<Resenia> crearResenia(@RequestBody ReseniaDTO reseniaDTO){
         return ResponseEntity.ok(reseniaServ.crearResenia(reseniaDTO));

@@ -21,7 +21,7 @@ public abstract class Trabajo { //extiende servicio y producto
     // private Boolean needsCertification; Eso va en categoria
 
     //datos
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "id_categoria")
     private Categoria categoria;
     private String titulo;

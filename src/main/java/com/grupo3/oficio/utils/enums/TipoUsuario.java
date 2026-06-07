@@ -1,0 +1,5 @@
+package com.grupo3.oficio.utils.enums;
+
+public enum TipoUsuario {
+    CLIENTE,TRABAJADOR
+}

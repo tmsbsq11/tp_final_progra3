@@ -3,12 +3,14 @@ package com.grupo3.oficio.service;
 import com.grupo3.oficio.model.Categoria;
 import com.grupo3.oficio.repository.CategoriaRepository;
 import com.grupo3.oficio.utils.exceps.SinNombreException;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.NoSuchElementException;
-
+@Service
 public class CategoriaService {
     CategoriaRepository categoriaRepo;
+
 
     public CategoriaService(CategoriaRepository categoriaRepo) {
         this.categoriaRepo = categoriaRepo;

@@ -7,10 +7,11 @@ import com.grupo3.oficio.model.users.Trabajador;
 import com.grupo3.oficio.repository.ReseniaRepository;
 import com.grupo3.oficio.service.users.ClienteService;
 import com.grupo3.oficio.service.users.TrabajadorService;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.NoSuchElementException;
-
+@Service
 public class ReseniaService {
     ReseniaRepository reseniaRepo;
     ClienteService clienteService;

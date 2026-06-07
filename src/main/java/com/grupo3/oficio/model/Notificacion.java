@@ -10,11 +10,11 @@ import org.hibernate.query.sql.internal.ParameterRecognizerImpl;
 
 import java.time.LocalDateTime;
 
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
-@Entity
-@Table(name="notificaciones")
+//@Data
+//@NoArgsConstructor
+//@AllArgsConstructor
+//@Entity
+//@Table(name="notificaciones")
 public class Notificacion {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -25,8 +25,8 @@ public class Notificacion {
     private boolean leida;
     private TipoNotificacion tipoNotificacion;
 
-    @ManyToOne
-    @JoinColumn(name="id_user_destino")
-    private User userDestino;
+    private Integer idDestino;
 
+    @Enumerated(EnumType.STRING)
+    private TipoUsuario tipoDestino;
 }

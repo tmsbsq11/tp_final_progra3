@@ -2,6 +2,7 @@ package com.grupo3.oficio.model;
 
 import com.grupo3.oficio.model.users.User;
 import com.grupo3.oficio.utils.enums.TipoNotificacion;
+import com.grupo3.oficio.utils.enums.TipoUsuario;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;

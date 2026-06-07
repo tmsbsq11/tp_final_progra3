@@ -18,8 +18,8 @@ import java.util.HashSet;
 @Entity
 @Table(name = "trabajadores")
 public class Trabajador extends User {
-    private HashSet<Trabajo> trabajos = new HashSet<>(); //en dto
-    private HashSet<Resenia> resenias = new HashSet<>(); //en dto
+    // private HashSet<Trabajo> trabajos = new HashSet<>(); //en dto
+    // private HashSet<Resenia> resenias = new HashSet<>(); //en dto
     private Double puntaje;
     private String descripcion;
 }

@@ -7,7 +7,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-
+@MappedSuperclass
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -18,6 +18,7 @@ public abstract class Trabajo { //extiende servicio y producto
 
     //bools
     private Boolean isActive;
+    private Boolean isApproved;
     // private Boolean needsCertification; Eso va en categoria
 
     //datos

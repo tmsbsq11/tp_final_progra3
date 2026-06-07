@@ -4,6 +4,7 @@ import com.grupo3.oficio.model.users.Trabajador;
 import com.grupo3.oficio.repository.users.TrabajadorRepository;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.NoSuchElementException;
 
@@ -18,6 +19,7 @@ public class TrabajadorService {
     public Trabajador crear(Trabajador trabajador) {
         //validaciones
         trabajador.setId(null);
+        trabajador.setFechaCreacion(LocalDateTime.now());
         trabajadorRepository.save(trabajador);
         return trabajador;
     }

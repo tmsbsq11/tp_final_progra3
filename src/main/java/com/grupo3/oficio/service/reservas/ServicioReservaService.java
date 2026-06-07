@@ -24,8 +24,10 @@ public class ServicioReservaService {
     ClienteService clienteService;
     TrabajadorService trabajadorService;
 
-    public ServicioReservaService(ServicioReservaRepository reservaRepo) {
+    public ServicioReservaService(ServicioReservaRepository reservaRepo,ClienteService clienteService, TrabajadorService trabajadorService) {
         this.reservaRepo = reservaRepo;
+        this.clienteService= clienteService;
+        this.trabajadorService=trabajadorService;
     }
 
     public List<ServicioReserva> mostrarTodasReservas(){

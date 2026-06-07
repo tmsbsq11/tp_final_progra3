@@ -4,6 +4,7 @@ import com.grupo3.oficio.model.users.Cliente;
 import com.grupo3.oficio.repository.users.ClienteRepository;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.NoSuchElementException;
 
@@ -18,6 +19,7 @@ public class ClienteService {
     public Cliente crear(Cliente cliente) {
         //validaciones
         cliente.setId(null);
+        cliente.setFechaCreacion(LocalDateTime.now());
         clienteRepository.save(cliente);
         return cliente;
     }

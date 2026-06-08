@@ -18,10 +18,41 @@ public class ClienteService {
         //create
     public Cliente crear(Cliente cliente) {
         //validaciones
+        if (cliente == null) {
+            throw new IllegalArgumentException("El cliente no puede ser nulo");
+        }
+        if (cliente.getCorreo() == null || cliente.getCorreo().isBlank()) {
+            throw new IllegalArgumentException("El correo es obligatorio");
+        }
+        if (cliente.getUsername() == null || cliente.getUsername().isBlank()) {
+            throw new IllegalArgumentException("El username es obligatorio");
+        }
+        if (cliente.getPassword() == null || cliente.getPassword().length() < 8) {
+            throw new IllegalArgumentException("La contraseña debe tener al menos 8 caracteres");
+        }
+        if (cliente.getNombre() == null || cliente.getNombre().isBlank()) {
+            throw new IllegalArgumentException("El nombre es obligatorio");
+        }
+        if (cliente.getApellido() == null || cliente.getApellido().isBlank()) {
+            throw new IllegalArgumentException("El apellido es obligatorio");
+        }
+        if (cliente.getDni() == null || !cliente.getDni().matches("\\d{7,8}")) {
+            throw new IllegalArgumentException("DNI inválido");
+        }
+        if (clienteRepository.existsByCorreo(cliente.getCorreo())) {
+            throw new IllegalArgumentException("Ya existe un cliente con ese correo");
+        }
+        if (clienteRepository.existsByUsername(cliente.getUsername())) {
+            throw new IllegalArgumentException("Ya existe un cliente con ese username");
+        }
+        if (clienteRepository.existsByDni(cliente.getDni())) {
+            throw new IllegalArgumentException("Ya existe un cliente con ese DNI");
+        }
+
         cliente.setId(null);
         cliente.setFechaCreacion(LocalDateTime.now());
-        clienteRepository.save(cliente);
-        return cliente;
+
+        return clienteRepository.save(cliente);
     }
 
         //read
@@ -35,8 +66,31 @@ public class ClienteService {
         //update
     public Cliente actualizar(Integer id, Cliente cliente) {
         //validaciones
+        if (cliente == null) {
+            throw new IllegalArgumentException("El cliente no puede ser nulo");
+        }
+        if (cliente.getCorreo() == null || cliente.getCorreo().isBlank()) {
+            throw new IllegalArgumentException("El correo es obligatorio");
+        }
+        if (cliente.getUsername() == null || cliente.getUsername().isBlank()) {
+            throw new IllegalArgumentException("El username es obligatorio");
+        }
+        if (cliente.getPassword() == null || cliente.getPassword().length() < 8) {
+            throw new IllegalArgumentException("La contraseña debe tener al menos 8 caracteres");
+        }
+        if (cliente.getNombre() == null || cliente.getNombre().isBlank()) {
+            throw new IllegalArgumentException("El nombre es obligatorio");
+        }
+        if (cliente.getApellido() == null || cliente.getApellido().isBlank()) {
+            throw new IllegalArgumentException("El apellido es obligatorio");
+        }
+        if (cliente.getDni() == null || !cliente.getDni().matches("\\d{7,8}")) {
+            throw new IllegalArgumentException("DNI inválido");
+        }
+
         cliente.setId(id);
         clienteRepository.save(cliente);
+
         return cliente;
     }
 

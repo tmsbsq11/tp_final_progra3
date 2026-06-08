@@ -18,10 +18,49 @@ public class TrabajadorService {
         //create
     public Trabajador crear(Trabajador trabajador) {
         //validaciones
+        if (trabajador == null) {
+            throw new IllegalArgumentException("El trabajador no puede ser nulo");
+        }
+            //credenciales
+        if (trabajador.getCorreo() == null || trabajador.getCorreo().isBlank()) {
+            throw new IllegalArgumentException("El correo es obligatorio");
+        }
+        if (!trabajador.getCorreo().matches("^[A-Za-z0-9+_.-]+@(.+)$")) {
+            throw new IllegalArgumentException("El correo no tiene un formato válido");
+        }
+        if (trabajador.getUsername() == null || trabajador.getUsername().isBlank()) {
+            throw new IllegalArgumentException("El username es obligatorio");
+        }
+        if (trabajador.getPassword() == null || trabajador.getPassword().length() < 8) {
+            throw new IllegalArgumentException("La contraseña debe tener al menos 8 caracteres");
+        }
+        if (trabajador.getNombre() == null || trabajador.getNombre().isBlank()) {
+            throw new IllegalArgumentException("El nombre es obligatorio");
+        }
+        if (trabajador.getApellido() == null || trabajador.getApellido().isBlank()) {
+            throw new IllegalArgumentException("El apellido es obligatorio");
+        }
+        if (trabajador.getDni() == null || trabajador.getDni().isBlank()) {
+            throw new IllegalArgumentException("El DNI es obligatorio");
+        }
+        if (!trabajador.getDni().matches("\\d{7,8}")) {
+            throw new IllegalArgumentException("El DNI debe tener 7 u 8 dígitos");
+        }
+        if (trabajadorRepository.existsByCorreo(trabajador.getCorreo())) {
+            throw new IllegalArgumentException("Ya existe un usuario con ese correo");
+        }
+        if (trabajadorRepository.existsByUsername(trabajador.getUsername())) {
+            throw new IllegalArgumentException("Ya existe un usuario con ese username");
+        }
+        if (trabajadorRepository.existsByDni(trabajador.getDni())) {
+            throw new IllegalArgumentException("Ya existe un usuario con ese DNI");
+        }
+
         trabajador.setId(null);
         trabajador.setFechaCreacion(LocalDateTime.now());
-        trabajadorRepository.save(trabajador);
-        return trabajador;
+        trabajador.setIsActive(true);
+
+        return trabajadorRepository.save(trabajador);
     }
 
     //read
@@ -35,8 +74,39 @@ public class TrabajadorService {
     //update
     public Trabajador actualizar(Integer id, Trabajador trabajador) {
         //validaciones
+        if (trabajador == null) {
+            throw new IllegalArgumentException("El trabajador no puede ser nulo");
+        }
+            //credenciales
+        if (trabajador.getCorreo() == null || trabajador.getCorreo().isBlank()) {
+            throw new IllegalArgumentException("El correo es obligatorio");
+        }
+        if (!trabajador.getCorreo().matches("^[A-Za-z0-9+_.-]+@(.+)$")) {
+            throw new IllegalArgumentException("El correo no tiene un formato válido");
+        }
+        if (trabajador.getUsername() == null || trabajador.getUsername().isBlank()) {
+            throw new IllegalArgumentException("El username es obligatorio");
+        }
+        if (trabajador.getPassword() == null || trabajador.getPassword().length() < 8) {
+            throw new IllegalArgumentException("La contraseña debe tener al menos 8 caracteres");
+        }
+            //datos
+        if (trabajador.getNombre() == null || trabajador.getNombre().isBlank()) {
+            throw new IllegalArgumentException("El nombre es obligatorio");
+        }
+        if (trabajador.getApellido() == null || trabajador.getApellido().isBlank()) {
+            throw new IllegalArgumentException("El apellido es obligatorio");
+        }
+        if (trabajador.getDni() == null || trabajador.getDni().isBlank()) {
+            throw new IllegalArgumentException("El DNI es obligatorio");
+        }
+        if (!trabajador.getDni().matches("\\d{7,8}")) {
+            throw new IllegalArgumentException("El DNI debe tener 7 u 8 dígitos");
+        }
+
         trabajador.setId(id);
         trabajadorRepository.save(trabajador);
+
         return trabajador;
     }
 

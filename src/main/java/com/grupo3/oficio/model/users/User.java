@@ -1,17 +1,15 @@
 package com.grupo3.oficio.model.users;
 
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.MappedSuperclass;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
-
-@MappedSuperclass
+@Entity
+@Table(name= "usuarios")
+@Inheritance(strategy = InheritanceType.JOINED) // Para que no haya una tabla suelta de cada subclase sino que esten relacionadas mediante la de la superclase
 @Data
 @AllArgsConstructor
 @NoArgsConstructor

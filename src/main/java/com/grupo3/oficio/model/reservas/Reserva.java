@@ -10,7 +10,8 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
-@MappedSuperclass
+@Entity
+@Table(name = "reservas")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor

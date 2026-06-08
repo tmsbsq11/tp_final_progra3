@@ -7,7 +7,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@MappedSuperclass
+@Entity
+@Table(name = "trabajos")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor

@@ -29,6 +29,5 @@ public abstract class Reserva { //abstracto
     @Enumerated(EnumType.STRING)
     private EstadoReserva estadoReserva;
     private LocalDateTime fechaCreacion;
-    @Column(unique = true)
     private LocalDateTime fechaReservada;
 }

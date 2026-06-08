@@ -25,12 +25,21 @@ public class CategoriaService {
     }
     //create
     public Categoria crearCategoria(Categoria categoria){
-        categoria.setId(null);
-        if(!categoria.getNombre().isBlank()) {
-            //settear los booleans?
-            return categoriaRepo.save(categoria);
+        if(categoriaRepo.existByNombreIgnoreCase(categoria.getNombre())){
+            throw new IllegalArgumentException("No se puede repetir el nombre de una categoria");
         }
-        throw new SinNombreException("Se intento crear una categoria sin nombre");
+        if(categoria.getNombre().isBlank()) {
+            throw new SinNombreException("Se intento crear una categoria sin nombre");
+        }
+        if(categoria.getIsActive()==null){
+            throw new IllegalArgumentException("Debe especificar si la categoria esta activa");
+        }
+        if (categoria.getNeedsCertification()==null){
+            throw new IllegalArgumentException("Debe especificar si la categoria necesita ser validada");
+        }
+        categoria.setId(null);
+        return categoriaRepo.save(categoria);
+
     }
     //update
     public Categoria actualizarCategoria(Integer id,Categoria categoria){

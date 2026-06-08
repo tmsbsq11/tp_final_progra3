@@ -2,6 +2,7 @@ package com.grupo3.oficio.model.resenias;
 
 import com.grupo3.oficio.model.users.Cliente;
 import com.grupo3.oficio.model.users.Trabajador;
+import com.grupo3.oficio.utils.enums.DireccionResenia;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -30,4 +31,6 @@ public class Resenia {
     private Double puntaje;
     private String comentario;
     private LocalDateTime fechaCreacion;
+    @Enumerated(EnumType.STRING)
+    private DireccionResenia direccionReserva;
 }

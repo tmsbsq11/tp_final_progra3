@@ -30,9 +30,18 @@ public class ReseniaService {
         Resenia resenia = new Resenia();
         Trabajador trabajador = trabajadorService.buscarPorId(reseniaDTO.getIdTrabajador());
         Cliente cliente = clienteService.buscarPorId(reseniaDTO.getIdCliente());
+        if(reseniaDTO.getPuntaje().isNaN() || resenia.getPuntaje() == null){
+            throw new IllegalArgumentException("El puntaje es obligatorio");
+        }
+        if(reseniaDTO.getComentario().isBlank() || resenia.getComentario() == null){
+            throw new IllegalArgumentException("El mensaje es obligatorio");
+        }
+        if(reseniaDTO.getDireccionResenia()== null){
+            throw new IllegalArgumentException("La resenia debe contener la direccion en la que va");
+        }
+        resenia.setPuntaje(reseniaDTO.getPuntaje());
         resenia.setCliente(cliente);
         resenia.setTrabajador(trabajador);
-        resenia.setPuntaje(reseniaDTO.getPuntaje());
         resenia.setComentario(reseniaDTO.getComentario());
         resenia.setFechaCreacion(LocalDateTime.now());
         return reseniaRepo.save(resenia);
@@ -50,11 +59,19 @@ public class ReseniaService {
     //update
     public Resenia actualizarResenia( ReseniaDTO reseniaDTO, Integer id) {
         Resenia resenia= new Resenia();
+        Trabajador trabajador = trabajadorService.buscarPorId(reseniaDTO.getIdTrabajador());
+        Cliente cliente = clienteService.buscarPorId(reseniaDTO.getIdCliente());
+        if(reseniaDTO.getPuntaje().isNaN() || resenia.getPuntaje() == null){
+            throw new IllegalArgumentException("El puntaje es obligatorio");
+        }
+        if(reseniaDTO.getComentario().isBlank() || resenia.getComentario() == null){
+            throw new IllegalArgumentException("El mensaje es obligatorio");
+        }
         resenia.setId(id);
         resenia.setFechaCreacion(reseniaDTO.getFechaCreacion());
         resenia.setComentario(reseniaDTO.getComentario());
-        resenia.setCliente(clienteService.buscarPorId(reseniaDTO.getIdCliente()));
-        resenia.setTrabajador(trabajadorService.buscarPorId(reseniaDTO.getIdTrabajador()));
+        resenia.setCliente(cliente);
+        resenia.setTrabajador(trabajador);
         resenia.setPuntaje(reseniaDTO.getPuntaje());
         resenia.setFechaCreacion(buscarPorId(id).getFechaCreacion());
         return reseniaRepo.save(resenia);

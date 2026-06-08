@@ -9,6 +9,7 @@ import com.grupo3.oficio.service.users.ClienteService;
 import com.grupo3.oficio.service.users.TrabajadorService;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.NoSuchElementException;
 @Service
@@ -17,8 +18,10 @@ public class ReseniaService {
     ClienteService clienteService;
     TrabajadorService trabajadorService;
 
-    public ReseniaService(ReseniaRepository reseniaRepo) {
+    public ReseniaService(ReseniaRepository reseniaRepo,ClienteService clienteService, TrabajadorService trabajadorService) {
         this.reseniaRepo = reseniaRepo;
+        this.clienteService = clienteService;
+        this.trabajadorService = trabajadorService;
     }
 
     //CRUD
@@ -31,8 +34,8 @@ public class ReseniaService {
         resenia.setTrabajador(trabajador);
         resenia.setPuntaje(reseniaDTO.getPuntaje());
         resenia.setComentario(reseniaDTO.getComentario());
-
-        return resenia;
+        resenia.setFechaCreacion(LocalDateTime.now());
+        return reseniaRepo.save(resenia);
     }
 
     //read
@@ -53,6 +56,7 @@ public class ReseniaService {
         resenia.setCliente(clienteService.buscarPorId(reseniaDTO.getIdCliente()));
         resenia.setTrabajador(trabajadorService.buscarPorId(reseniaDTO.getIdTrabajador()));
         resenia.setPuntaje(reseniaDTO.getPuntaje());
+        resenia.setFechaCreacion(buscarPorId(id).getFechaCreacion());
         return reseniaRepo.save(resenia);
     }
 

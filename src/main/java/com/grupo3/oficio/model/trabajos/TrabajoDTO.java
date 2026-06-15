@@ -15,5 +15,7 @@ public abstract class TrabajoDTO {
     // private Boolean needsCertification;
     private Integer idCategoria;
     private Integer idTrabajador;
+    private String titulo;
+    private String descripcion;
 
 }

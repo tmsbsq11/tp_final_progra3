@@ -126,14 +126,7 @@ public class ServicioReservaService {
                     "La fecha reservada debe estar entre inicio y fin"
             );
         }
-//        if (reservaRepo.findByFechaReservadaAndEstadoReserva(
-//                fechaReservada,
-//                EstadoReserva.APROBADO
-//        ).isPresent()) {
-//            throw new FechaReservadaException(
-//                    "La fecha en la que se quiso reservar un turno ya está reservada"
-//            );
-//        }
+
         boolean hayConflicto =
                 reservaRepo
                         .existsByTrabajadorAndEstadoReservaAndInicioLessThanAndFinGreaterThan(

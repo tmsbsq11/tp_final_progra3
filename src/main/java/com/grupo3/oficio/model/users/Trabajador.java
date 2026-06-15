@@ -18,7 +18,6 @@ import java.util.HashSet;
 @Entity
 @Table(name = "trabajadores")
 public class Trabajador extends User {
-
     private Double puntaje;
     private String descripcion;
 }

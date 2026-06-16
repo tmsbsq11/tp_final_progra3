@@ -18,6 +18,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.time.LocalDateTime;
+
 @RestController
 @RequestMapping("/api/auth")
 public class AuthController {
@@ -42,6 +44,7 @@ public class AuthController {
         usuario.setPassword(passwordEncoder.encode(dto.getPassword()));
         usuario.setRol(dto.getRol());
         usuario.setIsActive(true);
+        usuario.setFechaCreacion(LocalDateTime.now());
 
         usuarioRepo.save(usuario);
         return ResponseEntity.status(HttpStatus.CREATED).body("Usuario registrado con éxito");

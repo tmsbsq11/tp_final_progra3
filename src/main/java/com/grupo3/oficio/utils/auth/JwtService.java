@@ -15,12 +15,13 @@ import java.util.Date;
 @Service
 public class JwtService {
 
-    @Value("{jwt.secret}")
+    @Value("${jwt.secret}")
     private String secretKey;
 
     private static final long EXPIRACION_MS = 1000 * 60 * 60 * 24; //24hs
 
     public String generarToken(UserDetails user) {
+        System.out.println("SECRET KEY: " + secretKey);
         return Jwts.builder()
                 .subject(user.getUsername())
                 .issuedAt(new Date())

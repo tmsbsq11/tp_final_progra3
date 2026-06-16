@@ -1,9 +1,7 @@
 package com.grupo3.oficio.service.reservas;
 
-import com.grupo3.oficio.model.reservas.Reserva;
 import com.grupo3.oficio.model.reservas.ServicioReservaDTO;
 import com.grupo3.oficio.model.reservas.ServicioReserva;
-import com.grupo3.oficio.model.trabajos.Servicio;
 import com.grupo3.oficio.model.users.Cliente;
 import com.grupo3.oficio.model.users.Trabajador;
 import com.grupo3.oficio.repository.reservas.ServicioReservaRepository;
@@ -11,12 +9,12 @@ import com.grupo3.oficio.service.users.ClienteService;
 import com.grupo3.oficio.service.users.TrabajadorService;
 import com.grupo3.oficio.utils.enums.EstadoReserva;
 import com.grupo3.oficio.utils.exceps.FechaReservadaException;
+import com.grupo3.oficio.utils.exceps.UsuarioInactivoRuntimeException;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.NoSuchElementException;
-import java.util.Optional;
 
 @Service
 public class ServicioReservaService {
@@ -116,8 +114,13 @@ public class ServicioReservaService {
         }
 
         Cliente cliente = clienteService.buscarPorId(servicioReservaDTO.getIdCliente());
-        if(!cliente.getIsActive())
+        if(!cliente.getIsActive()) {
+        throw new UsuarioInactivoRuntimeException("El cliente debe estar activo para realizar una reserva");
+        }
         Trabajador trabajador = trabajadorService.buscarPorId(servicioReservaDTO.getIdTrabajador());
+        if(!trabajador.getIsActive()) {
+            throw new UsuarioInactivoRuntimeException("El trabajador debe estar activo para realizar una reserva");
+        }
 
         LocalDateTime fechaReservada = servicioReservaDTO.getFechaReservada();
 

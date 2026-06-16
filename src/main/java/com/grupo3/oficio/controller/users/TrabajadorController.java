@@ -16,7 +16,16 @@ public class TrabajadorController {
 
     public TrabajadorController(TrabajadorService trabajadorService) { this.trabajadorService = trabajadorService; }
 
-    @GetMapping("{id}")
+
+    //get
+    @GetMapping("/cercanos")
+    public ResponseEntity<List<Trabajador>> buscarCercanos(
+            @RequestParam Double latitud, @RequestParam Double longitud,
+            @RequestParam(defaultValue = "10") Double radioKm) {
+        return ResponseEntity.ok(trabajadorService.buscarCercanos(latitud, longitud, radioKm));
+    }
+
+    @GetMapping("/{id}")
     public ResponseEntity<Trabajador> buscarPorId(@PathVariable Integer id) {
         try {
             Trabajador trabajador = trabajadorService.buscarPorId(id);
@@ -36,6 +45,7 @@ public class TrabajadorController {
         }
     }
 
+    //post
     @PostMapping
     public ResponseEntity<Trabajador> crear(@RequestBody Trabajador trabajador) {
         try {
@@ -44,6 +54,12 @@ public class TrabajadorController {
         } catch (RuntimeException e) {
             return ResponseEntity.badRequest().build();
         }
+    }
+
+    //put
+    @PutMapping("/{id}/ubicacion")
+    public ResponseEntity<Trabajador> actualizarUbicacion(@PathVariable Integer id, @RequestParam String direccion) {
+        return ResponseEntity.ok(trabajadorService.actualizarUbicacion(id, direccion));
     }
 
     @PutMapping("/{id}")
@@ -56,6 +72,7 @@ public class TrabajadorController {
         }
     }
 
+    //del
     @DeleteMapping("/{id}")
     public ResponseEntity<String> borrar(@PathVariable Integer id) {
         try {

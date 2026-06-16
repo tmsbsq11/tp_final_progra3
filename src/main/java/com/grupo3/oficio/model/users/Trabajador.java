@@ -20,4 +20,6 @@ import java.util.HashSet;
 public class Trabajador extends User {
     private Double puntaje;
     private String descripcion;
+    private Double latitud;
+    private Double longitud;
 }

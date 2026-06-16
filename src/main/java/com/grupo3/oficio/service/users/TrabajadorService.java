@@ -2,7 +2,9 @@ package com.grupo3.oficio.service.users;
 
 import com.grupo3.oficio.model.users.Trabajador;
 import com.grupo3.oficio.repository.users.TrabajadorRepository;
+import com.grupo3.oficio.utils.geo.GeocodingService;
 import jakarta.persistence.EntityNotFoundException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -12,6 +14,9 @@ import java.util.NoSuchElementException;
 @Service
 public class TrabajadorService {
     private final TrabajadorRepository trabajadorRepository;
+
+    @Autowired
+    private GeocodingService geocodingService;
 
     public TrabajadorService(TrabajadorRepository trabajadorRepository) { this.trabajadorRepository = trabajadorRepository; }
 
@@ -124,5 +129,32 @@ public class TrabajadorService {
         }
 
         trabajadorRepository.deleteById(id);
+    }
+
+    //METODOS GEOCODING
+    public Trabajador actualizarUbicacion(Integer id, String direccion) {
+        Trabajador trabajador = buscarPorId(id);
+        double[] coords = geocodingService.obtenerCoordenadas(direccion);
+        trabajador.setLatitud(coords[0]);
+        trabajador.setLongitud(coords[1]);
+        return trabajadorRepository.save(trabajador);
+    }
+
+    public List<Trabajador> buscarCercanos(Double latCliente, Double lonCliente, Double radioKm) {
+        return trabajadorRepository.findAll().stream()
+                .filter(t -> t.getLatitud() != null && t.getLongitud() != null)
+                .filter(t -> calcularDistancia(latCliente, lonCliente,
+                        t.getLatitud(), t.getLongitud()) <= radioKm)
+                .toList();
+    }
+
+    private Double calcularDistancia(Double lat1, Double lon1, Double lat2, Double lon2) {
+        final int R = 6321;
+        double dLat = Math.toRadians(lat2 - lat1);
+        double dLon = Math.toRadians(lon2 - lon1);
+        double a = Math.sin(dLat/2) * Math.sin(dLat/2)
+                + Math.cos(Math.toRadians(lat1)) * Math.cos(Math.toRadians(lat2))
+                * Math.sin(dLon/2) * Math.sin(dLon/2);
+        return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
     }
 }

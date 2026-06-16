@@ -65,6 +65,7 @@ public class CategoriaService {
         }
         return categoriaRepo.save(categoria);
     }
+
     //delete
     public void eliminarCategoria(Integer id){
         Categoria categoria=buscarPorId(id);

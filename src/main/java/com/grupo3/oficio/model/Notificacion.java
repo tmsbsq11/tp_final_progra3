@@ -1,6 +1,7 @@
 package com.grupo3.oficio.model;
 
 import com.grupo3.oficio.model.users.User;
+import com.grupo3.oficio.utils.enums.Rol;
 import com.grupo3.oficio.utils.enums.TipoNotificacion;
 import com.grupo3.oficio.utils.enums.TipoUsuario;
 import jakarta.persistence.*;
@@ -11,11 +12,11 @@ import org.hibernate.query.sql.internal.ParameterRecognizerImpl;
 
 import java.time.LocalDateTime;
 
-//@Data
-//@NoArgsConstructor
-//@AllArgsConstructor
-//@Entity
-//@Table(name="notificaciones")
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Entity
+@Table(name="notificaciones")
 public class Notificacion {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -24,10 +25,12 @@ public class Notificacion {
     private String mensaje;
     private LocalDateTime fechaCreacion;
     private boolean leida;
+    @Enumerated(EnumType.STRING)
     private TipoNotificacion tipoNotificacion;
 
     private Integer idDestino;
-
     @Enumerated(EnumType.STRING)
-    private TipoUsuario tipoDestino;
+    private TipoUsuario tipoUsuario;
+    @Enumerated(EnumType.STRING)
+    private Rol rol;
 }

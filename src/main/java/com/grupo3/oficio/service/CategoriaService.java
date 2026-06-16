@@ -25,7 +25,7 @@ public class CategoriaService {
     }
     //create
     public Categoria crearCategoria(Categoria categoria){
-        if(categoriaRepo.existByNombreIgnoreCase(categoria.getNombre())){
+        if(categoriaRepo.existsByNombreIgnoreCase(categoria.getNombre())){
             throw new IllegalArgumentException("No se puede repetir el nombre de una categoria");
         }
         if(categoria.getNombre().isBlank()) {

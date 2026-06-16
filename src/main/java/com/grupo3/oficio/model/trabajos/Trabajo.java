@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name = "trabajos")
+@Inheritance(strategy = InheritanceType.JOINED)
 @Data
 @NoArgsConstructor
 @AllArgsConstructor

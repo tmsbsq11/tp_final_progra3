@@ -36,6 +36,11 @@ public class ServicioService {
                 .orElseThrow(() -> new NoSuchElementException("No se encontró el servicio con id " + id));
     }
 
+    /*
+    * Cuando se crea un servicio con una CATEGORIA que necesita aprobación, se envía una notificación a los Administradores para aprobar o no el trabajo.
+    * El atributo isApproved se encuentra dentro de Trabajo, cuyo hijo es Servicio.
+    * Si no se necesita aprobación, no hay que enviar nada al Administrador
+    * */
     public Servicio crearServicio(ServicioDTO dto) {
         if (dto == null) {
             throw new IllegalArgumentException("El servicio no puede ser nulo");

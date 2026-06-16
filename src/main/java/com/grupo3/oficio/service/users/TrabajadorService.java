@@ -47,6 +47,12 @@ public class TrabajadorService {
         if (!trabajador.getDni().matches("\\d{7,8}")) {
             throw new IllegalArgumentException("El DNI debe tener 7 u 8 dígitos");
         }
+        if (trabajador.getMinutosMinimoEntreReservas() == null ) {
+            throw new IllegalArgumentException("El minimo de tiempo entre reservas es obligatorio");
+        }
+        if(){
+
+        }
         if (trabajadorRepository.existsByCorreo(trabajador.getCorreo())) {
             throw new IllegalArgumentException("Ya existe un usuario con ese correo");
         }

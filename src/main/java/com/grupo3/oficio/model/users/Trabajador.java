@@ -20,4 +20,5 @@ import java.util.HashSet;
 public class Trabajador extends User {
     private Double puntaje;
     private String descripcion;
+    private Integer minutosMinimoEntreReservas; // bloque minimo tiempo de reserva
 }

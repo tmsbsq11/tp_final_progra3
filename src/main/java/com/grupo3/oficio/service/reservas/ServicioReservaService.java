@@ -116,6 +116,7 @@ public class ServicioReservaService {
         }
 
         Cliente cliente = clienteService.buscarPorId(servicioReservaDTO.getIdCliente());
+        if(!cliente.getIsActive())
         Trabajador trabajador = trabajadorService.buscarPorId(servicioReservaDTO.getIdTrabajador());
 
         LocalDateTime fechaReservada = servicioReservaDTO.getFechaReservada();
@@ -133,8 +134,8 @@ public class ServicioReservaService {
                         .existsByTrabajadorAndEstadoReservaAndInicioLessThanAndFinGreaterThan(
                                 trabajador,
                                 EstadoReserva.APROBADO,
-                                servicioReservaDTO.getFechaFin(), //.plusMinutes(minimoEntreReservas)
-                                servicioReservaDTO.getFechaInicio() //.minusMinutes(minimoEntreReservas)
+                                servicioReservaDTO.getFechaFin().plusMinutes(trabajador.getMinutosMinimoEntreReservas()),
+                                servicioReservaDTO.getFechaInicio().minusMinutes(trabajador.getMinutosMinimoEntreReservas())
                         );
         if (hayConflicto) {
             throw new FechaReservadaException(

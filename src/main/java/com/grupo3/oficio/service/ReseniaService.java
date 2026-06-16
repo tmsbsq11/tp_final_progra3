@@ -1,5 +1,6 @@
 package com.grupo3.oficio.service;
 
+import com.grupo3.oficio.model.resenias.CrearReseniaDTO;
 import com.grupo3.oficio.model.resenias.Resenia;
 import com.grupo3.oficio.model.resenias.ReseniaDTO;
 import com.grupo3.oficio.model.users.Cliente;
@@ -27,7 +28,7 @@ public class ReseniaService {
 
     //CRUD
     //create
-    public Resenia crearResenia(ReseniaDTO reseniaDTO) {
+    public Resenia crearResenia(CrearReseniaDTO reseniaDTO) {
 
         Trabajador trabajador = trabajadorService.buscarPorId(reseniaDTO.getIdTrabajador());
         Cliente cliente = clienteService.buscarPorId(reseniaDTO.getIdCliente());
@@ -91,10 +92,16 @@ public class ReseniaService {
     }
     //update
     public Resenia actualizarResenia( ReseniaDTO reseniaDTO, Integer id) {
-        Resenia resenia= new Resenia();
+        Resenia resenia=buscarPorId(id);
         Trabajador trabajador = trabajadorService.buscarPorId(reseniaDTO.getIdTrabajador());
+        if(trabajador==null){
+            throw new IllegalArgumentException("El trabajador no puede ser null");
+        }
         Cliente cliente = clienteService.buscarPorId(reseniaDTO.getIdCliente());
-        if(reseniaDTO.getPuntaje().isNaN() || resenia.getPuntaje() == null){
+        if(cliente==null){
+            throw new IllegalArgumentException("El cliene no puede ser null");
+        }
+        if(reseniaDTO.getPuntaje() == null || reseniaDTO.getPuntaje().isNaN()){
             throw new IllegalArgumentException("El puntaje es obligatorio");
         }
         if(reseniaDTO.getPuntaje()>5||reseniaDTO.getPuntaje()<1){
@@ -109,7 +116,6 @@ public class ReseniaService {
         resenia.setCliente(cliente);
         resenia.setTrabajador(trabajador);
         resenia.setPuntaje(reseniaDTO.getPuntaje());
-        resenia.setFechaCreacion(buscarPorId(id).getFechaCreacion());
         return reseniaRepo.save(resenia);
     }
 

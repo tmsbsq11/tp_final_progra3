@@ -11,7 +11,6 @@ import com.grupo3.oficio.service.users.ClienteService;
 import com.grupo3.oficio.service.users.TrabajadorService;
 import com.grupo3.oficio.utils.enums.EstadoReserva;
 import com.grupo3.oficio.utils.exceps.FechaReservadaException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -21,12 +20,10 @@ import java.util.Optional;
 
 @Service
 public class ServicioReservaService {
-    @Autowired
-    ServicioReservaRepository reservaRepo;
-    @Autowired
-    ClienteService clienteService;
-    @Autowired
-    TrabajadorService trabajadorService;
+
+    private final ServicioReservaRepository reservaRepo;
+    private final ClienteService clienteService;
+    private final TrabajadorService trabajadorService;
 
     public ServicioReservaService(ServicioReservaRepository reservaRepo,ClienteService clienteService, TrabajadorService trabajadorService) {
         this.reservaRepo = reservaRepo;
@@ -39,6 +36,10 @@ public class ServicioReservaService {
     }
 
     public List<ServicioReserva> mostrarPorEstado(EstadoReserva estadoReserva){
+        if (estadoReserva == null) {
+            throw new IllegalArgumentException(
+                    "El estado es obligatorio");
+        }
         return reservaRepo.findAll().stream()
                 .filter(reserva -> reserva.getEstadoReserva().equals(estadoReserva))
                 .toList();
@@ -80,7 +81,7 @@ public class ServicioReservaService {
         return reservaRepo.save(reserva);
     }
 
-    public Optional<ServicioReserva> registrarUnaReserva(ServicioReservaDTO servicioReservaDTO){
+    public ServicioReservaDTO registrarUnaReserva(ServicioReservaDTO servicioReservaDTO){
         //validaciones
         if (servicioReservaDTO == null) {
             throw new IllegalArgumentException("La reserva no puede ser nula");
@@ -132,8 +133,8 @@ public class ServicioReservaService {
                         .existsByTrabajadorAndEstadoReservaAndInicioLessThanAndFinGreaterThan(
                                 trabajador,
                                 EstadoReserva.APROBADO,
-                                servicioReservaDTO.getFechaFin(),
-                                servicioReservaDTO.getFechaInicio()
+                                servicioReservaDTO.getFechaFin(), //.plusMinutes(minimoEntreReservas)
+                                servicioReservaDTO.getFechaInicio() //.minusMinutes(minimoEntreReservas)
                         );
         if (hayConflicto) {
             throw new FechaReservadaException(
@@ -142,12 +143,17 @@ public class ServicioReservaService {
 
         ServicioReserva reserva = new ServicioReserva();
         reserva.setEstadoReserva(EstadoReserva.PENDIENTE);
+        servicioReservaDTO.setEstadoReserva(EstadoReserva.PENDIENTE);
         reserva.setFechaCreacion(LocalDateTime.now());
+        servicioReservaDTO.setFechaCreacion(LocalDateTime.now());
         reserva.setFechaReservada(fechaReservada);
         reserva.setCliente(cliente);
         reserva.setTrabajador(trabajador);
-
-        return Optional.of(reservaRepo.save(reserva));
+        reserva.setInicio(servicioReservaDTO.getFechaInicio());
+        reserva.setFin(servicioReservaDTO.getFechaFin());
+        ServicioReserva reservaGuardada= reservaRepo.save(reserva);
+        servicioReservaDTO.setId(reservaGuardada.getId()); // luego del save para poder obtener el id autogenerado
+        return servicioReservaDTO;
     }
 
     //Puede ser que haya que reemplazar con eliminado inteligente o simplemente cambiar estado a RECHAZADO

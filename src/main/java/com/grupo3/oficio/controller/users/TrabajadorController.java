@@ -12,7 +12,7 @@ import java.util.NoSuchElementException;
 @RequestMapping("/api/trabajadores")
 @CrossOrigin("*")
 public class TrabajadorController {
-    private TrabajadorService trabajadorService;
+    private final TrabajadorService trabajadorService;
 
     public TrabajadorController(TrabajadorService trabajadorService) { this.trabajadorService = trabajadorService; }
 

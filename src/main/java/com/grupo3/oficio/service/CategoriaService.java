@@ -20,6 +20,9 @@ public class CategoriaService {
     public List<Categoria> listarCategorias(){
         return categoriaRepo.findAll();
     }
+    public List<Categoria> listarCategoriasActivas(){
+        return categoriaRepo.findByIsActiveTrue();
+    }
     public Categoria buscarPorId(Integer id){
         return categoriaRepo.findById(id).orElseThrow(()->new NoSuchElementException("No se encontro el id de la categoria"));
     }

@@ -2,6 +2,7 @@ package com.grupo3.oficio.service.users;
 
 import com.grupo3.oficio.model.users.Trabajador;
 import com.grupo3.oficio.repository.users.TrabajadorRepository;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -10,7 +11,7 @@ import java.util.NoSuchElementException;
 
 @Service
 public class TrabajadorService {
-    private TrabajadorRepository trabajadorRepository;
+    private final TrabajadorRepository trabajadorRepository;
 
     public TrabajadorService(TrabajadorRepository trabajadorRepository) { this.trabajadorRepository = trabajadorRepository; }
 
@@ -103,6 +104,9 @@ public class TrabajadorService {
         if (!trabajador.getDni().matches("\\d{7,8}")) {
             throw new IllegalArgumentException("El DNI debe tener 7 u 8 dígitos");
         }
+        if (!trabajadorRepository.existsById(id)) {
+            throw new EntityNotFoundException("El trabajador con ID " + id + " no existe");
+        }
 
         trabajador.setId(id);
         trabajadorRepository.save(trabajador);
@@ -112,10 +116,11 @@ public class TrabajadorService {
 
     //delete
     public void borrar(Integer id) {
-        trabajadorRepository.findById(id)
-                .orElseThrow(() -> new NoSuchElementException("ERROR TrabajadorService/borrar, NO " + id));
         if (id == null) {
             throw new NullPointerException("ERROR TrabajadorService/borrar, ID nulo");
+        }
+        if (!trabajadorRepository.existsById(id)) {
+            throw new EntityNotFoundException("El trabajador con ID " + id + " no existe");
         }
 
         trabajadorRepository.deleteById(id);

@@ -14,7 +14,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @Table(name = "servicios")
 public class Servicio extends Trabajo {
-    private Integer minTiempo = 30; //minutos
+    private Integer minTiempo; //minutos
     private Double precioEstimadoPorHora;
     //max tiempo
 }

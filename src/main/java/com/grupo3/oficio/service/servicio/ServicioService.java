@@ -16,7 +16,7 @@ import java.util.NoSuchElementException;
 public class ServicioService {
     private final CategoriaService categoriaService;
     private final TrabajadorService trabajadorService;
-    private ServicioRepository servicioRepository;
+    private final ServicioRepository servicioRepository;
 
     public ServicioService(ServicioRepository servicioRepository, CategoriaService categoriaService, TrabajadorService trabajadorService) {
         this.servicioRepository = servicioRepository;
@@ -61,7 +61,11 @@ public class ServicioService {
         servicio.setPrecioEstimadoPorHora(dto.getPrecioEstimadoPorHora());
         servicio.setMinTiempo(dto.getMinTiempo());
         servicio.setIsActive(true);
-        servicio.setIsApproved(false);
+        if(Boolean.TRUE.equals(categoria.getNeedsCertification())){
+            servicio.setIsApproved(false);
+        }else{
+            servicio.setIsApproved(true);
+        }
 
         return servicioRepository.save(servicio);
     }
@@ -101,6 +105,15 @@ public class ServicioService {
             throw new IllegalStateException("El servicio ya se encuentra desactivado");
         }
         servicio.setIsActive(false);
+        servicioRepository.save(servicio);
+    }
+
+    public void activarServicio(Integer id) {
+        Servicio servicio = buscarPorId(id);
+        if (Boolean.TRUE.equals(servicio.getIsActive())) {
+            throw new IllegalStateException("El servicio ya se encuentra activo");
+        }
+        servicio.setIsActive(true);
         servicioRepository.save(servicio);
     }
 }

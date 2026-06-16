@@ -4,6 +4,7 @@ import com.grupo3.oficio.model.reservas.Reserva;
 import com.grupo3.oficio.model.reservas.ServicioReservaDTO;
 import com.grupo3.oficio.service.reservas.ServicioReservaService;
 import com.grupo3.oficio.utils.enums.EstadoReserva;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -39,7 +40,7 @@ public class ServicioReservaController {
 
     @PostMapping
     public ResponseEntity<?> registrarUnaReserva(@RequestBody ServicioReservaDTO servicioReservaDTO){
-        return ResponseEntity.of(servicioReservaService.registrarUnaReserva(servicioReservaDTO));
+        return ResponseEntity.status(HttpStatus.CREATED).body(servicioReservaService.registrarUnaReserva(servicioReservaDTO));
     }
 
     @DeleteMapping("/{id}")

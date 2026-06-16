@@ -41,6 +41,7 @@ public class AuthController {
         usuario.setCorreo(dto.getCorreo());
         usuario.setPassword(passwordEncoder.encode(dto.getPassword()));
         usuario.setRol(dto.getRol());
+        usuario.setIsActive(true);
 
         usuarioRepo.save(usuario);
         return ResponseEntity.status(HttpStatus.CREATED).body("Usuario registrado con éxito");
@@ -49,9 +50,9 @@ public class AuthController {
     @PostMapping("/login")
     public ResponseEntity<String> login(@RequestBody LoginDTO dto) {
         authManager.authenticate(
-                new UsernamePasswordAuthenticationToken(dto.getEmail(), dto.getPassword())
+                new UsernamePasswordAuthenticationToken(dto.getCorreo(), dto.getPassword())
         );
-        User usuario = usuarioRepo.findByCorreo(dto.getEmail()).get();
+        User usuario = usuarioRepo.findByCorreo(dto.getCorreo()).get();
         String token = jwtService.generarToken(usuario);
         return ResponseEntity.ok(token);
     }

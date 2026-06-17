@@ -116,4 +116,20 @@ public class ServicioService {
         servicio.setIsActive(true);
         servicioRepository.save(servicio);
     }
+    public Servicio validarServicio(Integer id){
+        Servicio servicio = buscarPorId(id);
+        if(Boolean.TRUE.equals(servicio.getIsApproved())){
+            throw new IllegalStateException("El servicio ya se encuentra aprobado");
+        }
+        servicio.setIsApproved(true);
+        return servicioRepository.save(servicio);
+    }
+    public Servicio invalidarServicio(Integer id){
+        Servicio servicio = buscarPorId(id);
+        if(Boolean.FALSE.equals(servicio.getIsApproved())){
+            throw new IllegalStateException("El servicio ya se encuentra desaprobado");
+        }
+        servicio.setIsApproved(false);
+        return servicioRepository.save(servicio);
+    }
 }

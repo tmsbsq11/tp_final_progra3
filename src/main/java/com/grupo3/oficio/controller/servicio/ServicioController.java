@@ -46,6 +46,14 @@ public class ServicioController {
         servicioService.activarServicio(id);
         return ResponseEntity.status(HttpStatus.OK).build();
     }
+    @PutMapping("/validar/{id}")
+    public ResponseEntity<Servicio> validarServicio(@PathVariable Integer id){
+        return ResponseEntity.ok(servicioService.validarServicio(id));
+    }
+    @DeleteMapping("/invalidar/{id}")
+    public ResponseEntity<Servicio> invalidarServicio(@PathVariable Integer id){
+        return ResponseEntity.ok(servicioService.invalidarServicio(id));
+    }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> desactivarServicio(@PathVariable Integer id) {

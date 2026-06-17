@@ -121,6 +121,9 @@ public class ServicioService {
         if(Boolean.TRUE.equals(servicio.getIsApproved())){
             throw new IllegalStateException("El servicio ya se encuentra aprobado");
         }
+        if(Boolean.FALSE.equals(servicio.getCategoria().getNeedsCertification())){
+            throw new IllegalStateException("Los sevicios de este tipo no necesitan aprobacion");
+        }
         servicio.setIsApproved(true);
         return servicioRepository.save(servicio);
     }
@@ -128,6 +131,9 @@ public class ServicioService {
         Servicio servicio = buscarPorId(id);
         if(Boolean.FALSE.equals(servicio.getIsApproved())){
             throw new IllegalStateException("El servicio ya se encuentra desaprobado");
+        }
+        if(Boolean.FALSE.equals(servicio.getCategoria().getNeedsCertification())){
+            throw new IllegalStateException("Los sevicios de este tipo no necesitan aprobacion");
         }
         servicio.setIsApproved(false);
         return servicioRepository.save(servicio);

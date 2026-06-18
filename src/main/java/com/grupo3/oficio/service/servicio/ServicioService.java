@@ -1,12 +1,16 @@
 package com.grupo3.oficio.service.servicio;
 
 import com.grupo3.oficio.model.Categoria;
+import com.grupo3.oficio.model.CrearNotificacionDTO;
 import com.grupo3.oficio.model.trabajos.Servicio;
 import com.grupo3.oficio.model.trabajos.ServicioDTO;
 import com.grupo3.oficio.model.users.Trabajador;
 import com.grupo3.oficio.repository.servicio.ServicioRepository;
 import com.grupo3.oficio.service.CategoriaService;
+import com.grupo3.oficio.service.NotificacionService;
 import com.grupo3.oficio.service.users.TrabajadorService;
+import com.grupo3.oficio.utils.enums.Rol;
+import com.grupo3.oficio.utils.enums.TipoNotificacion;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -17,11 +21,13 @@ public class ServicioService {
     private final CategoriaService categoriaService;
     private final TrabajadorService trabajadorService;
     private final ServicioRepository servicioRepository;
+    private final NotificacionService notificacionService;
 
-    public ServicioService(ServicioRepository servicioRepository, CategoriaService categoriaService, TrabajadorService trabajadorService) {
+    public ServicioService(ServicioRepository servicioRepository, CategoriaService categoriaService, TrabajadorService trabajadorService, NotificacionService notificacionService) {
         this.servicioRepository = servicioRepository;
         this.categoriaService = categoriaService;
         this.trabajadorService = trabajadorService;
+        this.notificacionService = notificacionService;
     }
 
     public List<Servicio> listarTodos() {
@@ -61,11 +67,7 @@ public class ServicioService {
         servicio.setPrecioEstimadoPorHora(dto.getPrecioEstimadoPorHora());
         servicio.setMinTiempo(dto.getMinTiempo());
         servicio.setIsActive(true);
-        if(Boolean.TRUE.equals(categoria.getNeedsCertification())){
-            servicio.setIsApproved(false);
-        }else{
-            servicio.setIsApproved(true);
-        }
+        servicio.setIsApproved(!Boolean.TRUE.equals(categoria.getNeedsCertification()));
 
         return servicioRepository.save(servicio);
     }
@@ -125,6 +127,15 @@ public class ServicioService {
             throw new IllegalStateException("Los sevicios de este tipo no necesitan aprobacion");
         }
         servicio.setIsApproved(true);
+        notificacionService.crearNotificacion(
+                new CrearNotificacionDTO(
+                        "Servicio aprobado",
+                        "Tu servicio \"" + servicio.getTitulo() + "\" fue aprobado",
+                        TipoNotificacion.VALIDACION,
+                        servicio.getTrabajador().getId(),
+                        Rol.TRABAJADOR
+                )
+        );
         return servicioRepository.save(servicio);
     }
     public Servicio invalidarServicio(Integer id){
@@ -136,6 +147,15 @@ public class ServicioService {
             throw new IllegalStateException("Los sevicios de este tipo no necesitan aprobacion");
         }
         servicio.setIsApproved(false);
+        notificacionService.crearNotificacion(
+                new CrearNotificacionDTO(
+                        "Servicio aprobado",
+                        "Tu servicio \"" + servicio.getTitulo() + "\" fue desabilitado",
+                        TipoNotificacion.VALIDACION,
+                        servicio.getTrabajador().getId(),
+                        Rol.TRABAJADOR
+                )
+        );
         return servicioRepository.save(servicio);
     }
 }

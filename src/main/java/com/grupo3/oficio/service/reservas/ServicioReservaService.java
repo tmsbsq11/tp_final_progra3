@@ -1,13 +1,17 @@
 package com.grupo3.oficio.service.reservas;
 
+import com.grupo3.oficio.model.CrearNotificacionDTO;
 import com.grupo3.oficio.model.reservas.ServicioReservaDTO;
 import com.grupo3.oficio.model.reservas.ServicioReserva;
 import com.grupo3.oficio.model.users.Cliente;
 import com.grupo3.oficio.model.users.Trabajador;
 import com.grupo3.oficio.repository.reservas.ServicioReservaRepository;
+import com.grupo3.oficio.service.NotificacionService;
 import com.grupo3.oficio.service.users.ClienteService;
 import com.grupo3.oficio.service.users.TrabajadorService;
 import com.grupo3.oficio.utils.enums.EstadoReserva;
+import com.grupo3.oficio.utils.enums.Rol;
+import com.grupo3.oficio.utils.enums.TipoNotificacion;
 import com.grupo3.oficio.utils.exceps.FechaReservadaException;
 import com.grupo3.oficio.utils.exceps.UsuarioInactivoRuntimeException;
 import org.springframework.stereotype.Service;
@@ -22,11 +26,13 @@ public class ServicioReservaService {
     private final ServicioReservaRepository reservaRepo;
     private final ClienteService clienteService;
     private final TrabajadorService trabajadorService;
+    private final NotificacionService notificacionService;
 
-    public ServicioReservaService(ServicioReservaRepository reservaRepo,ClienteService clienteService, TrabajadorService trabajadorService) {
+    public ServicioReservaService(ServicioReservaRepository reservaRepo, ClienteService clienteService, TrabajadorService trabajadorService, NotificacionService notificacionService) {
         this.reservaRepo = reservaRepo;
         this.clienteService= clienteService;
         this.trabajadorService=trabajadorService;
+        this.notificacionService = notificacionService;
     }
 
     public List<ServicioReserva> mostrarTodasReservas(){
@@ -76,6 +82,15 @@ public class ServicioReservaService {
         }
 
         reserva.setEstadoReserva(estadoNuevo);
+        notificacionService.crearNotificacion(
+                new CrearNotificacionDTO(
+                        "CAMBIO DE ESTADO DE RESERVA",
+                        "Tu reserva cambio al estado: " + reserva.getEstadoReserva(),
+                        TipoNotificacion.RESERVA,
+                        reserva.getCliente().getId(),
+                        Rol.CLIENTE
+                )
+        );
         return reservaRepo.save(reserva);
     }
 
@@ -156,6 +171,14 @@ public class ServicioReservaService {
         reserva.setInicio(servicioReservaDTO.getFechaInicio());
         reserva.setFin(servicioReservaDTO.getFechaFin());
         ServicioReserva reservaGuardada= reservaRepo.save(reserva);
+        notificacionService.crearNotificacion(
+                new CrearNotificacionDTO(
+                        "Nueva reserva",
+                        "Has recibido una nueva reserva",
+                        TipoNotificacion.RESERVA,
+                        trabajador.getId(),
+                        Rol.TRABAJADOR)
+        );
         servicioReservaDTO.setId(reservaGuardada.getId()); // luego del save para poder obtener el id autogenerado
         return servicioReservaDTO;
     }

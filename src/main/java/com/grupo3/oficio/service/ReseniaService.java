@@ -1,5 +1,6 @@
 package com.grupo3.oficio.service;
 
+import com.grupo3.oficio.model.CrearNotificacionDTO;
 import com.grupo3.oficio.model.resenias.CrearReseniaDTO;
 import com.grupo3.oficio.model.resenias.Resenia;
 import com.grupo3.oficio.model.resenias.ReseniaDTO;
@@ -9,6 +10,8 @@ import com.grupo3.oficio.repository.ReseniaRepository;
 import com.grupo3.oficio.service.users.ClienteService;
 import com.grupo3.oficio.service.users.TrabajadorService;
 import com.grupo3.oficio.utils.enums.DireccionResenia;
+import com.grupo3.oficio.utils.enums.Rol;
+import com.grupo3.oficio.utils.enums.TipoNotificacion;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -19,6 +22,7 @@ public class ReseniaService {
     ReseniaRepository reseniaRepo;
     ClienteService clienteService;
     TrabajadorService trabajadorService;
+    NotificacionService notificacionService;
 
     public ReseniaService(ReseniaRepository reseniaRepo,ClienteService clienteService, TrabajadorService trabajadorService) {
         this.reseniaRepo = reseniaRepo;
@@ -57,6 +61,17 @@ public class ReseniaService {
         resenia.setComentario(reseniaDTO.getComentario());
         resenia.setFechaCreacion(LocalDateTime.now());
         resenia.setDireccionResenia(reseniaDTO.getDireccionResenia());
+        if(resenia.getDireccionResenia().equals(DireccionResenia.CLIENTEATRABAJADOR)) {//Si el trabajador es el destinatario le avisa de la nueva resenia porq es publica
+            notificacionService.crearNotificacion(
+                    new CrearNotificacionDTO(
+                            "Nueva reseña",
+                            "Has recibido una nueva reseña",
+                            TipoNotificacion.RESENIA,
+                            trabajador.getId(),
+                            Rol.TRABAJADOR
+                    )
+            );
+        }
         return reseniaRepo.save(resenia);
     }
 

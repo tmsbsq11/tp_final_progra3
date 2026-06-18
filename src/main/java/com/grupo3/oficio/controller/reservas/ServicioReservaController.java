@@ -39,6 +39,9 @@ public class ServicioReservaController {
         return ResponseEntity.ok(servicioReservaService.mostrarTodasReservas());
     }
 
+    //crear metodo para ver solo mis reservas
+    //crear metodo para aceptar reservas
+
     @PostMapping
     public ResponseEntity<?> registrarUnaReserva(@RequestBody ServicioReservaDTO servicioReservaDTO){
         return ResponseEntity.status(HttpStatus.CREATED).body(servicioReservaService.registrarUnaReserva(servicioReservaDTO));

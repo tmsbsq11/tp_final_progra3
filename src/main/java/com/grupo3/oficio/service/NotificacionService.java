@@ -73,21 +73,21 @@ public class NotificacionService {
         notificacion.setId(null);
 
         Notificacion notificacionGuardada = notificacionRepo.save(notificacion);
-        String mail = "";
-        if(notificacionGuardada.getRol().equals(Rol.CLIENTE)){
-            Cliente cliente= clienteService.buscarPorId(notificacionGuardada.getIdDestino());
-            mail=cliente.getCorreo();
-        }
-        if (notificacionGuardada.getRol().equals(Rol.TRABAJADOR)) {
-            Trabajador trabajador= trabajadorService.buscarPorId(notificacionGuardada.getIdDestino());
-            mail=trabajador.getCorreo();
-        }
+//        String mail = "";
+//        if(notificacionGuardada.getRol().equals(Rol.CLIENTE)){
+//            Cliente cliente= clienteService.buscarPorId(notificacionGuardada.getIdDestino());
+//            mail=cliente.getCorreo();
+//        }
+//        if (notificacionGuardada.getRol().equals(Rol.TRABAJADOR)) {
+//            Trabajador trabajador= trabajadorService.buscarPorId(notificacionGuardada.getIdDestino());
+//            mail=trabajador.getCorreo();
+//        }
         //Falta el admin
-        emailService.enviarMail(
-                mail,//buscar el cliente o trabajador y mandar el mail
-                crearNotificacionDTO.getTitulo(),
-                crearNotificacionDTO.getMensaje()
-        );
+//        emailService.enviarMail(
+//                mail,//buscar el cliente o trabajador y mandar el mail
+//                crearNotificacionDTO.getTitulo(),
+//                crearNotificacionDTO.getMensaje()
+//        );
         return notificacionGuardada;
     }
 

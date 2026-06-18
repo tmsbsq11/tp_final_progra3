@@ -14,6 +14,7 @@ public class ServicioReservaDTO {
     private Integer id; // para devolverlo
     private Integer idCliente;
     private Integer idTrabajador;
+    private Integer idServicio;
     //private Integer idTrabajo; no utilizado
     private EstadoReserva estadoReserva;
     private LocalDateTime fechaCreacion;

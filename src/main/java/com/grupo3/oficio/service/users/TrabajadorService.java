@@ -7,6 +7,7 @@ import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -142,6 +143,8 @@ public class TrabajadorService {
         trabajadorExistente.setApellido(datos.getApellido());
         trabajadorExistente.setUsername(datos.getUsername());
         trabajadorExistente.setDni(datos.getDni());
+        trabajadorExistente.setMinutosMinimoEntreReservas(datos.getMinutosMinimoEntreReservas());
+            //COMPLETAR
 
         //password solo si querés permitir cambio
         if (datos.getPassword() != null && !datos.getPassword().isBlank()) {

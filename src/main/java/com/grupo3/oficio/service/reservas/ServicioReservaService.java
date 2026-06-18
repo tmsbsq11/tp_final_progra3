@@ -3,10 +3,12 @@ package com.grupo3.oficio.service.reservas;
 import com.grupo3.oficio.model.CrearNotificacionDTO;
 import com.grupo3.oficio.model.reservas.ServicioReservaDTO;
 import com.grupo3.oficio.model.reservas.ServicioReserva;
+import com.grupo3.oficio.model.trabajos.Servicio;
 import com.grupo3.oficio.model.users.Cliente;
 import com.grupo3.oficio.model.users.Trabajador;
 import com.grupo3.oficio.repository.reservas.ServicioReservaRepository;
 import com.grupo3.oficio.service.NotificacionService;
+import com.grupo3.oficio.service.servicio.ServicioService;
 import com.grupo3.oficio.service.users.ClienteService;
 import com.grupo3.oficio.service.users.TrabajadorService;
 import com.grupo3.oficio.utils.enums.EstadoReserva;
@@ -27,12 +29,14 @@ public class ServicioReservaService {
     private final ClienteService clienteService;
     private final TrabajadorService trabajadorService;
     private final NotificacionService notificacionService;
+    private final ServicioService servicioService;
 
-    public ServicioReservaService(ServicioReservaRepository reservaRepo, ClienteService clienteService, TrabajadorService trabajadorService, NotificacionService notificacionService) {
+    public ServicioReservaService(ServicioReservaRepository reservaRepo, ClienteService clienteService, TrabajadorService trabajadorService, NotificacionService notificacionService, ServicioService servicioService) {
         this.reservaRepo = reservaRepo;
         this.clienteService= clienteService;
         this.trabajadorService=trabajadorService;
         this.notificacionService = notificacionService;
+        this.servicioService = servicioService;
     }
 
     public List<ServicioReserva> mostrarTodasReservas(){
@@ -130,11 +134,15 @@ public class ServicioReservaService {
 
         Cliente cliente = clienteService.buscarPorId(servicioReservaDTO.getIdCliente());
         if(!cliente.getIsActive()) {
-        throw new UsuarioInactivoRuntimeException("El cliente debe estar activo para realizar una reserva");
+            throw new UsuarioInactivoRuntimeException("El cliente debe estar activo para realizar una reserva");
         }
         Trabajador trabajador = trabajadorService.buscarPorId(servicioReservaDTO.getIdTrabajador());
         if(!trabajador.getIsActive()) {
             throw new UsuarioInactivoRuntimeException("El trabajador debe estar activo para realizar una reserva");
+        }
+        Servicio servicio = servicioService.buscarPorId(servicioReservaDTO.getIdServicio());
+        if(!servicio.getIsActive()) {
+            throw new IllegalArgumentException("Servicio Inactivo"); //cambiar por excepc personalizada
         }
 
         LocalDateTime fechaReservada = servicioReservaDTO.getFechaReservada();
@@ -170,6 +178,7 @@ public class ServicioReservaService {
         reserva.setTrabajador(trabajador);
         reserva.setInicio(servicioReservaDTO.getFechaInicio());
         reserva.setFin(servicioReservaDTO.getFechaFin());
+        reserva.setServicio(servicio);
         ServicioReserva reservaGuardada= reservaRepo.save(reserva);
         notificacionService.crearNotificacion(
                 new CrearNotificacionDTO(

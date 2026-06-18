@@ -6,6 +6,7 @@ import com.grupo3.oficio.service.reservas.ServicioReservaService;
 import com.grupo3.oficio.utils.enums.EstadoReserva;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -24,12 +25,12 @@ public class ServicioReservaController {
         EstadoReserva estadoReserva= EstadoReserva.valueOf(estado.toUpperCase());//Puede tirar IllegalArgumentException
         return ResponseEntity.ok(servicioReservaService.mostrarPorEstado(estadoReserva));
     }
-
+    @PreAuthorize("hasRol('ADMIN')")
     @GetMapping("/{id}")
     public ResponseEntity<Reserva> mostrarReservaPorId(@PathVariable Integer id){
         return ResponseEntity.ok(servicioReservaService.buscarReservaPorId(id));
     }
-
+    @PreAuthorize("hasRol('ADMIN')")
     @GetMapping
     public ResponseEntity<?> mostrarTodasReservas(){
         if(servicioReservaService.mostrarTodasReservas().isEmpty()){
@@ -42,7 +43,7 @@ public class ServicioReservaController {
     public ResponseEntity<?> registrarUnaReserva(@RequestBody ServicioReservaDTO servicioReservaDTO){
         return ResponseEntity.status(HttpStatus.CREATED).body(servicioReservaService.registrarUnaReserva(servicioReservaDTO));
     }
-
+    @PreAuthorize("hasRol('ADMIN')")
     @DeleteMapping("/{id}")
     public ResponseEntity<?> eliminarUnaReserva(@PathVariable Integer id){
         servicioReservaService.eliminarReserva(servicioReservaService.buscarReservaPorId(id));

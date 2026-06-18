@@ -77,7 +77,10 @@ public class TrabajadorService {
         return trabajadorRepository.findById(id)
                 .orElseThrow(() -> new NoSuchElementException("ERROR TrabajadorService/buscarPorId, NO " + id));
     }
-
+    public Trabajador buscarPorEmail(String email) {
+        return trabajadorRepository.findByEmail(email)
+                .orElseThrow(() -> new NoSuchElementException("No existe"));
+    }
     //update
     public Trabajador actualizar(Integer id, Trabajador trabajador) {
         //validaciones
@@ -121,6 +124,26 @@ public class TrabajadorService {
         trabajadorRepository.save(trabajador);
 
         return trabajador;
+    }
+    public Trabajador actualizarPerfil(String email, Trabajador datos) {
+
+        Trabajador trabajadorExistente = trabajadorRepository.findByEmail(email)
+                .orElseThrow(() -> new EntityNotFoundException(
+                        "El cliente con email " + email + " no existe"
+                ));
+
+        //actualizar campos
+        trabajadorExistente.setNombre(datos.getNombre());
+        trabajadorExistente.setApellido(datos.getApellido());
+        trabajadorExistente.setUsername(datos.getUsername());
+        trabajadorExistente.setDni(datos.getDni());
+
+        //password solo si querés permitir cambio
+        if (datos.getPassword() != null && !datos.getPassword().isBlank()) {
+            trabajadorExistente.setPassword(datos.getPassword());
+        }
+
+        return trabajadorRepository.save(trabajadorExistente);
     }
 
     //delete

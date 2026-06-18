@@ -44,6 +44,10 @@ public class CategoriaController {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
+    @PutMapping("/reactivar/{id}")
+    public ResponseEntity<Categoria> reactivarCategoria(@PathVariable Integer id){
+        return ResponseEntity.ok(categoriaServ.reactivarCategoria(id));
+    }
     @DeleteMapping("/{id}")
     public ResponseEntity<?> eliminarCategoria(@PathVariable Integer id){
         categoriaServ.eliminarCategoria(id);

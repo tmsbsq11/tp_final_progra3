@@ -32,5 +32,5 @@ public class Resenia {
     private String comentario;
     private LocalDateTime fechaCreacion;
     @Enumerated(EnumType.STRING)
-    private DireccionResenia direccionReserva;
+    private DireccionResenia direccionResenia;
 }

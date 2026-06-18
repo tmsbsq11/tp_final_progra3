@@ -44,6 +44,9 @@ public class NotificacionService {
 
     //create
     public Notificacion crearNotificacion(CrearNotificacionDTO crearNotificacionDTO) {
+        if(crearNotificacionDTO==null){
+            throw new IllegalArgumentException("La notificacion no puede ser null");
+        }
         if (crearNotificacionDTO.getTipoNotificacion() == null) {
             throw new IllegalArgumentException("La notificacion debe decir que tipo de notificacion es");
         }
@@ -55,6 +58,9 @@ public class NotificacionService {
         }
         if (crearNotificacionDTO.getTitulo() == null || crearNotificacionDTO.getTitulo().isBlank()) {
             throw new IllegalArgumentException("La notificacion debe tener titulo");
+        }
+        if(crearNotificacionDTO.getRol()==null){
+            throw new IllegalArgumentException("La notificacion debe tener el rol al que se le manda la notificacion");
         }
         Notificacion notificacion = new Notificacion();
         notificacion.setTipoNotificacion(crearNotificacionDTO.getTipoNotificacion());

@@ -33,7 +33,7 @@ public class CategoriaService {
         if(categoriaRepo.existsByNombreIgnoreCase(categoria.getNombre())){
             throw new IllegalArgumentException("No se puede repetir el nombre de una categoria");
         }
-        if(categoria.getNombre().isBlank()) {
+        if(categoria.getNombre()==null||categoria.getNombre().isBlank()) {
             throw new SinNombreException("Se intento crear una categoria sin nombre");
         }
         if(categoria.getIsActive()==null){
@@ -65,10 +65,21 @@ public class CategoriaService {
         }
         return categoriaRepo.save(categoria);
     }
+    public Categoria reactivarCategoria(Integer id){
+        Categoria categoria=categoriaRepo.findById(id).orElseThrow(()->new NoSuchElementException("No se encontro el id de la categoria que se quiere reactivar"));
+        if(categoria.getIsActive().equals(true)){
+            throw new IllegalArgumentException("La categoria que se quiere reactivar ya se encuentra activada");
+        }
+        categoria.setIsActive(true);
+        return categoriaRepo.save(categoria);
+    }
 
     //delete
     public void eliminarCategoria(Integer id){
         Categoria categoria=buscarPorId(id);
+        if(categoria.getIsActive()==false){
+            throw new IllegalArgumentException("La categoria ya esta desactivada");
+        }
         categoria.setIsActive(false);
         categoriaRepo.save(categoria);
     }

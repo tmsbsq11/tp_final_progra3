@@ -7,6 +7,11 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 
 public interface ReseniaRepository extends JpaRepository<Resenia, Integer> {
-List<Resenia> findByIdTrabajadorAndDireccionResenia(Integer idTrabajador, DireccionResenia direccionResenia);
-List<Resenia> findByIdClienteAndDireccionResenia(Integer idCliente, DireccionResenia direccionResenia);
+    List<Resenia> findByTrabajadorIdAndDireccionResenia(
+            Integer idTrabajador,
+            DireccionResenia direccionResenia);
+
+    List<Resenia> findByClienteIdAndDireccionResenia(
+            Integer idCliente,
+            DireccionResenia direccionResenia);
 }

@@ -50,9 +50,9 @@ public class TrabajadorService {
         if (trabajador.getMinutosMinimoEntreReservas() == null ) {
             throw new IllegalArgumentException("El minimo de tiempo entre reservas es obligatorio");
         }
-        if(){
-
-        }
+//        if(){
+//
+//        }
         if (trabajadorRepository.existsByCorreo(trabajador.getCorreo())) {
             throw new IllegalArgumentException("Ya existe un usuario con ese correo");
         }
@@ -112,6 +112,9 @@ public class TrabajadorService {
         }
         if (!trabajadorRepository.existsById(id)) {
             throw new EntityNotFoundException("El trabajador con ID " + id + " no existe");
+        }
+        if(trabajador.getMinutosMinimoEntreReservas()==null){
+            throw new IllegalArgumentException(("El trabajador debe tener asignados los minutos minimos entre reservas"));
         }
 
         trabajador.setId(id);

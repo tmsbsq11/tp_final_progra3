@@ -56,7 +56,7 @@ public class ReseniaService {
         resenia.setTrabajador(trabajador);
         resenia.setComentario(reseniaDTO.getComentario());
         resenia.setFechaCreacion(LocalDateTime.now());
-        resenia.setDireccionReserva(reseniaDTO.getDireccionResenia());
+        resenia.setDireccionResenia(reseniaDTO.getDireccionResenia());
         return reseniaRepo.save(resenia);
     }
 
@@ -69,10 +69,10 @@ public class ReseniaService {
         return reseniaRepo.findById(id).orElseThrow(() -> new NoSuchElementException("No se encontro el id de la resenia que se quizo buscar"));
     }
     public List<Resenia> mostrarReseniaATrabajador(Integer idTrabajador){
-        return reseniaRepo.findByIdTrabajadorAndDireccionResenia(idTrabajador,DireccionResenia.CLIENTEATRABAJADOR);// listar las resenias de los clientes al trabajador que se busca
+        return reseniaRepo.findByTrabajadorIdAndDireccionResenia(idTrabajador,DireccionResenia.CLIENTEATRABAJADOR);// listar las resenias de los clientes al trabajador que se busca
     }
     public List<Resenia>mostrarReseniaACliente(Integer idCliente){
-        return reseniaRepo.findByIdClienteAndDireccionResenia(idCliente,DireccionResenia.TRABAJADORACLIENTE);//listar las resenias de los trabajadores al cliente
+        return reseniaRepo.findByClienteIdAndDireccionResenia(idCliente,DireccionResenia.TRABAJADORACLIENTE);//listar las resenias de los trabajadores al cliente
     }
     //calculo de promedio, elegir si hacerlo desde la bdd o calcularlo cada vez
     public Double promedioPuntajeTrabajador(Integer idTrabajador) {

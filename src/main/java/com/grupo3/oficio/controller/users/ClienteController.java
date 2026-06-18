@@ -3,6 +3,7 @@ package com.grupo3.oficio.controller.users;
 import com.grupo3.oficio.model.users.Cliente;
 import com.grupo3.oficio.service.users.ClienteService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -55,7 +56,6 @@ public class ClienteController {
             return ResponseEntity.badRequest().build();
         }
     }
-
     @DeleteMapping("/{id}")
     public ResponseEntity<String> borrar(@PathVariable Integer id) {
         try {

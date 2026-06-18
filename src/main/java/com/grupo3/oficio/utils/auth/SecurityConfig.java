@@ -16,6 +16,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+import static com.grupo3.oficio.utils.enums.Rol.ADMIN;
+import static com.grupo3.oficio.utils.enums.Rol.CLIENTE;
+
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
@@ -32,6 +35,11 @@ public class SecurityConfig {
                 .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/auth/**").permitAll()
+                        .requestMatchers("/api/servicio_reservas/**").hasAnyRole("CLIENTE","ADMIN")
+                        .requestMatchers("/api/servicios/**").hasAnyRole("TRABAJADOR","ADMIN")
+                        .requestMatchers("/api/categorias/**").hasAnyRole("ADMIN","TRABAJADOR")//ver si conviene q sea auth y despues poner todo menos mostrar categorias para admin
+                        .requestMatchers("/api/clientes").hasAnyRole("ADMIN","CLIENTE")
+                        .requestMatchers("/api/trabajadores").hasAnyRole("ADMIN","TRABAJADOR")
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)

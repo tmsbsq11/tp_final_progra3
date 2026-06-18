@@ -4,6 +4,7 @@ import com.grupo3.oficio.model.Categoria;
 import com.grupo3.oficio.service.CategoriaService;
 import com.grupo3.oficio.utils.exceps.SinNombreException;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -31,11 +32,12 @@ public class CategoriaController {
     public ResponseEntity<List<Categoria>> mostrarCategorias(){
         return ResponseEntity.ok(categoriaServ.listarCategorias());
     }
-
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping
     public ResponseEntity<Categoria> crearCategoria(@RequestBody Categoria categoria){
         return ResponseEntity.ok(categoriaServ.crearCategoria(categoria));
     }
+    @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/{id}")
     public ResponseEntity<?> actualizarCategoria(@RequestBody Categoria categoria,@PathVariable Integer id){
         try {
@@ -44,10 +46,12 @@ public class CategoriaController {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
+    @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/reactivar/{id}")
     public ResponseEntity<Categoria> reactivarCategoria(@PathVariable Integer id){
         return ResponseEntity.ok(categoriaServ.reactivarCategoria(id));
     }
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{id}")
     public ResponseEntity<?> eliminarCategoria(@PathVariable Integer id){
         categoriaServ.eliminarCategoria(id);

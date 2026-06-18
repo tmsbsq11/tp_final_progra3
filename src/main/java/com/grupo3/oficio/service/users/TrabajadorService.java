@@ -78,7 +78,7 @@ public class TrabajadorService {
                 .orElseThrow(() -> new NoSuchElementException("ERROR TrabajadorService/buscarPorId, NO " + id));
     }
     public Trabajador buscarPorEmail(String email) {
-        return trabajadorRepository.findByEmail(email)
+        return trabajadorRepository.findByCorreo(email)
                 .orElseThrow(() -> new NoSuchElementException("No existe"));
     }
     //update
@@ -127,7 +127,7 @@ public class TrabajadorService {
     }
     public Trabajador actualizarPerfil(String email, Trabajador datos) {
 
-        Trabajador trabajadorExistente = trabajadorRepository.findByEmail(email)
+        Trabajador trabajadorExistente = trabajadorRepository.findByCorreo(email)
                 .orElseThrow(() -> new EntityNotFoundException(
                         "El cliente con email " + email + " no existe"
                 ));

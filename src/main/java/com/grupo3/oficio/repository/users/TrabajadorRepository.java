@@ -11,5 +11,5 @@ public interface TrabajadorRepository extends JpaRepository<Trabajador, Integer>
     boolean existsByCorreo(String correo);
     boolean existsByUsername(String username);
     boolean existsByDni(String dni);
-    Optional<Trabajador> findByEmail(String email);
+    Optional<Trabajador> findByCorreo(String correo);
 }

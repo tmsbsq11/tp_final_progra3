@@ -64,7 +64,7 @@ public class ClienteService {
                 .orElseThrow(() -> new NoSuchElementException("ERROR ClienteService/buscarPorId, NO " + id));
     }
     public Cliente buscarPorEmail(String email) {
-        return clienteRepository.findByEmail(email)
+        return clienteRepository.findByCorreo(email)
                 .orElseThrow(() -> new NoSuchElementException("No existe"));
     }
         //update
@@ -102,7 +102,7 @@ public class ClienteService {
     }
     public Cliente actualizarPerfil(String email, Cliente datos) {
 
-        Cliente clienteExistente = clienteRepository.findByEmail(email)
+        Cliente clienteExistente = clienteRepository.findByCorreo(email)
                 .orElseThrow(() -> new EntityNotFoundException(
                         "El cliente con email " + email + " no existe"
                 ));

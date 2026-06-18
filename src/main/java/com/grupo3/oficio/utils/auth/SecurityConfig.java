@@ -37,14 +37,15 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/auth/**").permitAll()
                         .requestMatchers("/api/servicio_reservas/**").hasAnyRole("CLIENTE","ADMIN")
+                        .requestMatchers(HttpMethod.GET,"/api/servicios").authenticated()
                         .requestMatchers("/api/servicios/**").hasAnyRole("TRABAJADOR","ADMIN")
                         .requestMatchers(HttpMethod.GET, "/api/categorias/**").authenticated()
                         .requestMatchers("/api/categorias/**").hasAnyRole("ADMIN")//ver si conviene q sea auth y despues poner todo menos mostrar categorias para admin
                         .requestMatchers("/api/clientes/**").hasAnyRole("ADMIN","CLIENTE")
                         .requestMatchers("/api/trabajadores/**").hasAnyRole("ADMIN","TRABAJADOR")
-                        .requestMatchers("api/admins/**").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.GET,"api/noificaciones/**").authenticated()
-                        .requestMatchers("api/noificaciones/**").hasRole("ADMIN")
+                        .requestMatchers("/api/admins/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.GET,"/api/noificaciones/**").authenticated()
+                        .requestMatchers("/api/noificaciones/**").hasRole("ADMIN")
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)

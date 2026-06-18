@@ -5,6 +5,7 @@ import com.grupo3.oficio.model.trabajos.ServicioDTO;
 import com.grupo3.oficio.service.servicio.ServicioService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -40,21 +41,23 @@ public class ServicioController {
                                                    @RequestBody ServicioDTO dto) {
         return ResponseEntity.ok(servicioService.editarServicio(id, dto));
     }
-
+    @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/activar/{id}")
     public ResponseEntity<Void> activarServicio(@PathVariable Integer id) {
         servicioService.activarServicio(id);
         return ResponseEntity.status(HttpStatus.OK).build();
     }
+    @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/validar/{id}")
     public ResponseEntity<Servicio> validarServicio(@PathVariable Integer id){
         return ResponseEntity.ok(servicioService.validarServicio(id));
     }
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/invalidar/{id}")
     public ResponseEntity<Servicio> invalidarServicio(@PathVariable Integer id){
         return ResponseEntity.ok(servicioService.invalidarServicio(id));
     }
-
+    @PreAuthorize("hasRole('ADMIN')")//permitir que lo haga el trabajador tmb?
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> desactivarServicio(@PathVariable Integer id) {
         servicioService.desactivarServicio(id);

@@ -34,10 +34,21 @@ public class AuthController {
 
     @PostMapping("/register")
     public ResponseEntity<String> register(@RequestBody RegistroDTO dto) {
+        if(dto==null){
+            throw new IllegalArgumentException("Debe ingresar los datos");
+        }
         if (usuarioRepo.findByCorreo(dto.getCorreo()).isPresent()) {
             throw new IllegalArgumentException("El email ya está registrado");
         }
-
+        if(dto.getCorreo()==null||dto.getCorreo().isBlank()){
+            throw new IllegalArgumentException("Debe ingresarse el email");
+        }
+        if(dto.getRol()==null){
+            throw new IllegalArgumentException("Debe ingresar un rol para registrarse");
+        }
+        if(dto.getNombre()==null||dto.getNombre().isBlank()){
+            throw new IllegalArgumentException("Debe ingresar un nombre para registrarse");
+        }
         User usuario = dto.getRol() == Rol.CLIENTE ? new Cliente() : new Trabajador();
         usuario.setNombre(dto.getNombre());
         usuario.setCorreo(dto.getCorreo());

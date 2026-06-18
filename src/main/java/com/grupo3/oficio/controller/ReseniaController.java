@@ -1,5 +1,6 @@
 package com.grupo3.oficio.controller;
 
+import com.grupo3.oficio.model.resenias.CrearReseniaDTO;
 import com.grupo3.oficio.model.resenias.Resenia;
 import com.grupo3.oficio.model.resenias.ReseniaDTO;
 import com.grupo3.oficio.service.ReseniaService;
@@ -25,9 +26,17 @@ public class ReseniaController {
     public ResponseEntity<List<Resenia>> listarResenias(){
         return ResponseEntity.ok(reseniaServ.mostrarResenias());
     }
+    @GetMapping("/cliente/{id}")
+    public ResponseEntity<List<Resenia>> verReseniasACliente(@PathVariable Integer id){
+        return ResponseEntity.ok(reseniaServ.mostrarReseniaACliente(id));
+    }
+    @GetMapping("/trabajador/{id}")
+    public ResponseEntity<List<Resenia>> verReseniasATrabajador(@PathVariable Integer id){
+        return ResponseEntity.ok(reseniaServ.mostrarReseniaATrabajador(id));
+    }
 
     @PostMapping
-    public ResponseEntity<Resenia> crearResenia(@RequestBody ReseniaDTO reseniaDTO){
+    public ResponseEntity<Resenia> crearResenia(@RequestBody CrearReseniaDTO reseniaDTO){
         return ResponseEntity.ok(reseniaServ.crearResenia(reseniaDTO));
     }
     @PutMapping("/{id}")

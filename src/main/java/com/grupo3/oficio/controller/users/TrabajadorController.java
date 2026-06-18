@@ -3,6 +3,8 @@ package com.grupo3.oficio.controller.users;
 import com.grupo3.oficio.model.users.Trabajador;
 import com.grupo3.oficio.service.users.TrabajadorService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -17,15 +19,7 @@ public class TrabajadorController {
     public TrabajadorController(TrabajadorService trabajadorService) { this.trabajadorService = trabajadorService; }
 
 
-    //get
-    @GetMapping("/cercanos")
-    public ResponseEntity<List<Trabajador>> buscarCercanos(
-            @RequestParam Double latitud, @RequestParam Double longitud,
-            @RequestParam(defaultValue = "10") Double radioKm) {
-        return ResponseEntity.ok(trabajadorService.buscarCercanos(latitud, longitud, radioKm));
-    }
-
-    @GetMapping("/{id}")
+    @GetMapping("{id}")
     public ResponseEntity<Trabajador> buscarPorId(@PathVariable Integer id) {
         try {
             Trabajador trabajador = trabajadorService.buscarPorId(id);
@@ -44,8 +38,13 @@ public class TrabajadorController {
             return ResponseEntity.badRequest().build();
         }
     }
-
-    //post
+    @GetMapping("/perfil")
+    public ResponseEntity<Trabajador> miPerfil(Authentication auth) {
+        return ResponseEntity.ok(
+                trabajadorService.buscarPorEmail(auth.getName())
+        );
+    }
+    @PreAuthorize("hasRol('ADMIN')")
     @PostMapping
     public ResponseEntity<Trabajador> crear(@RequestBody Trabajador trabajador) {
         try {
@@ -55,13 +54,15 @@ public class TrabajadorController {
             return ResponseEntity.badRequest().build();
         }
     }
+    @PostMapping("/perfil")
+    public ResponseEntity<Trabajador> actualizarPerfil(Authentication auth,@RequestBody Trabajador trabajador) {
 
-    //put
-    @PutMapping("/{id}/ubicacion")
-    public ResponseEntity<Trabajador> actualizarUbicacion(@PathVariable Integer id, @RequestParam String direccion) {
-        return ResponseEntity.ok(trabajadorService.actualizarUbicacion(id, direccion));
+        String email = auth.getName();
+        return ResponseEntity.ok(
+                trabajadorService.actualizarPerfil(email,trabajador)
+        );
     }
-
+    @PreAuthorize("hasRol('ADMIN')")
     @PutMapping("/{id}")
     public ResponseEntity<Trabajador> actualizar(@PathVariable Integer id, @RequestBody Trabajador trabajador) {
         try {
@@ -71,8 +72,7 @@ public class TrabajadorController {
             return ResponseEntity.badRequest().build();
         }
     }
-
-    //del
+    @PreAuthorize("hasRol('ADMIN')")
     @DeleteMapping("/{id}")
     public ResponseEntity<String> borrar(@PathVariable Integer id) {
         try {

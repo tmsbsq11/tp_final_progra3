@@ -7,6 +7,8 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Optional;
+
 @Service
 public class CategoriaService {
     CategoriaRepository categoriaRepo;
@@ -24,14 +26,14 @@ public class CategoriaService {
         return categoriaRepo.findByIsActiveTrue();
     }
     public Categoria buscarPorId(Integer id){
-        return categoriaRepo.findById(id).orElseThrow(()->new NoSuchElementException("No se encontro el id de la categoria"));
+        return categoriaRepo.findById(id).orElseThrow(()->new NoSuchElementException("No se encontro la categoria"));
     }
     //create
     public Categoria crearCategoria(Categoria categoria){
         if(categoriaRepo.existsByNombreIgnoreCase(categoria.getNombre())){
             throw new IllegalArgumentException("No se puede repetir el nombre de una categoria");
         }
-        if(categoria.getNombre().isBlank()) {
+        if(categoria.getNombre()==null||categoria.getNombre().isBlank()) {
             throw new SinNombreException("Se intento crear una categoria sin nombre");
         }
         if(categoria.getIsActive()==null){
@@ -47,11 +49,38 @@ public class CategoriaService {
     //update
     public Categoria actualizarCategoria(Integer id,Categoria categoria){
         categoria.setId(id);
+        Optional<Categoria> categoriaExistente = categoriaRepo.findByNombreIgnoreCase(categoria.getNombre());
+
+        if (categoriaExistente.isPresent() && !categoriaExistente.get().getId().equals(id)) {
+            throw new IllegalArgumentException("No se puede repetir el nombre de una categoria"); //chequeo que no exista el nombre y que no sea el nombre que le quiero poner
+        }
+        if(categoria.getNombre().isBlank()) {
+            throw new SinNombreException("Se intento crear una categoria sin nombre");
+        }
+        if(categoria.getIsActive()==null){
+            throw new IllegalArgumentException("Debe especificar si la categoria esta activa");
+        }
+        if (categoria.getNeedsCertification()==null){
+            throw new IllegalArgumentException("Debe especificar si la categoria necesita ser validada");
+        }
         return categoriaRepo.save(categoria);
     }
+    public Categoria reactivarCategoria(Integer id){
+        Categoria categoria=categoriaRepo.findById(id).orElseThrow(()->new NoSuchElementException("No se encontro el id de la categoria que se quiere reactivar"));
+        if(categoria.getIsActive().equals(true)){
+            throw new IllegalArgumentException("La categoria que se quiere reactivar ya se encuentra activada");
+        }
+        categoria.setIsActive(true);
+        return categoriaRepo.save(categoria);
+    }
+
     //delete
     public void eliminarCategoria(Integer id){
         Categoria categoria=buscarPorId(id);
-        categoriaRepo.delete(categoria);
+        if(categoria.getIsActive()==false){
+            throw new IllegalArgumentException("La categoria ya esta desactivada");
+        }
+        categoria.setIsActive(false);
+        categoriaRepo.save(categoria);
     }
 }

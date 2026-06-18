@@ -52,6 +52,12 @@ public class TrabajadorService {
         if (!trabajador.getDni().matches("\\d{7,8}")) {
             throw new IllegalArgumentException("El DNI debe tener 7 u 8 dígitos");
         }
+        if (trabajador.getMinutosMinimoEntreReservas() == null ) {
+            throw new IllegalArgumentException("El minimo de tiempo entre reservas es obligatorio");
+        }
+//        if(){
+//
+//        }
         if (trabajadorRepository.existsByCorreo(trabajador.getCorreo())) {
             throw new IllegalArgumentException("Ya existe un usuario con ese correo");
         }
@@ -76,7 +82,10 @@ public class TrabajadorService {
         return trabajadorRepository.findById(id)
                 .orElseThrow(() -> new NoSuchElementException("ERROR TrabajadorService/buscarPorId, NO " + id));
     }
-
+    public Trabajador buscarPorEmail(String email) {
+        return trabajadorRepository.findByCorreo(email)
+                .orElseThrow(() -> new NoSuchElementException("No existe"));
+    }
     //update
     public Trabajador actualizar(Integer id, Trabajador trabajador) {
         //validaciones
@@ -112,11 +121,34 @@ public class TrabajadorService {
         if (!trabajadorRepository.existsById(id)) {
             throw new EntityNotFoundException("El trabajador con ID " + id + " no existe");
         }
+        if(trabajador.getMinutosMinimoEntreReservas()==null){
+            throw new IllegalArgumentException(("El trabajador debe tener asignados los minutos minimos entre reservas"));
+        }
 
         trabajador.setId(id);
         trabajadorRepository.save(trabajador);
 
         return trabajador;
+    }
+    public Trabajador actualizarPerfil(String email, Trabajador datos) {
+
+        Trabajador trabajadorExistente = trabajadorRepository.findByCorreo(email)
+                .orElseThrow(() -> new EntityNotFoundException(
+                        "El cliente con email " + email + " no existe"
+                ));
+
+        //actualizar campos
+        trabajadorExistente.setNombre(datos.getNombre());
+        trabajadorExistente.setApellido(datos.getApellido());
+        trabajadorExistente.setUsername(datos.getUsername());
+        trabajadorExistente.setDni(datos.getDni());
+
+        //password solo si querés permitir cambio
+        if (datos.getPassword() != null && !datos.getPassword().isBlank()) {
+            trabajadorExistente.setPassword(datos.getPassword());
+        }
+
+        return trabajadorRepository.save(trabajadorExistente);
     }
 
     //delete

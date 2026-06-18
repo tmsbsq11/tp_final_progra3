@@ -63,7 +63,10 @@ public class ClienteService {
         return clienteRepository.findById(id)
                 .orElseThrow(() -> new NoSuchElementException("ERROR ClienteService/buscarPorId, NO " + id));
     }
-
+    public Cliente buscarPorEmail(String email) {
+        return clienteRepository.findByCorreo(email)
+                .orElseThrow(() -> new NoSuchElementException("No existe"));
+    }
         //update
     public Cliente actualizar(Integer id, Cliente cliente) {
         //validaciones
@@ -96,6 +99,26 @@ public class ClienteService {
         clienteRepository.save(cliente);
 
         return cliente;
+    }
+    public Cliente actualizarPerfil(String email, Cliente datos) {
+
+        Cliente clienteExistente = clienteRepository.findByCorreo(email)
+                .orElseThrow(() -> new EntityNotFoundException(
+                        "El cliente con email " + email + " no existe"
+                ));
+
+        //actualizar campos
+        clienteExistente.setNombre(datos.getNombre());
+        clienteExistente.setApellido(datos.getApellido());
+        clienteExistente.setUsername(datos.getUsername());
+        clienteExistente.setDni(datos.getDni());
+
+        //password solo si querés permitir cambio
+        if (datos.getPassword() != null && !datos.getPassword().isBlank()) {
+            clienteExistente.setPassword(datos.getPassword());
+        }
+
+        return clienteRepository.save(clienteExistente);
     }
 
         //delete

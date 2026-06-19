@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>OficiosYa</title>
+  <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+  <header id="app-header" class="hidden">
+    <div class="header-inner">
+      <a href="#/" class="logo">OficiosYa</a>
+      <nav id="main-nav"></nav>
+      <div class="header-user">
+        <span id="user-label"></span>
+        <button type="button" id="btn-logout" class="btn btn-ghost">Salir</button>
+      </div>
+    </div>
+  </header>
+
+  <main id="app-main">
+    <!-- Auth -->
+    <section id="view-login" class="view hidden">
+      <div class="auth-card">
+        <h1>Iniciar sesión</h1>
+        <form id="form-login">
+          <label>Correo<input type="email" name="correo" required autocomplete="email"></label>
+          <label>Contraseña<input type="password" name="password" required autocomplete="current-password"></label>
+          <button type="submit" class="btn btn-primary">Entrar</button>
+        </form>
+        <p class="auth-link">¿No tenés cuenta? <a href="#/register">Registrate</a></p>
+      </div>
+    </section>
+
+    <section id="view-register" class="view hidden">
+      <div class="auth-card">
+        <h1>Crear cuenta</h1>
+        <form id="form-register">
+          <label>Nombre<input type="text" name="nombre" required></label>
+          <label>Correo<input type="email" name="correo" required autocomplete="email"></label>
+          <label>Contraseña<input type="password" name="password" required minlength="6" autocomplete="new-password"></label>
+          <label>Rol
+            <select name="rol" required>
+              <option value="CLIENTE">Cliente</option>
+              <option value="TRABAJADOR">Trabajador</option>
+            </select>
+          </label>
+          <button type="submit" class="btn btn-primary">Registrarse</button>
+        </form>
+        <p class="auth-link">¿Ya tenés cuenta? <a href="#/login">Iniciar sesión</a></p>
+      </div>
+    </section>
+
+    <!-- Cliente -->
+    <section id="view-servicios" class="view hidden">
+      <div class="page-header">
+        <h1>Servicios disponibles</h1>
+      </div>
+      <div id="servicios-list" class="cards-grid"></div>
+      <dialog id="dialog-reserva">
+        <form id="form-reserva" method="dialog">
+          <h2>Reservar servicio</h2>
+          <p id="reserva-servicio-info"></p>
+          <input type="hidden" name="idServicio">
+          <input type="hidden" name="idTrabajador">
+          <label>Fecha reservada<input type="datetime-local" name="fechaReservada" required></label>
+          <label>Inicio<input type="datetime-local" name="fechaInicio" required></label>
+          <label>Fin<input type="datetime-local" name="fechaFin" required></label>
+          <div class="dialog-actions">
+            <button type="button" class="btn btn-ghost" data-close>Cancelar</button>
+            <button type="submit" class="btn btn-primary">Confirmar</button>
+          </div>
+        </form>
+      </dialog>
+    </section>
+
+    <section id="view-reservas" class="view hidden">
+      <div class="page-header">
+        <h1>Mis reservas</h1>
+        <select id="filtro-estado-reserva">
+          <option value="PENDIENTE">Pendientes</option>
+          <option value="APROBADO">Aprobadas</option>
+          <option value="RECHAZADO">Rechazadas</option>
+          <option value="FINALIZADO">Finalizadas</option>
+        </select>
+      </div>
+      <div id="reservas-list"></div>
+    </section>
+
+    <section id="view-perfil-cliente" class="view hidden">
+      <div class="page-header"><h1>Mi perfil</h1></div>
+      <form id="form-perfil-cliente" class="form-card"></form>
+    </section>
+
+    <section id="view-resenias" class="view hidden">
+      <div class="page-header"><h1>Reseñas</h1></div>
+      <div class="two-col">
+        <div>
+          <h2>Mis reseñas recibidas</h2>
+          <div id="resenias-list"></div>
+        </div>
+        <div>
+          <h2>Dejar reseña</h2>
+          <form id="form-resenia" class="form-card">
+            <label>Trabajador (ID)<input type="number" name="idTrabajador" required min="1"></label>
+            <label>Puntaje (1-5)<input type="number" name="puntaje" required min="1" max="5" step="0.5"></label>
+            <label>Comentario<textarea name="comentario" rows="3"></textarea></label>
+            <label>Dirección
+              <select name="direccionResenia">
+                <option value="CLIENTEATRABAJADOR">Cliente → Trabajador</option>
+                <option value="TRABAJADORACLIENTE">Trabajador → Cliente</option>
+              </select>
+            </label>
+            <button type="submit" class="btn btn-primary">Publicar</button>
+          </form>
+        </div>
+      </div>
+    </section>
+
+    <!-- Trabajador -->
+    <section id="view-mis-servicios" class="view hidden">
+      <div class="page-header">
+        <h1>Mis servicios</h1>
+        <button type="button" id="btn-nuevo-servicio" class="btn btn-primary">Nuevo servicio</button>
+      </div>
+      <div id="mis-servicios-list" class="cards-grid"></div>
+      <dialog id="dialog-servicio">
+        <form id="form-servicio" method="dialog">
+          <h2 id="servicio-form-title">Nuevo servicio</h2>
+          <input type="hidden" name="id">
+          <label>Título<input type="text" name="titulo" required></label>
+          <label>Descripción<textarea name="descripcion" rows="3" required></textarea></label>
+          <label>Categoría<select name="idCategoria" required></select></label>
+          <label>Tiempo mínimo (min)<input type="number" name="minTiempo" value="30" min="15" required></label>
+          <label>Precio por hora ($)<input type="number" name="precioEstimadoPorHora" required min="0" step="0.01"></label>
+          <div class="dialog-actions">
+            <button type="button" class="btn btn-ghost" data-close>Cancelar</button>
+            <button type="submit" class="btn btn-primary">Guardar</button>
+          </div>
+        </form>
+      </dialog>
+    </section>
+
+    <section id="view-perfil-trabajador" class="view hidden">
+      <div class="page-header"><h1>Mi perfil</h1></div>
+      <form id="form-perfil-trabajador" class="form-card"></form>
+      <form id="form-ubicacion" class="form-card">
+        <h2>Ubicación</h2>
+        <label>Dirección<input type="text" name="direccion" required placeholder="Ej: Av. Corrientes 1234, CABA"></label>
+        <button type="submit" class="btn btn-primary">Actualizar ubicación</button>
+      </form>
+    </section>
+
+    <!-- Admin -->
+    <section id="view-admin-categorias" class="view hidden">
+      <div class="page-header">
+        <h1>Categorías</h1>
+        <button type="button" id="btn-nueva-categoria" class="btn btn-primary">Nueva categoría</button>
+      </div>
+      <div id="admin-categorias-list"></div>
+      <dialog id="dialog-categoria">
+        <form id="form-categoria" method="dialog">
+          <h2 id="categoria-form-title">Nueva categoría</h2>
+          <input type="hidden" name="id">
+          <label>Nombre<input type="text" name="nombre" required></label>
+          <label class="checkbox-label">
+            <input type="checkbox" name="needsCertification"> Requiere certificación
+          </label>
+          <div class="dialog-actions">
+            <button type="button" class="btn btn-ghost" data-close>Cancelar</button>
+            <button type="submit" class="btn btn-primary">Guardar</button>
+          </div>
+        </form>
+      </dialog>
+    </section>
+
+    <section id="view-admin-servicios" class="view hidden">
+      <div class="page-header"><h1>Validación de servicios</h1></div>
+      <div id="admin-servicios-list" class="cards-grid"></div>
+    </section>
+
+    <section id="view-admin-reservas" class="view hidden">
+      <div class="page-header">
+        <h1>Reservas</h1>
+        <select id="admin-filtro-estado">
+          <option value="">Todas</option>
+          <option value="PENDIENTE">Pendientes</option>
+          <option value="APROBADO">Aprobadas</option>
+          <option value="RECHAZADO">Rechazadas</option>
+          <option value="FINALIZADO">Finalizadas</option>
+        </select>
+      </div>
+      <div id="admin-reservas-list"></div>
+    </section>
+
+    <section id="view-admin-notificaciones" class="view hidden">
+      <div class="page-header">
+        <h1>Notificaciones</h1>
+        <button type="button" id="btn-nueva-notificacion" class="btn btn-primary">Nueva</button>
+      </div>
+      <div id="admin-notificaciones-list"></div>
+      <dialog id="dialog-notificacion">
+        <form id="form-notificacion" method="dialog">
+          <h2>Nueva notificación</h2>
+          <label>Título<input type="text" name="titulo" required></label>
+          <label>Mensaje<textarea name="mensaje" rows="3" required></textarea></label>
+          <label>Tipo<select name="tipoNotificacion" required>
+            <option value="RESERVA">RESERVA</option>
+            <option value="RESENIA">RESENIA</option>
+            <option value="VALIDACION">VALIDACION</option>
+            <option value="SISTEMA">SISTEMA</option>
+            <option value="RECORDATORIO">RECORDATORIO</option>
+          </select></label>
+          <label>ID usuario destino<input type="number" name="idUserDestino" required min="1"></label>
+          <label>Rol destino<select name="rol" required>
+            <option value="CLIENTE">CLIENTE</option>
+            <option value="TRABAJADOR">TRABAJADOR</option>
+            <option value="ADMIN">ADMIN</option>
+          </select></label>
+          <div class="dialog-actions">
+            <button type="button" class="btn btn-ghost" data-close>Cancelar</button>
+            <button type="submit" class="btn btn-primary">Crear</button>
+          </div>
+        </form>
+      </dialog>
+    </section>
+
+    <section id="view-admin-usuarios" class="view hidden">
+      <div class="page-header"><h1>Usuarios</h1></div>
+      <div class="tabs">
+        <button type="button" class="tab active" data-tab="clientes">Clientes</button>
+        <button type="button" class="tab" data-tab="trabajadores">Trabajadores</button>
+        <button type="button" class="tab" data-tab="admins">Admins</button>
+      </div>
+      <div id="admin-usuarios-list"></div>
+    </section>
+  </main>
+
+  <div id="toast-container"></div>
+  <div id="loading" class="loading hidden"><span>Cargando…</span></div>
+
+  <script type="module" src="/js/app.js"></script>
+</body>
+</html>

@@ -4,7 +4,9 @@ import com.grupo3.oficio.model.resenias.CrearReseniaDTO;
 import com.grupo3.oficio.model.resenias.Resenia;
 import com.grupo3.oficio.model.resenias.ReseniaDTO;
 import com.grupo3.oficio.service.ReseniaService;
+import com.grupo3.oficio.service.users.TrabajadorService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -14,6 +16,12 @@ import java.util.List;
 @CrossOrigin("*")
 public class ReseniaController {
     ReseniaService reseniaServ;
+    TrabajadorService trabajadorService;
+
+    public ReseniaController(ReseniaService reseniaServ, TrabajadorService trabajadorService) {
+        this.reseniaServ = reseniaServ;
+        this.trabajadorService = trabajadorService;
+    }
 
     public ReseniaController(ReseniaService reseniaServ) {
         this.reseniaServ = reseniaServ;
@@ -34,7 +42,10 @@ public class ReseniaController {
     public ResponseEntity<List<Resenia>> verReseniasATrabajador(@PathVariable Integer id){
         return ResponseEntity.ok(reseniaServ.mostrarReseniaATrabajador(id));
     }
-
+    @GetMapping("/propias")
+    public ResponseEntity<List<Resenia>> verReseniasPropias(Authentication auth){
+        return ResponseEntity.ok(reseniaServ.mostrarReseniaATrabajador(trabajadorService.buscarPorEmail(auth.getName()).getId()));
+    }
     @PostMapping
     public ResponseEntity<Resenia> crearResenia(@RequestBody CrearReseniaDTO reseniaDTO){
         return ResponseEntity.ok(reseniaServ.crearResenia(reseniaDTO));

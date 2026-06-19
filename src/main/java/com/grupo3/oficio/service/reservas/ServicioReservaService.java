@@ -16,6 +16,7 @@ import com.grupo3.oficio.utils.enums.Rol;
 import com.grupo3.oficio.utils.enums.TipoNotificacion;
 import com.grupo3.oficio.utils.exceps.FechaReservadaException;
 import com.grupo3.oficio.utils.exceps.UsuarioInactivoRuntimeException;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -33,17 +34,28 @@ public class ServicioReservaService {
 
     public ServicioReservaService(ServicioReservaRepository reservaRepo, ClienteService clienteService, TrabajadorService trabajadorService, NotificacionService notificacionService, ServicioService servicioService) {
         this.reservaRepo = reservaRepo;
-        this.clienteService= clienteService;
-        this.trabajadorService=trabajadorService;
+        this.clienteService = clienteService;
+        this.trabajadorService = trabajadorService;
         this.notificacionService = notificacionService;
         this.servicioService = servicioService;
     }
 
-    public List<ServicioReserva> mostrarTodasReservas(){
+    public List<ServicioReserva> mostrarTodasReservas() {
         return reservaRepo.findAll();
     }
 
-    public List<ServicioReserva> mostrarPorEstado(EstadoReserva estadoReserva){
+    public List<ServicioReserva> mostrarReservasPropias(String correo) {
+        return reservaRepo.findByIdTrabajador(trabajadorService.buscarPorEmail(correo).getId());
+    }
+
+    public List<ServicioReserva> mostrarReservasEnviadas() {
+        String correo = SecurityContextHolder.getContext()
+                .getAuthentication()
+                .getName();
+        return reservaRepo.findByIdCliente(clienteService.buscarPorEmail(correo).getId());
+    }
+
+    public List<ServicioReserva> mostrarPorEstado(EstadoReserva estadoReserva) {
         if (estadoReserva == null) {
             throw new IllegalArgumentException(
                     "El estado es obligatorio");
@@ -53,9 +65,25 @@ public class ServicioReservaService {
                 .toList();
     }
 
-    public ServicioReserva buscarReservaPorId(Integer id){
+    public List<ServicioReserva> mostrarReservasPropiasEstado(EstadoReserva estadoReserva, String correo) {
+        if (estadoReserva == null) {
+            throw new IllegalArgumentException(
+                    "El estado es obligatorio");
+        }
+        return reservaRepo.findByIdTrabajador(trabajadorService.buscarPorEmail(correo).getId()).stream()
+                .filter(reserva -> reserva.getEstadoReserva().equals(estadoReserva))
+                .toList();
+    }
+    public List<ServicioReserva> mostrarReservasEnviadasEstado(EstadoReserva estadoReserva){
+        String correo = SecurityContextHolder.getContext()
+                .getAuthentication()
+                .getName();
+        return reservaRepo.findByIdCliente(clienteService.buscarPorEmail(correo).getId()).stream().filter(reserva -> reserva.getEstadoReserva().equals(estadoReserva))
+                .toList();
+    }
+    public ServicioReserva buscarReservaPorId(Integer id) {
         return reservaRepo.findById(id)
-                .orElseThrow(()->new NoSuchElementException("No se encontró la reserva con el id " + id));
+                .orElseThrow(() -> new NoSuchElementException("No se encontró la reserva con el id " + id));
     }
 
     public ServicioReserva cambiarReservaEstado(Integer id, EstadoReserva estadoNuevo) {
@@ -98,7 +126,7 @@ public class ServicioReservaService {
         return reservaRepo.save(reserva);
     }
 
-    public ServicioReservaDTO registrarUnaReserva(ServicioReservaDTO servicioReservaDTO){
+    public ServicioReservaDTO registrarUnaReserva(ServicioReservaDTO servicioReservaDTO) {
         //validaciones
         if (servicioReservaDTO == null) {
             throw new IllegalArgumentException("La reserva no puede ser nula");
@@ -133,15 +161,15 @@ public class ServicioReservaService {
         }
 
         Cliente cliente = clienteService.buscarPorId(servicioReservaDTO.getIdCliente());
-        if(!cliente.getIsActive()) {
+        if (!cliente.getIsActive()) {
             throw new UsuarioInactivoRuntimeException("El cliente debe estar activo para realizar una reserva");
         }
         Trabajador trabajador = trabajadorService.buscarPorId(servicioReservaDTO.getIdTrabajador());
-        if(!trabajador.getIsActive()) {
+        if (!trabajador.getIsActive()) {
             throw new UsuarioInactivoRuntimeException("El trabajador debe estar activo para realizar una reserva");
         }
         Servicio servicio = servicioService.buscarPorId(servicioReservaDTO.getIdServicio());
-        if(!servicio.getIsActive()) {
+        if (!servicio.getIsActive()) {
             throw new IllegalArgumentException("Servicio Inactivo"); //cambiar por excepc personalizada
         }
 
@@ -179,7 +207,7 @@ public class ServicioReservaService {
         reserva.setInicio(servicioReservaDTO.getFechaInicio());
         reserva.setFin(servicioReservaDTO.getFechaFin());
         reserva.setServicio(servicio);
-        ServicioReserva reservaGuardada= reservaRepo.save(reserva);
+        ServicioReserva reservaGuardada = reservaRepo.save(reserva);
         notificacionService.crearNotificacion(
                 new CrearNotificacionDTO(
                         "Nueva reserva",
@@ -193,7 +221,7 @@ public class ServicioReservaService {
     }
 
     //Puede ser que haya que reemplazar con eliminado inteligente o simplemente cambiar estado a RECHAZADO
-    public void eliminarReserva(ServicioReserva reserva){
+    public void eliminarReserva(ServicioReserva reserva) {
         buscarReservaPorId(reserva.getId());
         reservaRepo.delete(reserva);
     }

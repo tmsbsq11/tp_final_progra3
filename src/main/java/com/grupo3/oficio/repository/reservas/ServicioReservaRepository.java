@@ -29,6 +29,12 @@ public interface ServicioReservaRepository extends JpaRepository<ServicioReserva
             Trabajador trabajador,
             LocalDateTime fechaFin,
             LocalDateTime fechaInicio);
+    List<ServicioReserva> findByTrabajadorAndEstadoReservaAndInicioLessThanAndFinGreaterThan(
+            Trabajador trabajador,
+            EstadoReserva estadoReserva,
+            LocalDateTime fin,
+            LocalDateTime inicio
+    );
     List<ServicioReserva> findByIdTrabajador(Integer idTrabajador);
     List<ServicioReserva> findByIdCliente(Integer idCliente);
 }

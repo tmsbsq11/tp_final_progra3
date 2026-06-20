@@ -112,8 +112,25 @@ public class ServicioReservaService {
                             + " a "
                             + estadoNuevo);
         }
-
+        boolean hayConflicto =
+                reservaRepo
+                        .existsByTrabajadorAndEstadoReservaAndInicioLessThanAndFinGreaterThan(
+                                reserva.getTrabajador(),
+                                EstadoReserva.APROBADO,
+                                reserva.getFin().plusMinutes(reserva.getTrabajador().getMinutosMinimoEntreReservas()),
+                                reserva.getInicio().minusMinutes(reserva.getTrabajador().getMinutosMinimoEntreReservas())
+                        );
+        if (hayConflicto) {
+            throw new FechaReservadaException(
+                    "El trabajador ya tiene una reserva aceptada en ese horario");
+        }
         reserva.setEstadoReserva(estadoNuevo);
+        if(estadoActual != EstadoReserva.APROBADO &&reserva.getEstadoReserva().equals(EstadoReserva.APROBADO)){//si esta aprobado que cancele las demas en el mismo horario
+            List<ServicioReserva> pendientes=reservaRepo.findByTrabajadorAndEstadoReservaAndInicioLessThanAndFinGreaterThan(reserva.getTrabajador(),EstadoReserva.PENDIENTE,reserva.getFin(),reserva.getInicio());
+            pendientes.stream().filter(r -> !r.getId().equals(reserva.getId())).forEach(r -> r.setEstadoReserva(EstadoReserva.RECHAZADO));//filter me saca la reserva actual por las dudas
+        reservaRepo.saveAll(pendientes); //guardo los cambios
+        }
+
         notificacionService.crearNotificacion(
                 new CrearNotificacionDTO(
                         "CAMBIO DE ESTADO DE RESERVA",

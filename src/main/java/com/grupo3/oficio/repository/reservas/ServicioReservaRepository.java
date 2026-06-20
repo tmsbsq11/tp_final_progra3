@@ -1,6 +1,7 @@
 package com.grupo3.oficio.repository.reservas;
 
 import com.grupo3.oficio.model.reservas.ServicioReserva;
+import com.grupo3.oficio.model.users.Cliente;
 import com.grupo3.oficio.model.users.Trabajador;
 import com.grupo3.oficio.utils.enums.EstadoReserva;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -20,6 +21,14 @@ public interface ServicioReservaRepository extends JpaRepository<ServicioReserva
             LocalDateTime fin,
             LocalDateTime inicio
     );
+    boolean existsByClienteAndInicioLessThanAndFinGreaterThan(
+            Cliente cliente,
+            LocalDateTime fechaFin,
+            LocalDateTime fechaInicio);
+    boolean existsByTrabajadorAndInicioLessThanAndFinGreaterThan(
+            Trabajador trabajador,
+            LocalDateTime fechaFin,
+            LocalDateTime fechaInicio);
     List<ServicioReserva> findByIdTrabajador(Integer idTrabajador);
     List<ServicioReserva> findByIdCliente(Integer idCliente);
 }

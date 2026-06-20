@@ -159,8 +159,16 @@ public class ServicioReservaService {
                     "La fecha de inicio debe ser anterior a la fecha de fin"
             );
         }
-
         Cliente cliente = clienteService.buscarPorId(servicioReservaDTO.getIdCliente());
+
+        if (reservaRepo.existsByClienteAndInicioLessThanAndFinGreaterThan(
+                cliente,
+                servicioReservaDTO.getFechaFin(),
+                servicioReservaDTO.getFechaInicio())) {
+
+            throw new IllegalArgumentException(
+                    "Un cliente solo puede crear una reserva por franja horaria");
+        }
         if (!cliente.getIsActive()) {
             throw new UsuarioInactivoRuntimeException("El cliente debe estar activo para realizar una reserva");
         }
@@ -168,6 +176,14 @@ public class ServicioReservaService {
         if (!trabajador.getIsActive()) {
             throw new UsuarioInactivoRuntimeException("El trabajador debe estar activo para realizar una reserva");
         }
+//        if (reservaRepo.existsByTrabajadorAndInicioLessThanAndFinGreaterThan(
+//                trabajador,
+//                servicioReservaDTO.getFechaFin(),
+//                servicioReservaDTO.getFechaInicio())) {
+//
+//            throw new IllegalArgumentException(
+//                    "Un trabajador solo puede recibir una reserva por franja horaria");
+//        }
         Servicio servicio = servicioService.buscarPorId(servicioReservaDTO.getIdServicio());
         if (!servicio.getIsActive()) {
             throw new IllegalArgumentException("Servicio Inactivo"); //cambiar por excepc personalizada

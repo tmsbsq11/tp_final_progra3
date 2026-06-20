@@ -25,22 +25,16 @@ public class ServicioReservaController {
 
     //los get deben ir de específico a general, sino saltan errores al hacer las requests
     @PreAuthorize("hasRol('TRABAJADOR')")
-    @GetMapping("/recibidas")
-    public ResponseEntity<List<ServicioReserva>> verReservasRecibidas(Authentication auth) {
-        return ResponseEntity.ok(servicioReservaService.mostrarReservasPropias(auth.getName()));
-    }
-
-    @PreAuthorize("hasRol('TRABAJADOR')")
     @GetMapping("/recibidas/{estado}")
     public ResponseEntity<List<ServicioReserva>> verReservasRecibidasEstado(@PathVariable String estado, Authentication auth) {
         EstadoReserva estadoReserva = EstadoReserva.valueOf(estado);//tal vez pasar al service que se encargue por si tira exception
         return ResponseEntity.ok(servicioReservaService.mostrarReservasPropiasEstado(estadoReserva, auth.getName()));
     }
 
-    @PreAuthorize("hasRol('CLIENTE')")
-    @GetMapping("/enviadas")
-    public ResponseEntity<List<ServicioReserva>> verReservasEnviadas() {
-        return ResponseEntity.ok(servicioReservaService.mostrarReservasEnviadas());
+    @PreAuthorize("hasRol('TRABAJADOR')")
+    @GetMapping("/recibidas")
+    public ResponseEntity<List<ServicioReserva>> verReservasRecibidas(Authentication auth) {
+        return ResponseEntity.ok(servicioReservaService.mostrarReservasPropias(auth.getName()));
     }
 
     @PreAuthorize("hasRol('CLIENTE')")
@@ -48,6 +42,12 @@ public class ServicioReservaController {
     public ResponseEntity<List<ServicioReserva>> verReservasEnviadasEstado(@PathVariable String estado) {
         EstadoReserva estadoReserva = EstadoReserva.valueOf(estado);
         return ResponseEntity.ok(servicioReservaService.mostrarReservasEnviadasEstado(estadoReserva));
+    }
+
+    @PreAuthorize("hasRol('CLIENTE')")
+    @GetMapping("/enviadas")
+    public ResponseEntity<List<ServicioReserva>> verReservasEnviadas() {
+        return ResponseEntity.ok(servicioReservaService.mostrarReservasEnviadas());
     }
 
     @PreAuthorize("hasRol('ADMIN')")
@@ -72,8 +72,7 @@ public class ServicioReservaController {
         return ResponseEntity.ok(servicioReservaService.mostrarTodasReservas());
     }
 
-    //crear metodo para ver solo mis reservas
-    //crear metodo para aceptar reservas
+
 
     @PostMapping
     public ResponseEntity<?> registrarUnaReserva(@RequestBody ServicioReservaDTO servicioReservaDTO) {

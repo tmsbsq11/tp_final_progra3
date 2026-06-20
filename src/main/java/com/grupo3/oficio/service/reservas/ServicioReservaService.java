@@ -19,6 +19,7 @@ import com.grupo3.oficio.utils.exceps.UsuarioInactivoRuntimeException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -157,32 +158,33 @@ public class ServicioReservaService {
         if (servicioReservaDTO.getFechaReservada() == null) {
             throw new IllegalArgumentException("La fecha reservada es obligatoria");
         }
-        if (servicioReservaDTO.getFechaReservada().isBefore(LocalDateTime.now())) {
+        if (servicioReservaDTO.getFechaReservada().isBefore(LocalDate.now())) {
             throw new IllegalArgumentException(
                     "No se puede reservar una fecha pasada"
             );
         }
-        if (servicioReservaDTO.getFechaInicio() == null ||
-                servicioReservaDTO.getFechaFin() == null) {
-
+        if (servicioReservaDTO.getHoraInicio() == null || servicioReservaDTO.getHoraFin() == null) {
             throw new IllegalArgumentException(
                     "Debe indicar fecha de inicio y fin"
             );
         }
-        if (!servicioReservaDTO.getFechaInicio()
-                .isBefore(servicioReservaDTO.getFechaFin())) {
-
+        if (!servicioReservaDTO.getHoraInicio().isBefore(servicioReservaDTO.getHoraFin())) {
             throw new IllegalArgumentException(
                     "La fecha de inicio debe ser anterior a la fecha de fin"
             );
         }
+
+        LocalDateTime fechaInicio = LocalDateTime.of(servicioReservaDTO.getFechaReservada(), servicioReservaDTO.getHoraInicio());
+        LocalDateTime fechaFin = LocalDateTime.of(servicioReservaDTO.getFechaReservada(), servicioReservaDTO.getHoraFin());
+
+        if (fechaInicio.isBefore(LocalDateTime.now())) {
+            throw new IllegalArgumentException("No se puede reservar una fecha pasada");
+        }
+
         Cliente cliente = clienteService.buscarPorId(servicioReservaDTO.getIdCliente());
 
         if (reservaRepo.existsByClienteAndInicioLessThanAndFinGreaterThan(
-                cliente,
-                servicioReservaDTO.getFechaFin(),
-                servicioReservaDTO.getFechaInicio())) {
-
+                cliente, fechaFin, fechaInicio)) {
             throw new IllegalArgumentException(
                     "Un cliente solo puede crear una reserva por franja horaria");
         }
@@ -193,40 +195,20 @@ public class ServicioReservaService {
         if (!trabajador.getIsActive()) {
             throw new UsuarioInactivoRuntimeException("El trabajador debe estar activo para realizar una reserva");
         }
-//        if (reservaRepo.existsByTrabajadorAndInicioLessThanAndFinGreaterThan(
-//                trabajador,
-//                servicioReservaDTO.getFechaFin(),
-//                servicioReservaDTO.getFechaInicio())) {
-//
-//            throw new IllegalArgumentException(
-//                    "Un trabajador solo puede recibir una reserva por franja horaria");
-//        }
         Servicio servicio = servicioService.buscarPorId(servicioReservaDTO.getIdServicio());
         if (!servicio.getIsActive()) {
             throw new IllegalArgumentException("Servicio Inactivo"); //cambiar por excepc personalizada
         }
 
-        LocalDateTime fechaReservada = servicioReservaDTO.getFechaReservada();
-
-        if (fechaReservada.isBefore(servicioReservaDTO.getFechaInicio()) ||
-                fechaReservada.isAfter(servicioReservaDTO.getFechaFin())) {
-
-            throw new IllegalArgumentException(
-                    "La fecha reservada debe estar entre inicio y fin"
-            );
-        }
-
         boolean hayConflicto =
-                reservaRepo
-                        .existsByTrabajadorAndEstadoReservaAndInicioLessThanAndFinGreaterThan(
-                                trabajador,
-                                EstadoReserva.APROBADO,
-                                servicioReservaDTO.getFechaFin().plusMinutes(trabajador.getMinutosMinimoEntreReservas()),
-                                servicioReservaDTO.getFechaInicio().minusMinutes(trabajador.getMinutosMinimoEntreReservas())
-                        );
+                reservaRepo.existsByTrabajadorAndEstadoReservaAndInicioLessThanAndFinGreaterThan(
+                        trabajador,
+                        EstadoReserva.APROBADO,
+                        fechaFin.plusMinutes(trabajador.getMinutosMinimoEntreReservas()),
+                        fechaInicio.minusMinutes(trabajador.getMinutosMinimoEntreReservas())
+                );
         if (hayConflicto) {
-            throw new FechaReservadaException(
-                    "El trabajador ya tiene una reserva en ese horario");
+            throw new FechaReservadaException("El trabajador ya tiene una reserva en ese horario");
         }
 
         ServicioReserva reserva = new ServicioReserva();
@@ -234,11 +216,11 @@ public class ServicioReservaService {
         servicioReservaDTO.setEstadoReserva(EstadoReserva.PENDIENTE);
         reserva.setFechaCreacion(LocalDateTime.now());
         servicioReservaDTO.setFechaCreacion(LocalDateTime.now());
-        reserva.setFechaReservada(fechaReservada);
+        reserva.setFechaReservada(fechaInicio);
         reserva.setCliente(cliente);
         reserva.setTrabajador(trabajador);
-        reserva.setInicio(servicioReservaDTO.getFechaInicio());
-        reserva.setFin(servicioReservaDTO.getFechaFin());
+        reserva.setInicio(fechaInicio);
+        reserva.setFin(fechaFin);
         reserva.setServicio(servicio);
         ServicioReserva reservaGuardada = reservaRepo.save(reserva);
         notificacionService.crearNotificacion(

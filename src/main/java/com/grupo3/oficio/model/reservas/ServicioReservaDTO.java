@@ -5,7 +5,9 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 
 @Data
 @AllArgsConstructor
@@ -15,10 +17,10 @@ public class ServicioReservaDTO {
     private Integer idCliente;
     private Integer idTrabajador;
     private Integer idServicio;
-    //private Integer idTrabajo; no utilizado
     private EstadoReserva estadoReserva;
     private LocalDateTime fechaCreacion;
-    private LocalDateTime fechaReservada;
-    private LocalDateTime fechaInicio;
-    private LocalDateTime fechaFin;
+
+    private LocalDate fechaReservada;
+    private LocalTime horaInicio;
+    private LocalTime horaFin;
 }

@@ -1,26 +1,108 @@
 import { request, adminRequest, formatDate } from '../api.js';
-import { showToast, setLoading, esc, setupDialogClose, badgeEstado, renderTable } from '../ui.js';
+import { showToast, setLoading, esc, setupDialogClose, openDialog, badgeEstado, renderTable } from '../ui.js';
 
 let categoriaDialogBound = false;
 let notifDialogBound = false;
+let usuarioDialogBound = false;
 let usuariosTab = 'clientes';
+let usuariosCache = [];
 
-function servicioAdminCard(s) {
+function servicioAdminCard(s, actions) {
   const cat = s.categoria?.nombre || '—';
   const trab = s.trabajador?.nombre || s.trabajador?.id || '—';
-  const approved = s.isApproved;
+  const needsCert = s.categoria?.needsCertification ? ' · Requiere certificación' : '';
   return `
     <article class="card">
       <h3>${esc(s.titulo)}</h3>
       <p>${esc(s.descripcion)}</p>
-      <div class="card-meta">${esc(cat)} · ${esc(trab)} · $${s.precioEstimadoPorHora ?? '—'}/h</div>
-      <div class="card-meta">${approved ? 'Aprobado' : 'Pendiente'} · ${s.isActive !== false ? 'Activo' : 'Inactivo'}</div>
-      <div class="btn-group">
-        ${!approved ? `<button type="button" class="btn btn-primary btn-sm btn-validar" data-id="${s.id}">Validar</button>` : ''}
-        ${approved ? `<button type="button" class="btn btn-danger btn-sm btn-invalidar" data-id="${s.id}">Invalidar</button>` : ''}
-        ${s.isActive === false ? `<button type="button" class="btn btn-ghost btn-sm btn-activar" data-id="${s.id}">Activar</button>` : ''}
-      </div>
+      <div class="card-meta">${esc(cat)} · ${esc(trab)} · $${s.precioEstimadoPorHora ?? '—'}/h${needsCert}</div>
+      <div class="card-meta">${s.isApproved ? 'Aprobado' : 'Pendiente'} · ${s.isActive !== false ? 'Activo' : 'Inactivo'}</div>
+      <div class="btn-group">${actions}</div>
     </article>`;
+}
+
+function bindServicioAdminActions(container) {
+  container.querySelectorAll('.btn-validar').forEach((btn) => {
+    btn.addEventListener('click', async () => {
+      setLoading(true);
+      try {
+        await request(`/servicios/validar/${btn.dataset.id}`, { method: 'PUT' });
+        showToast('Servicio validado', 'success');
+        await refreshAdminServiciosViews();
+      } catch (err) {
+        showToast(err.message, 'error');
+      } finally {
+        setLoading(false);
+      }
+    });
+  });
+
+  container.querySelectorAll('.btn-invalidar').forEach((btn) => {
+    btn.addEventListener('click', async () => {
+      setLoading(true);
+      try {
+        await request(`/servicios/invalidar/${btn.dataset.id}`, { method: 'DELETE' });
+        showToast('Servicio invalidado', 'success');
+        await refreshAdminServiciosViews();
+      } catch (err) {
+        showToast(err.message, 'error');
+      } finally {
+        setLoading(false);
+      }
+    });
+  });
+
+  container.querySelectorAll('.btn-activar').forEach((btn) => {
+    btn.addEventListener('click', async () => {
+      setLoading(true);
+      try {
+        await request(`/servicios/activar/${btn.dataset.id}`, { method: 'PUT' });
+        showToast('Servicio activado', 'success');
+        await refreshAdminServiciosViews();
+      } catch (err) {
+        showToast(err.message, 'error');
+      } finally {
+        setLoading(false);
+      }
+    });
+  });
+
+  container.querySelectorAll('.btn-desactivar-svc').forEach((btn) => {
+    btn.addEventListener('click', async () => {
+      if (!confirm('¿Desactivar servicio?')) return;
+      setLoading(true);
+      try {
+        await request(`/servicios/${btn.dataset.id}`, { method: 'DELETE' });
+        showToast('Servicio desactivado', 'success');
+        await refreshAdminServiciosViews();
+      } catch (err) {
+        showToast(err.message, 'error');
+      } finally {
+        setLoading(false);
+      }
+    });
+  });
+}
+
+function accionesServicio(s, soloCert = false) {
+  const parts = [];
+  if (!s.isApproved) {
+    parts.push(`<button type="button" class="btn btn-primary btn-sm btn-validar" data-id="${s.id}">Aprobar</button>`);
+    parts.push(`<button type="button" class="btn btn-danger btn-sm btn-invalidar" data-id="${s.id}">Rechazar</button>`);
+  } else if (!soloCert) {
+    parts.push(`<button type="button" class="btn btn-danger btn-sm btn-invalidar" data-id="${s.id}">Invalidar</button>`);
+  }
+  if (s.isActive === false) {
+    parts.push(`<button type="button" class="btn btn-ghost btn-sm btn-activar" data-id="${s.id}">Activar</button>`);
+  } else if (!soloCert) {
+    parts.push(`<button type="button" class="btn btn-danger btn-sm btn-desactivar-svc" data-id="${s.id}">Desactivar</button>`);
+  }
+  return parts.join('') || '—';
+}
+
+async function refreshAdminServiciosViews() {
+  if (location.hash === '#/admin/servicios') await renderAdminServicios();
+  if (location.hash === '#/admin/certificacion') await renderAdminCertificacion();
 }
 
 export async function renderAdminCategorias() {
@@ -117,7 +199,7 @@ function openCategoriaDialog(cat = null) {
     categoriaDialogBound = true;
   }
 
-  dialog.showModal();
+  openDialog(dialog);
 }
 
 async function submitCategoria(e) {
@@ -158,52 +240,29 @@ export async function renderAdminServicios() {
       return;
     }
 
-    list.innerHTML = servicios.map((s) => servicioAdminCard(s)).join('');
+    list.innerHTML = servicios.map((s) => servicioAdminCard(s, accionesServicio(s))).join('');
+    bindServicioAdminActions(list);
+  } finally {
+    setLoading(false);
+  }
+}
 
-    document.querySelectorAll('.btn-validar').forEach((btn) => {
-      btn.addEventListener('click', async () => {
-        setLoading(true);
-        try {
-          await request(`/servicios/validar/${btn.dataset.id}`, { method: 'PUT' });
-          showToast('Servicio validado', 'success');
-          await renderAdminServicios();
-        } catch (err) {
-          showToast(err.message, 'error');
-        } finally {
-          setLoading(false);
-        }
-      });
-    });
+export async function renderAdminCertificacion() {
+  setLoading(true);
+  try {
+    const servicios = await request('/servicios');
+    const pendientes = servicios.filter(
+      (s) => s.categoria?.needsCertification && !s.isApproved && s.isActive !== false,
+    );
+    const list = document.getElementById('admin-certificacion-list');
 
-    document.querySelectorAll('.btn-invalidar').forEach((btn) => {
-      btn.addEventListener('click', async () => {
-        setLoading(true);
-        try {
-          await request(`/servicios/invalidar/${btn.dataset.id}`, { method: 'DELETE' });
-          showToast('Servicio invalidado', 'success');
-          await renderAdminServicios();
-        } catch (err) {
-          showToast(err.message, 'error');
-        } finally {
-          setLoading(false);
-        }
-      });
-    });
+    if (!pendientes.length) {
+      list.innerHTML = '<div class="empty-state">No hay servicios pendientes de certificación</div>';
+      return;
+    }
 
-    document.querySelectorAll('.btn-activar').forEach((btn) => {
-      btn.addEventListener('click', async () => {
-        setLoading(true);
-        try {
-          await request(`/servicios/activar/${btn.dataset.id}`, { method: 'PUT' });
-          showToast('Servicio activado', 'success');
-          await renderAdminServicios();
-        } catch (err) {
-          showToast(err.message, 'error');
-        } finally {
-          setLoading(false);
-        }
-      });
-    });
+    list.innerHTML = pendientes.map((s) => servicioAdminCard(s, accionesServicio(s, true))).join('');
+    bindServicioAdminActions(list);
   } finally {
     setLoading(false);
   }
@@ -237,12 +296,12 @@ export async function renderAdminReservas() {
         r.cliente?.nombre ?? r.cliente?.id ?? '—',
         r.trabajador?.nombre ?? r.trabajador?.id ?? '—',
         badgeEstado(r.estadoReserva),
-        formatDate(r.inicio || r.fechaInicio),
+        formatDate(r.inicio || r.fechaReservada),
         `<button type="button" class="btn btn-danger btn-sm btn-del-reserva" data-id="${r.id}">Eliminar</button>`,
       ]),
     );
 
-    document.querySelectorAll('.btn-del-reserva').forEach((btn) => {
+    container.querySelectorAll('.btn-del-reserva').forEach((btn) => {
       btn.addEventListener('click', async () => {
         if (!confirm('¿Eliminar reserva?')) return;
         setLoading(true);
@@ -285,7 +344,7 @@ export async function renderAdminNotificaciones() {
       ]),
     );
 
-    document.querySelectorAll('.btn-del-notif').forEach((btn) => {
+    container.querySelectorAll('.btn-del-notif').forEach((btn) => {
       btn.addEventListener('click', async () => {
         if (!confirm('¿Eliminar notificación?')) return;
         setLoading(true);
@@ -331,35 +390,144 @@ async function submitNotificacion(e) {
   }
 }
 
+function usuarioEndpoint(tipo, id = null) {
+  if (tipo === 'admins') {
+    return id != null ? `/admin/${id}` : '/admin';
+  }
+  const base = tipo === 'clientes' ? '/clientes' : '/trabajadores';
+  return id != null ? `${base}/${id}` : base;
+}
+
+function openUsuarioDialog(user = null) {
+  const dialog = document.getElementById('dialog-usuario');
+  const form = document.getElementById('form-usuario');
+  const tipo = usuariosTab;
+  const isEdit = !!user;
+
+  document.getElementById('usuario-form-title').textContent =
+    isEdit ? 'Editar usuario' : 'Nuevo usuario';
+
+  form.elements.tipo.value = tipo;
+  form.elements.id.value = user?.id || '';
+  form.elements.nombre.value = user?.nombre || '';
+  form.elements.apellido.value = user?.apellido || '';
+  form.elements.correo.value = user?.correo || '';
+  form.elements.dni.value = user?.dni || '';
+  form.elements.password.value = '';
+  form.elements.password.required = !isEdit;
+
+  if (!usuarioDialogBound) {
+    setupDialogClose(dialog);
+    form.addEventListener('submit', submitUsuario);
+    usuarioDialogBound = true;
+  }
+
+  openDialog(dialog);
+}
+
+async function submitUsuario(e) {
+  e.preventDefault();
+  const form = e.target;
+  const tipo = form.elements.tipo.value;
+  const id = form.elements.id.value;
+  const body = {
+    nombre: form.elements.nombre.value,
+    apellido: form.elements.apellido.value,
+    correo: form.elements.correo.value,
+    dni: form.elements.dni.value,
+    isActive: true,
+  };
+  if (tipo === 'clientes') body.rol = 'CLIENTE';
+  if (tipo === 'trabajadores') body.rol = 'TRABAJADOR';
+  if (tipo === 'admins') body.rol = 'ADMIN';
+  if (form.elements.password.value) {
+    body.password = form.elements.password.value;
+    body.username = body.correo;
+  }
+
+  setLoading(true);
+  try {
+    const path = usuarioEndpoint(tipo, id || null);
+    if (id) {
+      const req = tipo === 'admins' ? adminRequest : request;
+      await req(path, { method: 'PUT', body });
+      showToast('Usuario actualizado', 'success');
+    } else {
+      const req = tipo === 'admins' ? adminRequest : request;
+      await req(usuarioEndpoint(tipo), { method: 'POST', body });
+      showToast('Usuario creado', 'success');
+    }
+    form.closest('dialog').close();
+    await renderAdminUsuarios();
+  } catch (err) {
+    showToast(err.message, 'error');
+  } finally {
+    setLoading(false);
+  }
+}
+
 export async function renderAdminUsuarios() {
   setLoading(true);
   try {
-    let data = [];
     if (usuariosTab === 'clientes') {
-      data = await request('/clientes');
+      usuariosCache = await request('/clientes');
     } else if (usuariosTab === 'trabajadores') {
-      data = await request('/trabajadores');
+      usuariosCache = await request('/trabajadores');
     } else {
-      data = await adminRequest('');
-      if (!Array.isArray(data)) data = [];
+      usuariosCache = await adminRequest('');
+      if (!Array.isArray(usuariosCache)) usuariosCache = [];
     }
 
     const container = document.getElementById('admin-usuarios-list');
-    if (!data.length) {
+    if (!usuariosCache.length) {
       container.innerHTML = '<div class="empty-state">No hay usuarios</div>';
       return;
     }
 
     container.innerHTML = renderTable(
-      ['ID', 'Nombre', 'Correo', 'Rol', 'Activo'],
-      data.map((u) => [
+      ['ID', 'Nombre', 'Correo', 'Rol', 'Activo', 'Acciones'],
+      usuariosCache.map((u) => [
         u.id,
         esc(u.nombre),
         esc(u.correo),
         esc(u.rol),
         u.isActive !== false ? 'Sí' : 'No',
+        `<div class="btn-group">
+          <button type="button" class="btn btn-ghost btn-sm btn-edit-user" data-id="${u.id}">Editar</button>
+          ${u.isActive !== false
+            ? `<button type="button" class="btn btn-danger btn-sm btn-del-user" data-id="${u.id}">Desactivar</button>`
+            : '—'}
+        </div>`,
       ]),
     );
+
+    container.querySelectorAll('.btn-edit-user').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const u = usuariosCache.find((x) => x.id === Number(btn.dataset.id));
+        if (u) openUsuarioDialog(u);
+      });
+    });
+
+    container.querySelectorAll('.btn-del-user').forEach((btn) => {
+      btn.addEventListener('click', async () => {
+        if (!confirm('¿Desactivar usuario?')) return;
+        setLoading(true);
+        try {
+          const id = btn.dataset.id;
+          if (usuariosTab === 'admins') {
+            await adminRequest(`/${id}`, { method: 'DELETE' });
+          } else {
+            await request(usuarioEndpoint(usuariosTab, id), { method: 'DELETE' });
+          }
+          showToast('Usuario desactivado', 'success');
+          await renderAdminUsuarios();
+        } catch (err) {
+          showToast(err.message, 'error');
+        } finally {
+          setLoading(false);
+        }
+      });
+    });
   } finally {
     setLoading(false);
   }
@@ -367,6 +535,7 @@ export async function renderAdminUsuarios() {
 
 export function initAdminEvents() {
   document.getElementById('btn-nueva-categoria').addEventListener('click', () => openCategoriaDialog());
+  document.getElementById('btn-nuevo-usuario').addEventListener('click', () => openUsuarioDialog());
 
   const notifDialog = document.getElementById('dialog-notificacion');
   document.getElementById('btn-nueva-notificacion').addEventListener('click', () => {
@@ -375,19 +544,23 @@ export function initAdminEvents() {
       document.getElementById('form-notificacion').addEventListener('submit', submitNotificacion);
       notifDialogBound = true;
     }
-    notifDialog.showModal();
+    openDialog(notifDialog);
   });
 
   document.getElementById('admin-filtro-estado').addEventListener('change', () => {
     if (location.hash === '#/admin/reservas') renderAdminReservas();
   });
 
-  document.querySelectorAll('.tabs .tab').forEach((tab) => {
+  document.querySelectorAll('#view-admin-usuarios .tabs .tab').forEach((tab) => {
     tab.addEventListener('click', () => {
-      document.querySelectorAll('.tabs .tab').forEach((t) => t.classList.remove('active'));
+      document.querySelectorAll('#view-admin-usuarios .tabs .tab').forEach((t) => t.classList.remove('active'));
       tab.classList.add('active');
       usuariosTab = tab.dataset.tab;
       if (location.hash === '#/admin/usuarios') renderAdminUsuarios();
     });
+  });
+
+  document.getElementById('btn-admin-nuevo-servicio')?.addEventListener('click', () => {
+    showToast('Creá servicios desde la cuenta del trabajador o editá los existentes aquí.', 'info');
   });
 }

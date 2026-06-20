@@ -56,6 +56,16 @@
       <div class="page-header">
         <h1>Servicios disponibles</h1>
       </div>
+      <form id="form-filtros-servicios" class="filters-bar">
+        <label>Buscar<input type="text" name="busqueda" placeholder="Título o descripción"></label>
+        <label>Categoría<select name="idCategoria"><option value="">Todas</option></select></label>
+        <label>Dirección (opcional)<input type="text" name="direccion" placeholder="Para filtrar por zona"></label>
+        <label>Radio (km)<input type="number" name="radioKm" value="10" min="1" step="1"></label>
+        <div class="filter-actions">
+          <button type="submit" class="btn btn-primary">Buscar</button>
+          <button type="button" id="btn-limpiar-filtros" class="btn btn-ghost">Limpiar</button>
+        </div>
+      </form>
       <div id="servicios-list" class="cards-grid"></div>
       <dialog id="dialog-reserva">
         <form id="form-reserva" method="dialog">
@@ -63,9 +73,11 @@
           <p id="reserva-servicio-info"></p>
           <input type="hidden" name="idServicio">
           <input type="hidden" name="idTrabajador">
-          <label>Fecha reservada<input type="datetime-local" name="fechaReservada" required></label>
-          <label>Inicio<input type="datetime-local" name="fechaInicio" required></label>
-          <label>Fin<input type="datetime-local" name="fechaFin" required></label>
+          <label>Día de la reserva<input type="date" name="fechaReservada" required></label>
+          <div class="time-row">
+            <label>Hora inicio<input type="time" name="horaInicio" required></label>
+            <label>Hora fin<input type="time" name="horaFin" required></label>
+          </div>
           <div class="dialog-actions">
             <button type="button" class="btn btn-ghost" data-close>Cancelar</button>
             <button type="submit" class="btn btn-primary">Confirmar</button>
@@ -151,6 +163,24 @@
       </form>
     </section>
 
+    <section id="view-reservas-recibidas" class="view hidden">
+      <div class="page-header">
+        <h1>Solicitudes de reserva</h1>
+        <select id="filtro-estado-recibidas">
+          <option value="PENDIENTE">Pendientes</option>
+          <option value="APROBADO">Aprobadas</option>
+          <option value="RECHAZADO">Rechazadas</option>
+          <option value="FINALIZADO">Finalizadas</option>
+        </select>
+      </div>
+      <div id="reservas-recibidas-list"></div>
+    </section>
+
+    <section id="view-resenias-trabajador" class="view hidden">
+      <div class="page-header"><h1>Reseñas recibidas</h1></div>
+      <div id="resenias-trabajador-list"></div>
+    </section>
+
     <!-- Admin -->
     <section id="view-admin-categorias" class="view hidden">
       <div class="page-header">
@@ -175,8 +205,16 @@
     </section>
 
     <section id="view-admin-servicios" class="view hidden">
-      <div class="page-header"><h1>Validación de servicios</h1></div>
+      <div class="page-header">
+        <h1>Gestión de servicios</h1>
+        <button type="button" id="btn-admin-nuevo-servicio" class="btn btn-primary">Nuevo servicio</button>
+      </div>
       <div id="admin-servicios-list" class="cards-grid"></div>
+    </section>
+
+    <section id="view-admin-certificacion" class="view hidden">
+      <div class="page-header"><h1>Servicios pendientes de certificación</h1></div>
+      <div id="admin-certificacion-list" class="cards-grid"></div>
     </section>
 
     <section id="view-admin-reservas" class="view hidden">
@@ -226,13 +264,32 @@
     </section>
 
     <section id="view-admin-usuarios" class="view hidden">
-      <div class="page-header"><h1>Usuarios</h1></div>
+      <div class="page-header">
+        <h1>Usuarios</h1>
+        <button type="button" id="btn-nuevo-usuario" class="btn btn-primary">Nuevo usuario</button>
+      </div>
       <div class="tabs">
         <button type="button" class="tab active" data-tab="clientes">Clientes</button>
         <button type="button" class="tab" data-tab="trabajadores">Trabajadores</button>
         <button type="button" class="tab" data-tab="admins">Admins</button>
       </div>
       <div id="admin-usuarios-list"></div>
+      <dialog id="dialog-usuario">
+        <form id="form-usuario" method="dialog">
+          <h2 id="usuario-form-title">Nuevo usuario</h2>
+          <input type="hidden" name="id">
+          <input type="hidden" name="tipo">
+          <label>Nombre<input type="text" name="nombre" required></label>
+          <label>Apellido<input type="text" name="apellido"></label>
+          <label>Correo<input type="email" name="correo" required></label>
+          <label>DNI<input type="text" name="dni"></label>
+          <label>Contraseña<input type="password" name="password" minlength="6"></label>
+          <div class="dialog-actions">
+            <button type="button" class="btn btn-ghost" data-close>Cancelar</button>
+            <button type="submit" class="btn btn-primary">Guardar</button>
+          </div>
+        </form>
+      </dialog>
     </section>
   </main>
 

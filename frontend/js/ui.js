@@ -40,6 +40,12 @@ export function setupDialogClose(dialog) {
   });
 }
 
+export function openDialog(dialog) {
+  if (typeof dialog.showModal === 'function') {
+    dialog.showModal();
+  }
+}
+
 export function fillForm(form, data) {
   Object.entries(data).forEach(([key, value]) => {
     const field = form.elements[key];

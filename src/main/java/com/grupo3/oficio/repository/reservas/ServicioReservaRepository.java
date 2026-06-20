@@ -35,6 +35,6 @@ public interface ServicioReservaRepository extends JpaRepository<ServicioReserva
             LocalDateTime fin,
             LocalDateTime inicio
     );
-    List<ServicioReserva> findByIdTrabajador(Integer idTrabajador);
-    List<ServicioReserva> findByIdCliente(Integer idCliente);
+    List<ServicioReserva> findByTrabajadorId(Integer idTrabajador);
+    List<ServicioReserva> findByClienteId(Integer idCliente);
 }

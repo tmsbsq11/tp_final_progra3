@@ -46,14 +46,14 @@ public class ServicioReservaService {
     }
 
     public List<ServicioReserva> mostrarReservasPropias(String correo) {
-        return reservaRepo.findByIdTrabajador(trabajadorService.buscarPorEmail(correo).getId());
+        return reservaRepo.findByTrabajadorId(trabajadorService.buscarPorEmail(correo).getId());
     }
 
     public List<ServicioReserva> mostrarReservasEnviadas() {
         String correo = SecurityContextHolder.getContext()
                 .getAuthentication()
                 .getName();
-        return reservaRepo.findByIdCliente(clienteService.buscarPorEmail(correo).getId());
+        return reservaRepo.findByClienteId(clienteService.buscarPorEmail(correo).getId());
     }
 
     public List<ServicioReserva> mostrarPorEstado(EstadoReserva estadoReserva) {
@@ -71,7 +71,7 @@ public class ServicioReservaService {
             throw new IllegalArgumentException(
                     "El estado es obligatorio");
         }
-        return reservaRepo.findByIdTrabajador(trabajadorService.buscarPorEmail(correo).getId()).stream()
+        return reservaRepo.findByTrabajadorId(trabajadorService.buscarPorEmail(correo).getId()).stream()
                 .filter(reserva -> reserva.getEstadoReserva().equals(estadoReserva))
                 .toList();
     }
@@ -79,7 +79,7 @@ public class ServicioReservaService {
         String correo = SecurityContextHolder.getContext()
                 .getAuthentication()
                 .getName();
-        return reservaRepo.findByIdCliente(clienteService.buscarPorEmail(correo).getId()).stream().filter(reserva -> reserva.getEstadoReserva().equals(estadoReserva))
+        return reservaRepo.findByClienteId(clienteService.buscarPorEmail(correo).getId()).stream().filter(reserva -> reserva.getEstadoReserva().equals(estadoReserva))
                 .toList();
     }
     public ServicioReserva buscarReservaPorId(Integer id) {

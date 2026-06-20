@@ -1,50 +1,124 @@
-import { request, fromDatetimeLocal, formatDate } from '../api.js';
+import { request, buscarServicios, geocodeAddress, formatDate, formatTime } from '../api.js';
 import { getSession } from '../auth.js';
-import { showToast, setLoading, esc, setupDialogClose, badgeEstado, renderTable } from '../ui.js';
+import { showToast, setLoading, esc, setupDialogClose, openDialog, badgeEstado, renderTable } from '../ui.js';
 
 let reservaDialogBound = false;
+let categoriasCache = [];
+let serviciosActuales = [];
+
+async function loadCategorias() {
+  if (categoriasCache.length) return categoriasCache;
+  categoriasCache = await request('/categorias');
+  return categoriasCache.filter((c) => c.isActive !== false);
+}
+
+async function populateCategoriaFilter() {
+  const cats = await loadCategorias();
+  const select = document.querySelector('#form-filtros-servicios select[name="idCategoria"]');
+  if (!select) return;
+  select.innerHTML = '<option value="">Todas</option>' +
+    cats.map((c) => `<option value="${c.id}">${esc(c.nombre)}</option>`).join('');
+}
 
 function servicioCard(s, withReserva = true) {
   const cat = s.categoria?.nombre || 'Sin categoría';
   const trab = s.trabajador?.nombre || `Trabajador #${s.trabajador?.id || '?'}`;
-  const approved = s.isApproved ? 'Aprobado' : 'Pendiente';
-  const active = s.isActive !== false ? 'Activo' : 'Inactivo';
   return `
     <article class="card" data-id="${s.id}">
       <h3>${esc(s.titulo)}</h3>
       <p>${esc(s.descripcion)}</p>
       <div class="card-meta">
         ${esc(cat)} · ${esc(trab)}<br>
-        $${s.precioEstimadoPorHora ?? '—'}/h · mín. ${s.minTiempo ?? '—'} min<br>
-        ${approved} · ${active}
+        $${s.precioEstimadoPorHora ?? '—'}/h · mín. ${s.minTiempo ?? '—'} min
       </div>
       ${withReserva ? `<button type="button" class="btn btn-primary btn-sm btn-reservar" data-id="${s.id}">Reservar</button>` : ''}
     </article>`;
 }
 
+function renderServiciosList(servicios) {
+  const list = document.getElementById('servicios-list');
+  const activos = servicios.filter((s) => s.isActive !== false && s.isApproved);
+  serviciosActuales = activos;
+
+  if (!activos.length) {
+    list.innerHTML = '<div class="empty-state">No hay servicios disponibles</div>';
+    return;
+  }
+
+  list.innerHTML = activos.map((s) => servicioCard(s)).join('');
+  list.querySelectorAll('.btn-reservar').forEach((btn) => {
+    btn.addEventListener('click', () => openReservaDialog(Number(btn.dataset.id)));
+  });
+}
+
+async function fetchServicios(filtros = {}) {
+  try {
+    return await buscarServicios(filtros);
+  } catch (err) {
+    if (err.status === 403 || err.status === 404) {
+      const todos = await request('/servicios');
+      let result = todos.filter((s) => s.isActive !== false && s.isApproved);
+      if (filtros.idCategoria) {
+        result = result.filter((s) => s.categoria?.id === Number(filtros.idCategoria));
+      }
+      if (filtros.busqueda) {
+        const q = filtros.busqueda.toLowerCase();
+        result = result.filter((s) =>
+          s.titulo?.toLowerCase().includes(q) || s.descripcion?.toLowerCase().includes(q));
+      }
+      return result;
+    }
+    throw err;
+  }
+}
+
 export async function renderServicios() {
+  await populateCategoriaFilter();
   setLoading(true);
   try {
-    const servicios = await request('/servicios');
-    const activos = servicios.filter((s) => s.isActive !== false && s.isApproved);
-    const list = document.getElementById('servicios-list');
-
-    if (!activos.length) {
-      list.innerHTML = '<div class="empty-state">No hay servicios disponibles</div>';
-      return;
-    }
-
-    list.innerHTML = activos.map((s) => servicioCard(s)).join('');
-    list.querySelectorAll('.btn-reservar').forEach((btn) => {
-      btn.addEventListener('click', () => openReservaDialog(Number(btn.dataset.id), activos));
-    });
+    const servicios = await fetchServicios();
+    renderServiciosList(servicios);
   } finally {
     setLoading(false);
   }
 }
 
-function openReservaDialog(servicioId, servicios) {
-  const s = servicios.find((x) => x.id === servicioId);
+async function aplicarFiltros(e) {
+  e.preventDefault();
+  const fd = new FormData(e.target);
+  const filtros = {
+    idCategoria: fd.get('idCategoria') || undefined,
+    busqueda: fd.get('busqueda') || undefined,
+    radioKm: fd.get('radioKm') ? Number(fd.get('radioKm')) : undefined,
+  };
+
+  const direccion = fd.get('direccion')?.trim();
+  if (direccion) {
+    setLoading(true);
+    try {
+      const { lat, lng } = await geocodeAddress(direccion);
+      filtros.lat = lat;
+      filtros.lng = lng;
+    } catch (err) {
+      showToast(err.message, 'error');
+      setLoading(false);
+      return;
+    }
+  }
+
+  setLoading(true);
+  try {
+    const servicios = await fetchServicios(filtros);
+    renderServiciosList(servicios);
+  } catch (err) {
+    showToast(err.message, 'error');
+  } finally {
+    setLoading(false);
+  }
+}
+
+function openReservaDialog(servicioId) {
+  const s = serviciosActuales.find((x) => x.id === servicioId);
   if (!s) return;
 
   const dialog = document.getElementById('dialog-reserva');
@@ -53,6 +127,9 @@ function openReservaDialog(servicioId, servicios) {
     `${s.titulo} — ${s.trabajador?.nombre || 'Trabajador'}`;
   form.elements.idServicio.value = s.id;
   form.elements.idTrabajador.value = s.trabajador?.id;
+  form.elements.fechaReservada.value = '';
+  form.elements.horaInicio.value = '';
+  form.elements.horaFin.value = '';
 
   if (!reservaDialogBound) {
     setupDialogClose(dialog);
@@ -60,7 +137,12 @@ function openReservaDialog(servicioId, servicios) {
     reservaDialogBound = true;
   }
 
-  dialog.showModal();
+  openDialog(dialog);
+}
+
+function normalizeTime(value) {
+  if (!value) return null;
+  return value.length === 5 ? `${value}:00` : value;
 }
 
 async function submitReserva(e) {
@@ -76,9 +158,9 @@ async function submitReserva(e) {
         idCliente: userId,
         idTrabajador: Number(form.elements.idTrabajador.value),
         idServicio: Number(form.elements.idServicio.value),
-        fechaReservada: fromDatetimeLocal(form.elements.fechaReservada.value),
-        fechaInicio: fromDatetimeLocal(form.elements.fechaInicio.value),
-        fechaFin: fromDatetimeLocal(form.elements.fechaFin.value),
+        fechaReservada: form.elements.fechaReservada.value,
+        horaInicio: normalizeTime(form.elements.horaInicio.value),
+        horaFin: normalizeTime(form.elements.horaFin.value),
       },
     });
     showToast('Reserva creada', 'success');
@@ -91,32 +173,59 @@ async function submitReserva(e) {
   }
 }
 
+async function cancelarReserva(id) {
+  if (!confirm('¿Cancelar esta reserva?')) return;
+  setLoading(true);
+  try {
+    await request(`/servicio_reservas/rechazar/${id}`, { method: 'PATCH' });
+    showToast('Reserva cancelada', 'success');
+    await renderReservas();
+  } catch (err) {
+    showToast(err.message, 'error');
+  } finally {
+    setLoading(false);
+  }
+}
+
 export async function renderReservas() {
   const estado = document.getElementById('filtro-estado-reserva').value;
-  const { userId } = getSession();
   setLoading(true);
 
   try {
-    const reservas = await request(`/servicio_reservas/estado/${estado}`);
+    const reservas = await request(`/servicio_reservas/enviadas/${estado}`);
     const list = Array.isArray(reservas) ? reservas : [];
-    const mias = list.filter((r) => r.cliente?.id === userId);
-
     const container = document.getElementById('reservas-list');
-    if (!mias.length) {
+
+    if (!list.length) {
       container.innerHTML = '<div class="empty-state">No tenés reservas en este estado</div>';
       return;
     }
 
     container.innerHTML = renderTable(
-      ['ID', 'Servicio', 'Estado', 'Inicio', 'Fin'],
-      mias.map((r) => [
-        r.id,
-        r.servicio?.titulo || '—',
-        badgeEstado(r.estadoReserva),
-        formatDate(r.inicio || r.fechaInicio),
-        formatDate(r.fin || r.fechaFin),
-      ]),
+      ['ID', 'Servicio', 'Día', 'Horario', 'Estado', 'Acciones'],
+      list.map((r) => {
+        const acciones = r.estadoReserva === 'PENDIENTE'
+          ? `<button type="button" class="btn btn-danger btn-sm btn-cancelar-reserva" data-id="${r.id}">Cancelar</button>`
+          : '—';
+        const inicio = r.inicio || r.fechaReservada;
+        const fin = r.fin;
+        const horario = fin
+          ? `${formatTime(inicio)} – ${formatTime(fin)}`
+          : formatTime(inicio);
+        return [
+          r.id,
+          r.servicio?.titulo || '—',
+          formatDate(r.fechaReservada || inicio).split(',')[0],
+          horario,
+          badgeEstado(r.estadoReserva),
+          acciones,
+        ];
+      }),
     );
+
+    container.querySelectorAll('.btn-cancelar-reserva').forEach((btn) => {
+      btn.addEventListener('click', () => cancelarReserva(Number(btn.dataset.id)));
+    });
   } finally {
     setLoading(false);
   }
@@ -212,5 +321,11 @@ export async function renderResenias() {
 export function initClienteEvents() {
   document.getElementById('filtro-estado-reserva').addEventListener('change', () => {
     if (location.hash === '#/reservas') renderReservas();
+  });
+
+  document.getElementById('form-filtros-servicios').addEventListener('submit', aplicarFiltros);
+  document.getElementById('btn-limpiar-filtros').addEventListener('click', () => {
+    document.getElementById('form-filtros-servicios').reset();
+    renderServicios();
   });
 }

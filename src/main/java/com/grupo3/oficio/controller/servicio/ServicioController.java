@@ -20,9 +20,14 @@ public class ServicioController {
         this.servicioService = servicioService;
     }
 
-    @GetMapping
-    public ResponseEntity<List<Servicio>> listarTodos() {
-        return ResponseEntity.ok(servicioService.listarTodos());
+    @GetMapping("/buscar")
+    public ResponseEntity<List<Servicio>> buscarConFiltros(
+            @RequestParam(required = false) Integer idCategoria,
+            @RequestParam(required = false) String busqueda,
+            @RequestParam(required = false) Double lat,
+            @RequestParam(required = false) Double lng,
+            @RequestParam(required = false) Double radioKm) {
+        return ResponseEntity.ok(servicioService.buscarConFiltros(idCategoria, busqueda, lat, lng, radioKm));
     }
 
     @GetMapping("/{id}")
@@ -30,11 +35,20 @@ public class ServicioController {
         return ResponseEntity.ok(servicioService.buscarPorId(id));
     }
 
+    @GetMapping
+    public ResponseEntity<List<Servicio>> listarTodos() {
+        return ResponseEntity.ok(servicioService.listarTodos());
+    }
+
+
+
     @PostMapping
     public ResponseEntity<Servicio> crearServicio(@RequestBody ServicioDTO dto) {
         Servicio creado = servicioService.crearServicio(dto);
         return ResponseEntity.status(HttpStatus.CREATED).body(creado);
     }
+
+
 
     @PutMapping("/{id}")
     public ResponseEntity<Servicio> editarServicio(@PathVariable Integer id,
@@ -54,6 +68,8 @@ public class ServicioController {
     public ResponseEntity<Servicio> validarServicio(@PathVariable Integer id){
         return ResponseEntity.ok(servicioService.validarServicio(id));
     }
+
+
 
     @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/invalidar/{id}")

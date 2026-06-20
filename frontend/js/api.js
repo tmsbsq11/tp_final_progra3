@@ -93,3 +93,44 @@ export function formatDate(value) {
   if (Number.isNaN(d.getTime())) return value;
   return d.toLocaleString('es-AR');
 }
+
+export function formatTime(value) {
+  if (!value) return '—';
+  if (typeof value === 'string') {
+    if (value.includes('T')) {
+      const d = new Date(value);
+      if (!Number.isNaN(d.getTime())) {
+        return d.toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit' });
+      }
+    }
+    return value.length >= 5 ? value.slice(0, 5) : value;
+  }
+  return String(value);
+}
+
+export async function geocodeAddress(direccion) {
+  const res = await fetch(`/geocode?q=${encodeURIComponent(direccion)}`);
+  if (!res.ok) throw new Error('No se pudo geocodificar la dirección');
+  const data = await res.json();
+  if (!Array.isArray(data) || !data.length) {
+    throw new Error('Dirección no encontrada');
+  }
+  return {
+    lat: parseFloat(data[0].lat),
+    lng: parseFloat(data[0].lon),
+  };
+}
+
+export async function buscarServicios(filtros = {}) {
+  const { idCategoria, busqueda, lat, lng, radioKm } = filtros;
+  const params = new URLSearchParams();
+  if (idCategoria) params.set('idCategoria', idCategoria);
+  if (busqueda?.trim()) params.set('busqueda', busqueda.trim());
+  if (lat != null && lng != null) {
+    params.set('lat', lat);
+    params.set('lng', lng);
+    if (radioKm != null) params.set('radioKm', radioKm);
+  }
+  const qs = params.toString();
+  return request(`/servicios/buscar${qs ? `?${qs}` : ''}`);
+}

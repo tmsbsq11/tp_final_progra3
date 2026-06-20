@@ -1,6 +1,6 @@
-import { request } from '../api.js';
+import { request, formatDate, formatTime } from '../api.js';
 import { getSession } from '../auth.js';
-import { showToast, setLoading, esc, setupDialogClose } from '../ui.js';
+import { showToast, setLoading, esc, setupDialogClose, openDialog, badgeEstado, renderTable } from '../ui.js';
 
 let servicioDialogBound = false;
 let categoriasCache = [];
@@ -105,7 +105,7 @@ async function openServicioDialog(servicio = null) {
     servicioDialogBound = true;
   }
 
-  dialog.showModal();
+  openDialog(dialog);
 }
 
 async function submitServicio(e) {
@@ -135,6 +135,95 @@ async function submitServicio(e) {
     await renderMisServicios();
   } catch (err) {
     showToast(err.message, 'error');
+  } finally {
+    setLoading(false);
+  }
+}
+
+async function cambiarEstadoReserva(id, accion) {
+  const msg = accion === 'aceptar' ? '¿Aceptar esta reserva?' : '¿Rechazar esta reserva?';
+  if (!confirm(msg)) return;
+  setLoading(true);
+  try {
+    await request(`/servicio_reservas/${accion}/${id}`, { method: 'PATCH' });
+    showToast(accion === 'aceptar' ? 'Reserva aceptada' : 'Reserva rechazada', 'success');
+    await renderReservasRecibidas();
+  } catch (err) {
+    showToast(err.message, 'error');
+  } finally {
+    setLoading(false);
+  }
+}
+
+export async function renderReservasRecibidas() {
+  const estado = document.getElementById('filtro-estado-recibidas').value;
+  setLoading(true);
+
+  try {
+    const reservas = await request(`/servicio_reservas/recibidas/${estado}`);
+    const list = Array.isArray(reservas) ? reservas : [];
+    const container = document.getElementById('reservas-recibidas-list');
+
+    if (!list.length) {
+      container.innerHTML = '<div class="empty-state">No hay solicitudes en este estado</div>';
+      return;
+    }
+
+    container.innerHTML = renderTable(
+      ['ID', 'Cliente', 'Servicio', 'Día', 'Horario', 'Estado', 'Acciones'],
+      list.map((r) => {
+        const inicio = r.inicio || r.fechaReservada;
+        const fin = r.fin;
+        const horario = fin
+          ? `${formatTime(inicio)} – ${formatTime(fin)}`
+          : formatTime(inicio);
+        let acciones = '—';
+        if (r.estadoReserva === 'PENDIENTE') {
+          acciones = `
+            <div class="btn-group">
+              <button type="button" class="btn btn-primary btn-sm btn-aceptar-reserva" data-id="${r.id}">Aceptar</button>
+              <button type="button" class="btn btn-danger btn-sm btn-rechazar-reserva" data-id="${r.id}">Rechazar</button>
+            </div>`;
+        }
+        return [
+          r.id,
+          r.cliente?.nombre ?? r.cliente?.id ?? '—',
+          r.servicio?.titulo || '—',
+          formatDate(r.fechaReservada || inicio).split(',')[0],
+          horario,
+          badgeEstado(r.estadoReserva),
+          acciones,
+        ];
+      }),
+    );
+
+    container.querySelectorAll('.btn-aceptar-reserva').forEach((btn) => {
+      btn.addEventListener('click', () => cambiarEstadoReserva(Number(btn.dataset.id), 'aceptar'));
+    });
+    container.querySelectorAll('.btn-rechazar-reserva').forEach((btn) => {
+      btn.addEventListener('click', () => cambiarEstadoReserva(Number(btn.dataset.id), 'rechazar'));
+    });
+  } finally {
+    setLoading(false);
+  }
+}
+
+export async function renderReseniasTrabajador() {
+  setLoading(true);
+  try {
+    const resenias = await request('/resenias/propias');
+    const list = document.getElementById('resenias-trabajador-list');
+
+    if (!resenias?.length) {
+      list.innerHTML = '<div class="empty-state">Todavía no recibiste reseñas</div>';
+      return;
+    }
+
+    list.innerHTML = resenias.map((r) => `
+      <div class="card" style="margin-bottom:0.75rem">
+        <strong>${r.puntaje ?? '—'} ★</strong> — ${esc(r.comentario || 'Sin comentario')}
+        <div class="card-meta">${esc(r.direccionResenia)} · ${formatDate(r.fechaCreacion)}</div>
+      </div>`).join('');
   } finally {
     setLoading(false);
   }
@@ -204,4 +293,7 @@ export async function renderPerfilTrabajador() {
 
 export function initTrabajadorEvents() {
   document.getElementById('btn-nuevo-servicio').addEventListener('click', () => openServicioDialog());
+  document.getElementById('filtro-estado-recibidas').addEventListener('change', () => {
+    if (location.hash === '#/reservas-recibidas') renderReservasRecibidas();
+  });
 }

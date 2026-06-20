@@ -163,4 +163,8 @@ public class ServicioService {
         );
         return servicioRepository.save(servicio);
     }
+
+    public List<Servicio> buscarConFiltros(Integer idCategoria, String busqueda, Double lat, Double lng, Double radioKm) {
+        return servicioRepository.buscarConFiltros(idCategoria, busqueda, lat, lng, radioKm);
+    }
 }

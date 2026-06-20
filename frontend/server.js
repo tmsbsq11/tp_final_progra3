@@ -51,8 +51,46 @@ function serveStatic(req, res, filePath) {
   });
 }
 
+function geocodeRequest(req, res) {
+  const q = new URL(req.url, 'http://localhost').searchParams.get('q');
+  if (!q) {
+    res.writeHead(400, { 'Content-Type': 'application/json' });
+    res.end(JSON.stringify({ error: 'Falta parámetro q' }));
+    return;
+  }
+
+  const path = `/search?q=${encodeURIComponent(q)}&format=json&limit=1`;
+  const options = {
+    hostname: 'nominatim.openstreetmap.org',
+    path,
+    method: 'GET',
+    headers: { 'User-Agent': 'OficioApp/1.0 (dev frontend)' },
+  };
+
+  const ext = http.request(options, (geoRes) => {
+    let body = '';
+    geoRes.on('data', (chunk) => { body += chunk; });
+    geoRes.on('end', () => {
+      res.writeHead(geoRes.statusCode, { 'Content-Type': 'application/json' });
+      res.end(body);
+    });
+  });
+
+  ext.on('error', () => {
+    res.writeHead(502, { 'Content-Type': 'application/json' });
+    res.end(JSON.stringify({ error: 'Error al geocodificar' }));
+  });
+
+  ext.end();
+}
+
 const server = http.createServer((req, res) => {
   const url = req.url.split('?')[0];
+
+  if (url === '/geocode') {
+    geocodeRequest(req, res);
+    return;
+  }
 
   if (url.startsWith('/api/') || url === '/api') {
     proxyRequest(req, res, req.url);

@@ -251,6 +251,13 @@ dialog {
   max-width: 440px;
   width: 90%;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+  margin: 0;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  max-height: 90vh;
+  overflow-y: auto;
 }
 
 dialog::backdrop { background: rgba(0, 0, 0, 0.4); }
@@ -336,4 +343,34 @@ select {
   border-radius: 6px;
   font: inherit;
   background: var(--surface);
+}
+
+.filters-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  align-items: flex-end;
+  margin-bottom: 1.25rem;
+  padding: 1rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+
+.filters-bar label {
+  margin: 0;
+  flex: 1;
+  min-width: 140px;
+}
+
+.filters-bar .filter-actions {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.time-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
 }

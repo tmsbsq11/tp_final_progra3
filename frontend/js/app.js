@@ -11,11 +11,14 @@ import {
 import {
   renderMisServicios,
   renderPerfilTrabajador,
+  renderReservasRecibidas,
+  renderReseniasTrabajador,
   initTrabajadorEvents,
 } from './views/trabajador.js';
 import {
   renderAdminCategorias,
   renderAdminServicios,
+  renderAdminCertificacion,
   renderAdminReservas,
   renderAdminNotificaciones,
   renderAdminUsuarios,
@@ -32,10 +35,13 @@ function registerRoutes() {
   onRoute('#/resenias', renderResenias);
 
   onRoute('#/mis-servicios', renderMisServicios);
+  onRoute('#/reservas-recibidas', renderReservasRecibidas);
+  onRoute('#/resenias-trabajador', renderReseniasTrabajador);
   onRoute('#/perfil-trabajador', renderPerfilTrabajador);
 
   onRoute('#/admin/categorias', renderAdminCategorias);
   onRoute('#/admin/servicios', renderAdminServicios);
+  onRoute('#/admin/certificacion', renderAdminCertificacion);
   onRoute('#/admin/reservas', renderAdminReservas);
   onRoute('#/admin/notificaciones', renderAdminNotificaciones);
   onRoute('#/admin/usuarios', renderAdminUsuarios);

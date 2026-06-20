@@ -15,14 +15,17 @@ export const NAV_BY_ROLE = {
   ],
   TRABAJADOR: [
     { hash: '#/mis-servicios', label: 'Mis servicios' },
+    { hash: '#/reservas-recibidas', label: 'Solicitudes' },
+    { hash: '#/resenias-trabajador', label: 'Reseñas' },
     { hash: '#/perfil-trabajador', label: 'Perfil' },
   ],
   ADMIN: [
     { hash: '#/admin/categorias', label: 'Categorías' },
     { hash: '#/admin/servicios', label: 'Servicios' },
+    { hash: '#/admin/certificacion', label: 'Certificación' },
+    { hash: '#/admin/usuarios', label: 'Usuarios' },
     { hash: '#/admin/reservas', label: 'Reservas' },
     { hash: '#/admin/notificaciones', label: 'Notificaciones' },
-    { hash: '#/admin/usuarios', label: 'Usuarios' },
   ],
 };
 

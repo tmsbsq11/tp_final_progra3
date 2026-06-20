@@ -23,46 +23,38 @@ node frontend/server.js
 
 3. Abrí en el navegador: **http://localhost:3000**
 
-## Estructura
-
-```
-frontend/
-├── index.html       # SPA única
-├── css/styles.css   # Estilos
-├── js/              # Lógica de la aplicación
-├── server.js        # Servidor estático + proxy a :8080
-└── README.md
-```
-
-El proxy evita problemas de CORS con endpoints que no tienen `@CrossOrigin` en el backend (`/api/auth/**`, `/api/servicios/**`).
-
-## Roles y funcionalidades
+## Funcionalidades por rol
 
 | Rol | Secciones |
 |-----|-----------|
-| **Cliente** | Catálogo de servicios, reservas, reseñas, perfil |
-| **Trabajador** | Mis servicios (CRUD), perfil, ubicación |
-| **Admin** | Categorías, validación de servicios, reservas, notificaciones, usuarios |
+| **Cliente** | Buscar servicios (texto, categoría, zona), reservar (día + horario), ver/cancelar reservas enviadas, reseñas, perfil |
+| **Trabajador** | Mis servicios, solicitudes de reserva (aceptar/rechazar), reseñas recibidas, perfil y ubicación |
+| **Admin** | CRUD categorías, CRUD usuarios, gestión de servicios, certificación pendiente, reservas, notificaciones |
 
-El registro público solo permite crear cuentas **Cliente** o **Trabajador**. Los administradores deben existir previamente en la base de datos.
+## Búsqueda de servicios
 
-## Autenticación
+- Endpoint: `GET /api/servicios/buscar`
+- Parámetros opcionales: `idCategoria`, `busqueda`, `lat`, `lng`, `radioKm`
+- Si se ingresa una dirección, el frontend geocodifica vía Nominatim (proxy en `/geocode`) y envía `lat`/`lng` al backend
 
-- Login: `POST /api/auth/login` → devuelve JWT
-- El token se guarda en `sessionStorage`
-- Tras el login se detecta el rol consultando el perfil correspondiente
+## Reservas
 
-## Limitaciones conocidas (backend)
+- Crear: `fechaReservada` (LocalDate), `horaInicio` y `horaFin` (LocalTime) del mismo día
+- Cliente: `GET /api/servicio_reservas/enviadas/{estado}`, cancelar con `PATCH .../rechazar/{id}` (solo pendientes)
+- Trabajador: `GET /api/servicio_reservas/recibidas/{estado}`, aceptar/rechazar con `PATCH .../aceptar|rechazar/{id}`
 
-Estas limitaciones vienen del API actual y no se modifican desde el frontend:
+Los cambios automáticos de estado (finalizar/rechazar por fecha) los maneja el backend.
 
-- **Trabajador no puede listar reservas** — `/api/servicio_reservas/**` solo admite roles CLIENTE y ADMIN
-- **No hay endpoint "mis reservas"** — el cliente filtra por estado y muestra las reservas cuyo `cliente.id` coincide
-- **Admin no se registra** desde la UI
-- Algunos `@PreAuthorize("hasRol(...)")` tienen un typo y pueden no aplicarse; la seguridad efectiva está en `SecurityConfig`
+## Proxy local
 
-## Verificación rápida
+El servidor en `server.js` reenvía:
 
-1. Registrarse como cliente → login → ver servicios → crear reserva
-2. Registrarse como trabajador → login → publicar servicio → editar perfil/ubicación
-3. Login como admin → gestionar categorías → validar servicios pendientes
+- `/api/*` → backend `:8080`
+- `/admin/*` → backend `:8080`
+- `/geocode?q=...` → Nominatim (evita CORS y permite User-Agent)
+
+## Limitaciones conocidas
+
+- El registro público solo admite **Cliente** y **Trabajador**; los admins deben existir en la BD
+- Si `GET /api/servicios/buscar` devuelve 403 para clientes, el frontend hace fallback a listar todos y filtrar en el navegador (sin filtro geográfico)
+- La cancelación de reservas por cliente usa `PATCH /rechazar/{id}`; el backend debe permitir ese rol en esa ruta

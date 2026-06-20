@@ -24,46 +24,46 @@ public class ServicioReservaController {
     }
 
     //los get deben ir de específico a general, sino saltan errores al hacer las requests
-    @PreAuthorize("hasRol('TRABAJADOR')")
+    @PreAuthorize("hasRole('TRABAJADOR')")
     @GetMapping("/recibidas/{estado}")
     public ResponseEntity<List<ServicioReserva>> verReservasRecibidasEstado(@PathVariable String estado, Authentication auth) {
         EstadoReserva estadoReserva = EstadoReserva.valueOf(estado);//tal vez pasar al service que se encargue por si tira exception
         return ResponseEntity.ok(servicioReservaService.mostrarReservasPropiasEstado(estadoReserva, auth.getName()));
     }
 
-    @PreAuthorize("hasRol('TRABAJADOR')")
+    @PreAuthorize("hasRole('TRABAJADOR')")
     @GetMapping("/recibidas")
     public ResponseEntity<List<ServicioReserva>> verReservasRecibidas(Authentication auth) {
         return ResponseEntity.ok(servicioReservaService.mostrarReservasPropias(auth.getName()));
     }
 
-    @PreAuthorize("hasRol('CLIENTE')")
+    @PreAuthorize("hasRole('CLIENTE')")
     @GetMapping("/enviadas/{estado}")
     public ResponseEntity<List<ServicioReserva>> verReservasEnviadasEstado(@PathVariable String estado) {
         EstadoReserva estadoReserva = EstadoReserva.valueOf(estado);
         return ResponseEntity.ok(servicioReservaService.mostrarReservasEnviadasEstado(estadoReserva));
     }
 
-    @PreAuthorize("hasRol('CLIENTE')")
+    @PreAuthorize("hasRole('CLIENTE')")
     @GetMapping("/enviadas")
     public ResponseEntity<List<ServicioReserva>> verReservasEnviadas() {
         return ResponseEntity.ok(servicioReservaService.mostrarReservasEnviadas());
     }
 
-    @PreAuthorize("hasRol('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/estado/{estado}")
     private ResponseEntity<List<ServicioReserva>> mostrarReservasPorEstado(@PathVariable String estado) {
         EstadoReserva estadoReserva = EstadoReserva.valueOf(estado.toUpperCase());//Puede tirar IllegalArgumentException
         return ResponseEntity.ok(servicioReservaService.mostrarPorEstado(estadoReserva));
     }
 
-    @PreAuthorize("hasRol('ADMIN')")
+    @PreAuthorize("hasRolee('ADMIN')")
     @GetMapping("/{id}")
     public ResponseEntity<Reserva> mostrarReservaPorId(@PathVariable Integer id) {
         return ResponseEntity.ok(servicioReservaService.buscarReservaPorId(id));
     }
 
-    @PreAuthorize("hasRol('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping
     public ResponseEntity<?> mostrarTodasReservas() {
         if (servicioReservaService.mostrarTodasReservas().isEmpty()) {
@@ -79,18 +79,18 @@ public class ServicioReservaController {
         return ResponseEntity.status(HttpStatus.CREATED).body(servicioReservaService.registrarUnaReserva(servicioReservaDTO));
     }
 
-    @PreAuthorize("hasRol('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{id}")
     public ResponseEntity<?> eliminarUnaReserva(@PathVariable Integer id) {
         servicioReservaService.eliminarReserva(servicioReservaService.buscarReservaPorId(id));
         return ResponseEntity.ok("La reserva se elimino correctamente");
     }
-    @PreAuthorize("hasRol('TRABAJADOR')")
+    @PreAuthorize("hasRole('TRABAJADOR')")
     @PatchMapping("/aceptar/{id}")
     public ResponseEntity<ServicioReserva> aceptarReserva(@PathVariable Integer id){
         return ResponseEntity.ok(servicioReservaService.cambiarReservaEstado(id,EstadoReserva.APROBADO));
     }
-    @PreAuthorize("hasRol('TRABAJADOR')")
+    @PreAuthorize("hasRole('TRABAJADOR')")
     @PatchMapping("/rechazar/{id}")
     public ResponseEntity<ServicioReserva> rechazarReserva(@PathVariable Integer id){
         return ResponseEntity.ok(servicioReservaService.cambiarReservaEstado(id,EstadoReserva.RECHAZADO));

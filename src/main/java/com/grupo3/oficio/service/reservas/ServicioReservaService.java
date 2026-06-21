@@ -174,6 +174,13 @@ public class ServicioReservaService {
             );
         }
 
+        long pendientesDelCliente = reservaRepo.countByCliente_IdAndEstadoReserva(servicioReservaDTO.getIdCliente(), EstadoReserva.PENDIENTE);
+        if (pendientesDelCliente >= 5) {
+            throw new IllegalArgumentException(
+                    "Ya tenés demasiadas reservas pendientes. Esperá una respuesta antes de crear más.");
+        }
+
+
         LocalDateTime fechaInicio = LocalDateTime.of(servicioReservaDTO.getFechaReservada(), servicioReservaDTO.getHoraInicio());
         LocalDateTime fechaFin = LocalDateTime.of(servicioReservaDTO.getFechaReservada(), servicioReservaDTO.getHoraFin());
 

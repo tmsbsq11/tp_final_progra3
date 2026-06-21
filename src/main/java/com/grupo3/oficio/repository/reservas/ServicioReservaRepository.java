@@ -37,4 +37,6 @@ public interface ServicioReservaRepository extends JpaRepository<ServicioReserva
     );
     List<ServicioReserva> findByTrabajadorId(Integer idTrabajador);
     List<ServicioReserva> findByClienteId(Integer idCliente);
+
+    long countByCliente_IdAndEstadoReserva(Integer clienteId, EstadoReserva estadoReserva);
 }

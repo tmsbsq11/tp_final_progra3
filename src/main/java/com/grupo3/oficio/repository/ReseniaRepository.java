@@ -14,4 +14,7 @@ public interface ReseniaRepository extends JpaRepository<Resenia, Integer> {
     List<Resenia> findByClienteIdAndDireccionResenia(
             Integer idCliente,
             DireccionResenia direccionResenia);
+
+
+
 }

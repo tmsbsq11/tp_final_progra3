@@ -1,6 +1,8 @@
 package com.grupo3.oficio.service.users;
 
 import com.grupo3.oficio.model.users.Trabajador;
+import com.grupo3.oficio.model.users.TrabajadorEntradaDTO;
+import com.grupo3.oficio.model.users.TrabajadorSalidaDTO;
 import com.grupo3.oficio.repository.users.TrabajadorRepository;
 import com.grupo3.oficio.utils.geo.GeocodingService;
 import jakarta.persistence.EntityNotFoundException;
@@ -21,59 +23,104 @@ public class TrabajadorService {
 
     public TrabajadorService(TrabajadorRepository trabajadorRepository) { this.trabajadorRepository = trabajadorRepository; }
 
+    private TrabajadorSalidaDTO convertirATrabajadorSalidaDTO(Trabajador trabajador) {
+        if (trabajador == null) return null;
+
+        TrabajadorSalidaDTO dto = new TrabajadorSalidaDTO();
+        dto.setId(trabajador.getId());
+        dto.setCorreo(trabajador.getCorreo());
+        dto.setUsername(trabajador.getUsername());
+        dto.setIsActive(trabajador.getIsActive());
+        dto.setNombre(trabajador.getNombre());
+        dto.setApellido(trabajador.getApellido());
+        dto.setDni(trabajador.getDni());
+        dto.setDireccionFoto(trabajador.getDireccionFoto());
+        dto.setFechaCreacion(trabajador.getFechaCreacion());
+        dto.setRol(trabajador.getRol());
+        dto.setPuntaje(trabajador.getPuntaje());
+        dto.setDescripcion(trabajador.getDescripcion());
+        dto.setMinutosMinimoEntreReservas(trabajador.getMinutosMinimoEntreReservas());
+        dto.setLatitud(trabajador.getLatitud());
+        dto.setLongitud(trabajador.getLongitud());
+
+        return dto;
+    }
+
+    private Trabajador convertirATrabajadorEntidad(TrabajadorEntradaDTO dto) {
+        if (dto == null) return null;
+
+        Trabajador trabajador = new Trabajador();
+        trabajador.setId(dto.getId());
+        trabajador.setCorreo(dto.getCorreo());
+        trabajador.setUsername(dto.getUsername());
+        trabajador.setPassword(dto.getPassword()); // Importante para el registro/login
+        trabajador.setIsActive(dto.getIsActive());
+        trabajador.setNombre(dto.getNombre());
+        trabajador.setApellido(dto.getApellido());
+        trabajador.setDni(dto.getDni());
+        trabajador.setDireccionFoto(dto.getDireccionFoto());
+        trabajador.setFechaCreacion(dto.getFechaCreacion());
+        trabajador.setRol(dto.getRol());
+        trabajador.setPuntaje(dto.getPuntaje());
+        trabajador.setDescripcion(dto.getDescripcion());
+        trabajador.setMinutosMinimoEntreReservas(dto.getMinutosMinimoEntreReservas());
+        trabajador.setLatitud(dto.getLatitud());
+        trabajador.setLongitud(dto.getLongitud());
+
+        return trabajador;
+    }
+
     //CRUD
         //create
-    public Trabajador crear(Trabajador trabajador) {
+    public TrabajadorSalidaDTO crear(TrabajadorEntradaDTO dto) {
         //validaciones
-        if (trabajador == null) {
+        if (dto == null) {
             throw new IllegalArgumentException("El trabajador no puede ser nulo");
         }
             //credenciales
-        if (trabajador.getCorreo() == null || trabajador.getCorreo().isBlank()) {
+        if (dto.getCorreo() == null || dto.getCorreo().isBlank()) {
             throw new IllegalArgumentException("El correo es obligatorio");
         }
-        if (!trabajador.getCorreo().matches("^[A-Za-z0-9+_.-]+@(.+)$")) {
+        if (!dto.getCorreo().matches("^[A-Za-z0-9+_.-]+@(.+)$")) {
             throw new IllegalArgumentException("El correo no tiene un formato válido");
         }
-        if (trabajador.getUsername() == null || trabajador.getUsername().isBlank()) {
+        if (dto.getUsername() == null || dto.getUsername().isBlank()) {
             throw new IllegalArgumentException("El username es obligatorio");
         }
-        if (trabajador.getPassword() == null || trabajador.getPassword().length() < 8) {
+        if (dto.getPassword() == null || dto.getPassword().length() < 8) {
             throw new IllegalArgumentException("La contraseña debe tener al menos 8 caracteres");
         }
-        if (trabajador.getNombre() == null || trabajador.getNombre().isBlank()) {
+        if (dto.getNombre() == null || dto.getNombre().isBlank()) {
             throw new IllegalArgumentException("El nombre es obligatorio");
         }
-        if (trabajador.getApellido() == null || trabajador.getApellido().isBlank()) {
+        if (dto.getApellido() == null || dto.getApellido().isBlank()) {
             throw new IllegalArgumentException("El apellido es obligatorio");
         }
-        if (trabajador.getDni() == null || trabajador.getDni().isBlank()) {
+        if (dto.getDni() == null || dto.getDni().isBlank()) {
             throw new IllegalArgumentException("El DNI es obligatorio");
         }
-        if (!trabajador.getDni().matches("\\d{7,8}")) {
+        if (!dto.getDni().matches("\\d{7,8}")) {
             throw new IllegalArgumentException("El DNI debe tener 7 u 8 dígitos");
         }
-        if (trabajador.getMinutosMinimoEntreReservas() == null ) {
+        if (dto.getMinutosMinimoEntreReservas() == null ) {
             throw new IllegalArgumentException("El minimo de tiempo entre reservas es obligatorio");
         }
-//        if(){
-//
-//        }
-        if (trabajadorRepository.existsByCorreo(trabajador.getCorreo())) {
+        if (trabajadorRepository.existsByCorreo(dto.getCorreo())) {
             throw new IllegalArgumentException("Ya existe un usuario con ese correo");
         }
-        if (trabajadorRepository.existsByUsername(trabajador.getUsername())) {
+        if (trabajadorRepository.existsByUsername(dto.getUsername())) {
             throw new IllegalArgumentException("Ya existe un usuario con ese username");
         }
-        if (trabajadorRepository.existsByDni(trabajador.getDni())) {
+        if (trabajadorRepository.existsByDni(dto.getDni())) {
             throw new IllegalArgumentException("Ya existe un usuario con ese DNI");
         }
 
+        Trabajador trabajador= this.convertirATrabajadorEntidad(dto);
         trabajador.setId(null);
         trabajador.setFechaCreacion(LocalDateTime.now());
         trabajador.setIsActive(true);
-
-        return trabajadorRepository.save(trabajador);
+        trabajadorRepository.save(trabajador);
+        return this.convertirATrabajadorSalidaDTO(trabajador);
     }
 
     //read
@@ -175,11 +222,12 @@ public class TrabajadorService {
         return trabajadorRepository.save(trabajador);
     }
 
-    public List<Trabajador> buscarCercanos(Double latCliente, Double lonCliente, Double radioKm) {
+    public List<TrabajadorSalidaDTO> buscarCercanos(Double latCliente, Double lonCliente, Double radioKm) {
         return trabajadorRepository.findAll().stream()
                 .filter(t -> t.getLatitud() != null && t.getLongitud() != null)
                 .filter(t -> calcularDistancia(latCliente, lonCliente,
                         t.getLatitud(), t.getLongitud()) <= radioKm)
+                .map(this::convertirATrabajadorSalidaDTO)
                 .toList();
     }
 

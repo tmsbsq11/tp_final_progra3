@@ -48,7 +48,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.DELETE, "/api/servicio_reservas/**").hasRole("ADMIN")
 
                         // --- servicios ---
-                        .requestMatchers(HttpMethod.GET, "/api/servicios").authenticated()
+                        .requestMatchers(HttpMethod.GET, "/api/servicios/**").authenticated()
                         .requestMatchers("/api/servicios/**").hasAnyRole("TRABAJADOR", "ADMIN")
 
                         // --- categorias ---
@@ -61,8 +61,8 @@ public class SecurityConfig {
                         .requestMatchers("/api/admins/**").hasRole("ADMIN")
 
                         // --- notificaciones ---
-                        .requestMatchers(HttpMethod.GET, "/api/noificaciones/**").authenticated()
-                        .requestMatchers("/api/noificaciones/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.GET, "/api/notificaciones/**").authenticated()
+                        .requestMatchers("/api/notificaciones/**").hasRole("ADMIN")
 
                         .anyRequest().authenticated()
                 )

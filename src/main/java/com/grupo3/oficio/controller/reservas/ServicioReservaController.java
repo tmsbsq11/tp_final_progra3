@@ -57,7 +57,7 @@ public class ServicioReservaController {
         return ResponseEntity.ok(servicioReservaService.mostrarPorEstado(estadoReserva));
     }
 
-    @PreAuthorize("hasRolee('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/{id}")
     public ResponseEntity<Reserva> mostrarReservaPorId(@PathVariable Integer id) {
         return ResponseEntity.ok(servicioReservaService.buscarReservaPorId(id));

@@ -28,7 +28,7 @@ public class ClienteController {
                 clienteService.buscarPorEmail(email)
         );
     }
-    @PreAuthorize("hasRol('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("{id}")
     public ResponseEntity<Cliente> buscarPorId(@PathVariable Integer id) {
         try {
@@ -38,7 +38,7 @@ public class ClienteController {
             return ResponseEntity.badRequest().build();
         }
     }
-    @PreAuthorize("hasRol('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping
     public ResponseEntity<List<Cliente>> mostrarTodos() {
         try {
@@ -48,7 +48,7 @@ public class ClienteController {
             return ResponseEntity.badRequest().build();
         }
     }
-    @PreAuthorize("hasRol('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping
     public ResponseEntity<Cliente> crear(@RequestBody Cliente cliente) {
         try {
@@ -58,7 +58,7 @@ public class ClienteController {
             return ResponseEntity.badRequest().build();
         }
     }
-    @PreAuthorize("hasRol('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/{id}")
     public ResponseEntity<Cliente> actualizar(@PathVariable Integer id, @RequestBody Cliente cliente) {
         try {
@@ -77,7 +77,7 @@ public class ClienteController {
         );
     }
 
-    @PreAuthorize("hasRol('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{id}")
     public ResponseEntity<String> borrar(@PathVariable Integer id) {
         try {

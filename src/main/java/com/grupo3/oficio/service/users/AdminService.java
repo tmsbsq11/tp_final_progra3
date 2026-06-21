@@ -1,6 +1,8 @@
 package com.grupo3.oficio.service.users;
 
 import com.grupo3.oficio.model.users.Admin;
+import com.grupo3.oficio.model.users.AdminEntradaDTO;
+import com.grupo3.oficio.model.users.AdminSalidaDTO;
 import com.grupo3.oficio.repository.users.AdminRepository;
 import org.springframework.stereotype.Service;
 
@@ -15,6 +17,45 @@ public class AdminService {
     public AdminService(AdminRepository adminRepo) {
         this.adminRepo = adminRepo;
     }
+
+    private AdminSalidaDTO convertirAAdminSalidaDTO(Admin admin) {
+        if (admin == null) return null;
+
+        AdminSalidaDTO dto = new AdminSalidaDTO();
+        dto.setId(admin.getId());
+        dto.setCorreo(admin.getCorreo());
+        dto.setUsername(admin.getUsername());
+        dto.setIsActive(admin.getIsActive());
+        dto.setNombre(admin.getNombre());
+        dto.setApellido(admin.getApellido());
+        dto.setDni(admin.getDni());
+        dto.setDireccionFoto(admin.getDireccionFoto());
+        dto.setFechaCreacion(admin.getFechaCreacion());
+        dto.setRol(admin.getRol());
+
+        return dto;
+    }
+
+    private Admin convertirAAdminEntidad(AdminEntradaDTO dto) {
+        if (dto == null) return null;
+
+        Admin admin = new Admin();
+        // Atributos heredados de UsuarioEntradaDTO -> User
+        admin.setId(dto.getId());
+        admin.setCorreo(dto.getCorreo());
+        admin.setUsername(dto.getUsername());
+        admin.setPassword(dto.getPassword());
+        admin.setIsActive(dto.getIsActive());
+        admin.setNombre(dto.getNombre());
+        admin.setApellido(dto.getApellido());
+        admin.setDni(dto.getDni());
+        admin.setDireccionFoto(dto.getDireccionFoto());
+        admin.setFechaCreacion(dto.getFechaCreacion());
+        admin.setRol(dto.getRol());
+
+        return admin;
+    }
+
     //CRUD
     //read
     public List<Admin> mostrarAdmins(){

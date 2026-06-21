@@ -374,3 +374,16 @@ select {
   grid-template-columns: 1fr 1fr;
   gap: 0.75rem;
 }
+
+.profile-link {
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.profile-link:hover {
+  text-decoration: underline;
+}
+
+.card-unread {
+  border-left: 3px solid var(--accent);
+}

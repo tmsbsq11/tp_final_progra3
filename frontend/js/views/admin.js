@@ -187,10 +187,13 @@ function openCategoriaDialog(cat = null) {
   if (cat) {
     form.elements.id.value = cat.id;
     form.elements.nombre.value = cat.nombre || '';
+    form.elements.isActive.checked = cat.isActive !== false;
     form.elements.needsCertification.checked = !!cat.needsCertification;
   } else {
     form.reset();
     form.elements.id.value = '';
+    form.elements.isActive.checked = true;
+    form.elements.needsCertification.checked = false;
   }
 
   if (!categoriaDialogBound) {
@@ -208,6 +211,7 @@ async function submitCategoria(e) {
   const id = form.elements.id.value;
   const body = {
     nombre: form.elements.nombre.value,
+    isActive: form.elements.isActive.checked,
     needsCertification: form.elements.needsCertification.checked,
   };
 
@@ -485,15 +489,19 @@ export async function renderAdminUsuarios() {
     }
 
     container.innerHTML = renderTable(
-      ['ID', 'Nombre', 'Correo', 'Rol', 'Activo', 'Acciones'],
+      ['ID', 'Nombre', 'Correo', 'Puntaje', 'Rol', 'Activo', 'Acciones'],
       usuariosCache.map((u) => [
         u.id,
         esc(u.nombre),
         esc(u.correo),
+        u.puntaje != null ? Number(u.puntaje).toFixed(1) : '—',
         esc(u.rol),
         u.isActive !== false ? 'Sí' : 'No',
         `<div class="btn-group">
           <button type="button" class="btn btn-ghost btn-sm btn-edit-user" data-id="${u.id}">Editar</button>
+          ${usuariosTab !== 'admins' && u.id
+            ? `<a href="#/perfil/${usuariosTab === 'clientes' ? 'cliente' : 'trabajador'}/${u.id}" class="btn btn-ghost btn-sm">Ver perfil</a>`
+            : ''}
           ${u.isActive !== false
             ? `<button type="button" class="btn btn-danger btn-sm btn-del-user" data-id="${u.id}">Desactivar</button>`
             : '—'}

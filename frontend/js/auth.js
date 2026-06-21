@@ -53,10 +53,35 @@ export async function register({ nombre, correo, password, rol }) {
   });
 }
 
+function sameEmail(a, b) {
+  return (a || '').trim().toLowerCase() === (b || '').trim().toLowerCase();
+}
+
 async function detectRole(correo) {
+  // Admin primero: SecurityConfig permite a ADMIN acceder a /trabajadores/**,
+  // lo que hacía que algunos admins se detectaran como TRABAJADOR.
+  try {
+    const admins = await adminRequest('', { silent: true });
+    const list = Array.isArray(admins) ? admins : [];
+    console.log('Respuesta cruda de /api/admin:', admins);
+    console.log('Tipo de admins:', typeof admins, Array.isArray(admins));
+    console.log('Correo que busco:', JSON.stringify(correo));
+    console.log('Lista final:', list);
+    const admin = list.find((a) => sameEmail(a.correo, correo));
+    console.log('Admin encontrado:', admin);
+    if (admin) {
+      return {
+        rol: 'ADMIN',
+        userId: admin.id,
+        email: admin.correo || correo,
+        nombre: admin.nombre,
+      };
+    }
+  } catch { /* siguiente */ }
+
   try {
     const cliente = await request('/clientes/perfil', { silent: true });
-    if (cliente?.rol === 'CLIENTE' || cliente?.id) {
+    if (cliente?.rol === 'CLIENTE') {
       return {
         rol: 'CLIENTE',
         userId: cliente.id,
@@ -68,26 +93,12 @@ async function detectRole(correo) {
 
   try {
     const trabajador = await request('/trabajadores/perfil', { silent: true });
-    if (trabajador?.rol === 'TRABAJADOR' || trabajador?.id) {
+    if (trabajador?.rol === 'TRABAJADOR') {
       return {
         rol: 'TRABAJADOR',
         userId: trabajador.id,
         email: trabajador.correo || correo,
         nombre: trabajador.nombre,
-      };
-    }
-  } catch { /* siguiente */ }
-
-  try {
-    const admins = await adminRequest('', { silent: true });
-    const list = Array.isArray(admins) ? admins : [];
-    const admin = list.find((a) => a.correo === correo);
-    if (admin) {
-      return {
-        rol: 'ADMIN',
-        userId: admin.id,
-        email: admin.correo || correo,
-        nombre: admin.nombre,
       };
     }
   } catch { /* fallthrough */ }
@@ -108,9 +119,6 @@ function emailFromToken(token) {
 export async function restoreSession() {
   if (!getToken()) return null;
   const email = sessionStorage.getItem('email') || emailFromToken(getToken());
-  if (email && sessionStorage.getItem('rol')) {
-    return getSession();
-  }
   try {
     const profile = await detectRole(email || '');
     saveSession({ token: getToken(), ...profile });

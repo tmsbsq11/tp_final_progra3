@@ -10,12 +10,14 @@ export const NAV_BY_ROLE = {
   CLIENTE: [
     { hash: '#/servicios', label: 'Servicios' },
     { hash: '#/reservas', label: 'Mis reservas' },
+    { hash: '#/notificaciones', label: 'Notificaciones' },
     { hash: '#/resenias', label: 'Reseñas' },
     { hash: '#/perfil-cliente', label: 'Perfil' },
   ],
   TRABAJADOR: [
     { hash: '#/mis-servicios', label: 'Mis servicios' },
     { hash: '#/reservas-recibidas', label: 'Solicitudes' },
+    { hash: '#/notificaciones', label: 'Notificaciones' },
     { hash: '#/resenias-trabajador', label: 'Reseñas' },
     { hash: '#/perfil-trabajador', label: 'Perfil' },
   ],

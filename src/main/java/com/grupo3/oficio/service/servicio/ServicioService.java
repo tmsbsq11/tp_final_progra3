@@ -6,11 +6,14 @@ import com.grupo3.oficio.model.trabajos.Servicio;
 import com.grupo3.oficio.model.trabajos.ServicioDTO;
 import com.grupo3.oficio.model.users.Trabajador;
 import com.grupo3.oficio.repository.servicio.ServicioRepository;
+import com.grupo3.oficio.repository.servicio.ServicioSpecifications;
 import com.grupo3.oficio.service.CategoriaService;
 import com.grupo3.oficio.service.NotificacionService;
 import com.grupo3.oficio.service.users.TrabajadorService;
 import com.grupo3.oficio.utils.enums.Rol;
 import com.grupo3.oficio.utils.enums.TipoNotificacion;
+import com.grupo3.oficio.utils.geo.GeoUtils;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -165,6 +168,34 @@ public class ServicioService {
     }
 
     public List<Servicio> buscarConFiltros(Integer idCategoria, String busqueda, Double lat, Double lng, Double radioKm) {
-        return servicioRepository.buscarConFiltros(idCategoria, busqueda, lat, lng, radioKm);
+        Specification<Servicio> spec = Specification.where(ServicioSpecifications.activosYAprobados());
+
+        Specification<Servicio> filtroCategoria = ServicioSpecifications.conCategoria(idCategoria);
+        if (filtroCategoria != null) {
+            spec = spec.and(filtroCategoria);
+        }
+
+        Specification<Servicio> filtroBusqueda = ServicioSpecifications.conBusqueda(busqueda);
+        if (filtroBusqueda != null) {
+            spec = spec.and(filtroBusqueda);
+        }
+
+        List<Servicio> resultados = servicioRepository.findAll(spec);
+
+        if (lat != null && lng != null && radioKm != null) {
+            resultados = resultados.stream()
+                    .filter(s -> {
+                        Trabajador trabajador = s.getTrabajador();
+                        if (trabajador.getLatitud() == null || trabajador.getLongitud() == null) {
+                            return false;
+                        }
+                        double distancia = GeoUtils.calcularDistanciaKm(
+                                lat, lng, trabajador.getLatitud(), trabajador.getLongitud());
+                        return distancia <= radioKm;
+                    })
+                    .toList();
+        }
+
+        return resultados;
     }
 }

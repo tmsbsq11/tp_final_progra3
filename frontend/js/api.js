@@ -52,14 +52,14 @@ export async function adminRequest(path, options = {}) {
     if (token) headers.Authorization = `Bearer ${token}`;
   }
 
-  const url = path.startsWith('/admin') ? path : `/admin${path}`;
+  const url = path.startsWith('/api') ? path : `${API_BASE}/admin${path}`;
 
   const response = await fetch(url, {
     method,
     headers,
     body: body != null ? JSON.stringify(body) : undefined,
   });
-
+  
   const data = await parseBody(response);
 
   if (!response.ok) {

@@ -1,9 +1,11 @@
 import { request, formatDate, formatTime } from '../api.js';
 import { getSession } from '../auth.js';
 import { showToast, setLoading, esc, setupDialogClose, openDialog, badgeEstado, renderTable } from '../ui.js';
+import { userNameLink, bindProfileLinks, formatPuntaje, sortByPuntaje } from '../profile.js';
 
 let servicioDialogBound = false;
 let categoriasCache = [];
+let reseniasTrabajadorSort = 'desc';
 
 async function loadCategorias() {
   if (categoriasCache.length) return categoriasCache;
@@ -185,9 +187,15 @@ export async function renderReservasRecibidas() {
               <button type="button" class="btn btn-danger btn-sm btn-rechazar-reserva" data-id="${r.id}">Rechazar</button>
             </div>`;
         }
+        const cliJson = r.cliente
+          ? JSON.stringify(r.cliente).replace(/'/g, '&#39;')
+          : '';
+        const clienteCell = r.cliente?.id
+          ? `<span data-profile-data='${cliJson}'>${userNameLink('cliente', r.cliente)}</span>`
+          : '—';
         return [
           r.id,
-          r.cliente?.nombre ?? r.cliente?.id ?? '—',
+          clienteCell,
           r.servicio?.titulo || '—',
           formatDate(r.fechaReservada || inicio).split(',')[0],
           horario,
@@ -197,6 +205,7 @@ export async function renderReservasRecibidas() {
       }),
     );
 
+    bindProfileLinks(container);
     container.querySelectorAll('.btn-aceptar-reserva').forEach((btn) => {
       btn.addEventListener('click', () => cambiarEstadoReserva(Number(btn.dataset.id), 'aceptar'));
     });
@@ -213,15 +222,16 @@ export async function renderReseniasTrabajador() {
   try {
     const resenias = await request('/resenias/propias');
     const list = document.getElementById('resenias-trabajador-list');
+    const sorted = sortByPuntaje(resenias || [], reseniasTrabajadorSort);
 
-    if (!resenias?.length) {
+    if (!sorted.length) {
       list.innerHTML = '<div class="empty-state">Todavía no recibiste reseñas</div>';
       return;
     }
 
-    list.innerHTML = resenias.map((r) => `
+    list.innerHTML = sorted.map((r) => `
       <div class="card" style="margin-bottom:0.75rem">
-        <strong>${r.puntaje ?? '—'} ★</strong> — ${esc(r.comentario || 'Sin comentario')}
+        <strong>${formatPuntaje(r.puntaje)}</strong> — ${esc(r.comentario || 'Sin comentario')}
         <div class="card-meta">${esc(r.direccionResenia)} · ${formatDate(r.fechaCreacion)}</div>
       </div>`).join('');
   } finally {
@@ -235,6 +245,7 @@ export async function renderPerfilTrabajador() {
     const t = await request('/trabajadores/perfil');
     const form = document.getElementById('form-perfil-trabajador');
     form.innerHTML = `
+      <p class="card-meta">Puntaje: <strong>${formatPuntaje(t.puntaje)}</strong></p>
       <label>Nombre<input name="nombre" value="${esc(t.nombre)}" required></label>
       <label>Apellido<input name="apellido" value="${esc(t.apellido || '')}"></label>
       <label>DNI<input name="dni" value="${esc(t.dni || '')}"></label>
@@ -295,5 +306,9 @@ export function initTrabajadorEvents() {
   document.getElementById('btn-nuevo-servicio').addEventListener('click', () => openServicioDialog());
   document.getElementById('filtro-estado-recibidas').addEventListener('change', () => {
     if (location.hash === '#/reservas-recibidas') renderReservasRecibidas();
+  });
+  document.getElementById('filtro-orden-resenias-trabajador')?.addEventListener('change', (e) => {
+    reseniasTrabajadorSort = e.target.value;
+    if (location.hash === '#/resenias-trabajador') renderReseniasTrabajador();
   });
 }

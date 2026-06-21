@@ -104,8 +104,21 @@
       <form id="form-perfil-cliente" class="form-card"></form>
     </section>
 
+    <section id="view-notificaciones" class="view hidden">
+      <div class="page-header"><h1>Mis notificaciones</h1></div>
+      <div id="notificaciones-list"></div>
+    </section>
+
+    <section id="view-perfil-publico" class="view hidden"></section>
+
     <section id="view-resenias" class="view hidden">
-      <div class="page-header"><h1>Reseñas</h1></div>
+      <div class="page-header">
+        <h1>Reseñas</h1>
+        <select id="filtro-orden-resenias-cliente">
+          <option value="desc">Mayor a menor puntaje</option>
+          <option value="asc">Menor a mayor puntaje</option>
+        </select>
+      </div>
       <div class="two-col">
         <div>
           <h2>Mis reseñas recibidas</h2>
@@ -177,7 +190,13 @@
     </section>
 
     <section id="view-resenias-trabajador" class="view hidden">
-      <div class="page-header"><h1>Reseñas recibidas</h1></div>
+      <div class="page-header">
+        <h1>Reseñas recibidas</h1>
+        <select id="filtro-orden-resenias-trabajador">
+          <option value="desc">Mayor a menor puntaje</option>
+          <option value="asc">Menor a mayor puntaje</option>
+        </select>
+      </div>
       <div id="resenias-trabajador-list"></div>
     </section>
 
@@ -193,6 +212,9 @@
           <h2 id="categoria-form-title">Nueva categoría</h2>
           <input type="hidden" name="id">
           <label>Nombre<input type="text" name="nombre" required></label>
+          <label class="checkbox-label">
+            <input type="checkbox" name="isActive" checked> Activa
+          </label>
           <label class="checkbox-label">
             <input type="checkbox" name="needsCertification"> Requiere certificación
           </label>

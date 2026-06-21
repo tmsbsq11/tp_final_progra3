@@ -58,7 +58,8 @@ public class SecurityConfig {
                         // --- clientes / trabajadores / admins ---
                         .requestMatchers("/api/clientes/**").hasAnyRole("ADMIN", "CLIENTE")
                         .requestMatchers("/api/trabajadores/**").hasAnyRole("ADMIN", "TRABAJADOR")
-                        .requestMatchers("/api/admins/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.GET, "/api/admin/**").hasRole("ADMIN")
+                        .requestMatchers("/api/admin/**").hasRole("ADMIN")
 
                         // --- notificaciones ---
                         .requestMatchers(HttpMethod.GET, "/api/notificaciones/**").authenticated()

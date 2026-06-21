@@ -1,10 +1,12 @@
 import { request, buscarServicios, geocodeAddress, formatDate, formatTime } from '../api.js';
 import { getSession } from '../auth.js';
 import { showToast, setLoading, esc, setupDialogClose, openDialog, badgeEstado, renderTable } from '../ui.js';
+import { userNameLink, bindProfileLinks, formatPuntaje, sortByPuntaje } from '../profile.js';
 
 let reservaDialogBound = false;
 let categoriasCache = [];
 let serviciosActuales = [];
+let reseniasClienteSort = 'desc';
 
 async function loadCategorias() {
   if (categoriasCache.length) return categoriasCache;
@@ -22,13 +24,18 @@ async function populateCategoriaFilter() {
 
 function servicioCard(s, withReserva = true) {
   const cat = s.categoria?.nombre || 'Sin categoría';
-  const trab = s.trabajador?.nombre || `Trabajador #${s.trabajador?.id || '?'}`;
+  const trabLink = s.trabajador?.id
+    ? userNameLink('trabajador', s.trabajador)
+    : '—';
+  const trabData = s.trabajador
+    ? JSON.stringify(s.trabajador).replace(/'/g, '&#39;')
+    : '';
   return `
-    <article class="card" data-id="${s.id}">
+    <article class="card" data-id="${s.id}" ${trabData ? `data-profile-data='${trabData}'` : ''}>
       <h3>${esc(s.titulo)}</h3>
       <p>${esc(s.descripcion)}</p>
       <div class="card-meta">
-        ${esc(cat)} · ${esc(trab)}<br>
+        ${esc(cat)} · ${trabLink}<br>
         $${s.precioEstimadoPorHora ?? '—'}/h · mín. ${s.minTiempo ?? '—'} min
       </div>
       ${withReserva ? `<button type="button" class="btn btn-primary btn-sm btn-reservar" data-id="${s.id}">Reservar</button>` : ''}
@@ -46,6 +53,7 @@ function renderServiciosList(servicios) {
   }
 
   list.innerHTML = activos.map((s) => servicioCard(s)).join('');
+  bindProfileLinks(list);
   list.querySelectorAll('.btn-reservar').forEach((btn) => {
     btn.addEventListener('click', () => openReservaDialog(Number(btn.dataset.id)));
   });
@@ -202,7 +210,7 @@ export async function renderReservas() {
     }
 
     container.innerHTML = renderTable(
-      ['ID', 'Servicio', 'Día', 'Horario', 'Estado', 'Acciones'],
+      ['ID', 'Servicio', 'Trabajador', 'Día', 'Horario', 'Estado', 'Acciones'],
       list.map((r) => {
         const acciones = r.estadoReserva === 'PENDIENTE'
           ? `<button type="button" class="btn btn-danger btn-sm btn-cancelar-reserva" data-id="${r.id}">Cancelar</button>`
@@ -212,9 +220,16 @@ export async function renderReservas() {
         const horario = fin
           ? `${formatTime(inicio)} – ${formatTime(fin)}`
           : formatTime(inicio);
+        const trabJson = r.trabajador
+          ? JSON.stringify(r.trabajador).replace(/'/g, '&#39;')
+          : '';
+        const trabajadorCell = r.trabajador?.id
+          ? `<span data-profile-data='${trabJson}'>${userNameLink('trabajador', r.trabajador)}</span>`
+          : '—';
         return [
           r.id,
           r.servicio?.titulo || '—',
+          trabajadorCell,
           formatDate(r.fechaReservada || inicio).split(',')[0],
           horario,
           badgeEstado(r.estadoReserva),
@@ -222,6 +237,8 @@ export async function renderReservas() {
         ];
       }),
     );
+
+    bindProfileLinks(container);
 
     container.querySelectorAll('.btn-cancelar-reserva').forEach((btn) => {
       btn.addEventListener('click', () => cancelarReserva(Number(btn.dataset.id)));
@@ -237,6 +254,7 @@ export async function renderPerfilCliente() {
     const cliente = await request('/clientes/perfil');
     const form = document.getElementById('form-perfil-cliente');
     form.innerHTML = `
+      <p class="card-meta">Puntaje: <strong>${formatPuntaje(cliente.puntaje)}</strong></p>
       <label>Nombre<input name="nombre" value="${esc(cliente.nombre)}" required></label>
       <label>Apellido<input name="apellido" value="${esc(cliente.apellido || '')}"></label>
       <label>DNI<input name="dni" value="${esc(cliente.dni || '')}"></label>
@@ -277,13 +295,14 @@ export async function renderResenias() {
   try {
     const resenias = await request(`/resenias/cliente/${userId}`);
     const list = document.getElementById('resenias-list');
+    const sorted = sortByPuntaje(resenias || [], reseniasClienteSort);
 
-    if (!resenias?.length) {
+    if (!sorted.length) {
       list.innerHTML = '<div class="empty-state">Sin reseñas</div>';
     } else {
-      list.innerHTML = resenias.map((r) => `
+      list.innerHTML = sorted.map((r) => `
         <div class="card" style="margin-bottom:0.75rem">
-          <strong>${r.puntaje ?? '—'} ★</strong> — ${esc(r.comentario || 'Sin comentario')}
+          <strong>${formatPuntaje(r.puntaje)}</strong> — ${esc(r.comentario || 'Sin comentario')}
           <div class="card-meta">${esc(r.direccionResenia)} · ${formatDate(r.fechaCreacion)}</div>
         </div>`).join('');
     }
@@ -321,6 +340,11 @@ export async function renderResenias() {
 export function initClienteEvents() {
   document.getElementById('filtro-estado-reserva').addEventListener('change', () => {
     if (location.hash === '#/reservas') renderReservas();
+  });
+
+  document.getElementById('filtro-orden-resenias-cliente')?.addEventListener('change', (e) => {
+    reseniasClienteSort = e.target.value;
+    if (location.hash === '#/resenias') renderResenias();
   });
 
   document.getElementById('form-filtros-servicios').addEventListener('submit', aplicarFiltros);

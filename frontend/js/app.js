@@ -1,5 +1,5 @@
 import { restoreSession } from './auth.js';
-import { initRouter, onRoute, navigate } from './router.js';
+import { initRouter, onRoute, onRoutePattern, navigate } from './router.js';
 import { initAuthViews } from './views/auth.js';
 import {
   renderServicios,
@@ -24,6 +24,7 @@ import {
   renderAdminUsuarios,
   initAdminEvents,
 } from './views/admin.js';
+import { renderPerfilPublico, renderNotificaciones } from './views/shared.js';
 
 function registerRoutes() {
   onRoute('#/login', async () => {});
@@ -33,6 +34,7 @@ function registerRoutes() {
   onRoute('#/reservas', renderReservas);
   onRoute('#/perfil-cliente', renderPerfilCliente);
   onRoute('#/resenias', renderResenias);
+  onRoute('#/notificaciones', renderNotificaciones);
 
   onRoute('#/mis-servicios', renderMisServicios);
   onRoute('#/reservas-recibidas', renderReservasRecibidas);
@@ -45,6 +47,10 @@ function registerRoutes() {
   onRoute('#/admin/reservas', renderAdminReservas);
   onRoute('#/admin/notificaciones', renderAdminNotificaciones);
   onRoute('#/admin/usuarios', renderAdminUsuarios);
+
+  onRoutePattern('perfil', async (params) => {
+    if (params) await renderPerfilPublico(params);
+  });
 }
 
 async function bootstrap() {

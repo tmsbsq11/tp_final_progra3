@@ -133,11 +133,6 @@ Autenticación basada en JWT con control de acceso por roles.
 
 Teniamos la intencion de agregar una api mail y una api para verificar DNI pero por problemas tecnicos solo quedo la estructura de la api mail para notificaciones
 
----
-### Enlaces al despliegue
-Frontend - https://front-tpfp3.vercel.app/
-Backend - https://spring-boot-backend-production-ebe2.up.railway.app/
----
 ### Configuracion necesaria
 ---
 ##  Instalación y ejecución
@@ -215,7 +210,18 @@ cd frontend
 https://canva.link/lrkcp61zw3abxoh
 
 ---
-### Enlaces y usuarios de prueba
+
+---
+### Enlaces al despliegue
+
+Frontend - https://front-tpfp3.vercel.app/
+
+Backend - https://spring-boot-backend-production-ebe2.up.railway.app/
+
+---
+
+---
+### Usuarios de prueba
 
 2 julian@gmail.com : 123456 (trabajador)
 
@@ -225,9 +231,11 @@ https://canva.link/lrkcp61zw3abxoh
 
 4 admin@gmail.com : admin
 
-https://front-tpfp3.vercel.app/
-https://spring-boot-backend-production-ebe2.up.railway.app/
-https://spring-boot-backend-production-ebe2.up.railway.app/swagger-ui/index.html
+---
 
+---
+### Documentacion
+
+https://spring-boot-backend-production-ebe2.up.railway.app/swagger-ui/index.html
 
 ---

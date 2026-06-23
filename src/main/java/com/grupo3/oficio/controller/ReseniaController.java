@@ -4,6 +4,7 @@ import com.grupo3.oficio.model.resenias.CrearReseniaDTO;
 import com.grupo3.oficio.model.resenias.Resenia;
 import com.grupo3.oficio.model.resenias.ReseniaDTO;
 import com.grupo3.oficio.service.ReseniaService;
+import com.grupo3.oficio.service.users.ClienteService;
 import com.grupo3.oficio.service.users.TrabajadorService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -17,10 +18,12 @@ import java.util.List;
 public class ReseniaController {
     ReseniaService reseniaServ;
     TrabajadorService trabajadorService;
+    ClienteService clienteService;
 
-    public ReseniaController(ReseniaService reseniaServ, TrabajadorService trabajadorService) {
+    public ReseniaController(ReseniaService reseniaServ, TrabajadorService trabajadorService, ClienteService clienteService) {
         this.reseniaServ = reseniaServ;
         this.trabajadorService = trabajadorService;
+        this.clienteService = clienteService;
     }
 
     @GetMapping("/{id}")
@@ -43,9 +46,14 @@ public class ReseniaController {
         return ResponseEntity.ok(reseniaServ.mostrarReseniaATrabajador(id));
     }
 
-    @GetMapping("/propias")
-    public ResponseEntity<List<Resenia>> verReseniasPropias(Authentication auth){
+    @GetMapping("/enviadasTrabajador")
+    public ResponseEntity<List<Resenia>> verReseniasRecibidas(Authentication auth){
         return ResponseEntity.ok(reseniaServ.mostrarReseniaATrabajador(trabajadorService.buscarPorEmail(auth.getName()).getId()));
+    }
+
+    @GetMapping("/enviadasCliente")
+    public ResponseEntity<List<Resenia>> verReseniasEnviadas(Authentication auth){
+        return ResponseEntity.ok(reseniaServ.mostrarReseniaACliente(clienteService.buscarPorEmail(auth.getName()).getId()));
     }
 
     @PostMapping

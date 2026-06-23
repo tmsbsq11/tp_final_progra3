@@ -4,6 +4,93 @@ import { showToast, setLoading, esc } from '../ui.js';
 import { formatDate } from '../api.js';
 import { loadProfileSnapshot, formatPuntaje, sortByPuntaje } from '../profile.js';
 
+export async function fetchReservasFinalizadas(rol) {
+  const path = rol === 'CLIENTE'
+    ? '/servicio_reservas/enviadas/FINALIZADO'
+    : '/servicio_reservas/recibidas/FINALIZADO';
+  const reservas = await request(path);
+  return Array.isArray(reservas) ? reservas : [];
+}
+
+function reservaOptionLabel(r, rol) {
+  const serv = r.servicio?.titulo || 'Servicio';
+  const dia = formatDate(r.fechaReservada || r.inicio).split(',')[0];
+  const otro = rol === 'CLIENTE'
+    ? (r.trabajador?.nombre || 'Trabajador')
+    : (r.cliente?.nombre || 'Cliente');
+  return `#${r.id} — ${serv} — ${otro} (${dia})`;
+}
+
+export function fillReservaSelect(select, reservas, rol) {
+  if (!select) return;
+  if (!reservas.length) {
+    select.innerHTML = '<option value="">Sin reservas finalizadas</option>';
+    select.disabled = true;
+    return;
+  }
+  select.disabled = false;
+  select.innerHTML = '<option value="">Elegí una reserva</option>' +
+    reservas.map((r) => {
+      const cid = r.cliente?.id ?? '';
+      const tid = r.trabajador?.id ?? '';
+      return `<option value="${r.id}" data-id-cliente="${cid}" data-id-trabajador="${tid}">${esc(reservaOptionLabel(r, rol))}</option>`;
+    }).join('');
+}
+
+export function direccionReseniaPorRol(rol) {
+  return rol === 'CLIENTE' ? 'CLIENTEATRABAJADOR' : 'TRABAJADORACLIENTE';
+}
+
+export function endpointReseniasEnviadas(rol) {
+  return rol === 'CLIENTE' ? '/resenias/enviadasCliente' : '/resenias/enviadasTrabajador';
+}
+
+export function renderReseniasEnviadasHtml(resenias, sortOrder, rol) {
+  const sorted = sortByPuntaje(resenias || [], sortOrder);
+  if (!sorted.length) return '<div class="empty-state">Todavía no enviaste reseñas</div>';
+  return sorted.map((r) => {
+    const dest = rol === 'CLIENTE'
+      ? (r.trabajador?.nombre || 'Trabajador')
+      : (r.cliente?.nombre || 'Cliente');
+    return `
+      <div class="card" style="margin-bottom:0.75rem">
+        <strong>${formatPuntaje(r.puntaje)}</strong> — ${esc(r.comentario || 'Sin comentario')}
+        <div class="card-meta">Para ${esc(dest)} · ${formatDate(r.fechaCreacion)}</div>
+      </div>`;
+  }).join('');
+}
+
+export async function submitReseniaForm(form, rol, onSuccess) {
+  const fd = new FormData(form);
+  const select = form.querySelector('select[name="idReserva"]');
+  const option = select?.selectedOptions[0];
+  if (!option?.dataset.idCliente || !option?.dataset.idTrabajador) {
+    showToast('Elegí una reserva finalizada', 'error');
+    return;
+  }
+  setLoading(true);
+  try {
+    await request('/resenias', {
+      method: 'POST',
+      body: {
+        idCliente: Number(option.dataset.idCliente),
+        idTrabajador: Number(option.dataset.idTrabajador),
+        puntaje: Number(fd.get('puntaje')),
+        comentario: fd.get('comentario'),
+        direccionResenia: direccionReseniaPorRol(rol),
+      },
+    });
+    showToast('Reseña publicada', 'success');
+    form.reset();
+    if (select) select.selectedIndex = 0;
+    await onSuccess();
+  } catch (err) {
+    showToast(err.message, 'error');
+  } finally {
+    setLoading(false);
+  }
+}
+
 let reseniasSortOrder = 'desc';
 
 export function parsePerfilRoute(hash) {

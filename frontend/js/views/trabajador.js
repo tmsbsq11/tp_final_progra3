@@ -1,7 +1,14 @@
 import { request, formatDate, formatTime } from '../api.js';
 import { getSession } from '../auth.js';
 import { showToast, setLoading, esc, setupDialogClose, openDialog, badgeEstado, renderTable } from '../ui.js';
-import { userNameLink, bindProfileLinks, formatPuntaje, sortByPuntaje } from '../profile.js';
+import { userNameLink, bindProfileLinks, formatPuntaje } from '../profile.js';
+import {
+  fetchReservasFinalizadas,
+  fillReservaSelect,
+  endpointReseniasEnviadas,
+  renderReseniasEnviadasHtml,
+  submitReseniaForm,
+} from './shared.js';
 
 let servicioDialogBound = false;
 let categoriasCache = [];
@@ -220,20 +227,19 @@ export async function renderReservasRecibidas() {
 export async function renderReseniasTrabajador() {
   setLoading(true);
   try {
-    const resenias = await request('/resenias/propias');
-    const list = document.getElementById('resenias-trabajador-list');
-    const sorted = sortByPuntaje(resenias || [], reseniasTrabajadorSort);
+    const [resenias, reservas] = await Promise.all([
+      request(endpointReseniasEnviadas('TRABAJADOR')),
+      fetchReservasFinalizadas('TRABAJADOR'),
+    ]);
+    document.getElementById('resenias-trabajador-list').innerHTML =
+      renderReseniasEnviadasHtml(resenias, reseniasTrabajadorSort, 'TRABAJADOR');
+    fillReservaSelect(document.getElementById('resenia-reserva-trabajador'), reservas, 'TRABAJADOR');
 
-    if (!sorted.length) {
-      list.innerHTML = '<div class="empty-state">Todavía no recibiste reseñas</div>';
-      return;
-    }
-
-    list.innerHTML = sorted.map((r) => `
-      <div class="card" style="margin-bottom:0.75rem">
-        <strong>${formatPuntaje(r.puntaje)}</strong> — ${esc(r.comentario || 'Sin comentario')}
-        <div class="card-meta">${esc(r.direccionResenia)} · ${formatDate(r.fechaCreacion)}</div>
-      </div>`).join('');
+    const form = document.getElementById('form-resenia-trabajador');
+    form.onsubmit = async (e) => {
+      e.preventDefault();
+      await submitReseniaForm(form, 'TRABAJADOR', renderReseniasTrabajador);
+    };
   } finally {
     setLoading(false);
   }

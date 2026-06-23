@@ -127,15 +127,9 @@
         <div>
           <h2>Dejar reseña</h2>
           <form id="form-resenia" class="form-card">
-            <label>Trabajador (ID)<input type="number" name="idTrabajador" required min="1"></label>
+            <label>Reserva finalizada<select id="resenia-reserva-cliente" name="idReserva" required></select></label>
             <label>Puntaje (1-5)<input type="number" name="puntaje" required min="1" max="5" step="0.5"></label>
-            <label>Comentario<textarea name="comentario" rows="3"></textarea></label>
-            <label>Dirección
-              <select name="direccionResenia">
-                <option value="CLIENTEATRABAJADOR">Cliente → Trabajador</option>
-                <option value="TRABAJADORACLIENTE">Trabajador → Cliente</option>
-              </select>
-            </label>
+            <label>Comentario<textarea name="comentario" rows="3" required></textarea></label>
             <button type="submit" class="btn btn-primary">Publicar</button>
           </form>
         </div>
@@ -191,13 +185,27 @@
 
     <section id="view-resenias-trabajador" class="view hidden">
       <div class="page-header">
-        <h1>Reseñas recibidas</h1>
+        <h1>Reseñas</h1>
         <select id="filtro-orden-resenias-trabajador">
           <option value="desc">Mayor a menor puntaje</option>
           <option value="asc">Menor a mayor puntaje</option>
         </select>
       </div>
-      <div id="resenias-trabajador-list"></div>
+      <div class="two-col">
+        <div>
+          <h2>Mis reseñas recibidas</h2>
+          <div id="resenias-trabajador-list"></div>
+        </div>
+        <div>
+          <h2>Dejar reseña</h2>
+          <form id="form-resenia-trabajador" class="form-card">
+            <label>Reserva finalizada<select id="resenia-reserva-trabajador" name="idReserva" required></select></label>
+            <label>Puntaje (1-5)<input type="number" name="puntaje" required min="1" max="5" step="0.5"></label>
+            <label>Comentario<textarea name="comentario" rows="3" required></textarea></label>
+            <button type="submit" class="btn btn-primary">Publicar</button>
+          </form>
+        </div>
+      </div>
     </section>
 
     <!-- Admin -->

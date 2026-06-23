@@ -86,6 +86,7 @@ public class ReseniaService {
     public Resenia buscarPorId(Integer id) {
         return reseniaRepo.findById(id).orElseThrow(() -> new NoSuchElementException("No se encontro el id de la resenia que se quizo buscar"));
     }
+
     public List<Resenia> mostrarReseniaATrabajador(Integer idTrabajador){
         return reseniaRepo.findByTrabajadorIdAndDireccionResenia(idTrabajador,DireccionResenia.CLIENTEATRABAJADOR);// listar las resenias de los clientes al trabajador que se busca
     }
@@ -113,6 +114,12 @@ public class ReseniaService {
         Double promedio = promedioPuntajeTrabajador(trabajador.getId());
         trabajador.setPuntaje(promedio);
         trabajadorService.actualizar(trabajador.getId(), trabajador); // ver nota abajo
+    }
+
+    private void actualizarPuntajeCliente(Cliente cliente) {
+        Double promedio = promedioPuntajeCliente(cliente.getId());
+        cliente.setPuntaje(promedio);
+        clienteService.actualizar(cliente.getId(), cliente); // ver nota abajo
     }
 
     //update

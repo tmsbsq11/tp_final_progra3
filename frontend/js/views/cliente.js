@@ -1,7 +1,14 @@
 import { request, buscarServicios, geocodeAddress, formatDate, formatTime } from '../api.js';
 import { getSession } from '../auth.js';
 import { showToast, setLoading, esc, setupDialogClose, openDialog, badgeEstado, renderTable } from '../ui.js';
-import { userNameLink, bindProfileLinks, formatPuntaje, sortByPuntaje } from '../profile.js';
+import { userNameLink, bindProfileLinks, formatPuntaje } from '../profile.js';
+import {
+  fetchReservasFinalizadas,
+  fillReservaSelect,
+  endpointReseniasEnviadas,
+  renderReseniasEnviadasHtml,
+  submitReseniaForm,
+} from './shared.js';
 
 let reservaDialogBound = false;
 let categoriasCache = [];
@@ -289,48 +296,21 @@ export async function renderPerfilCliente() {
 }
 
 export async function renderResenias() {
-  const { userId } = getSession();
   setLoading(true);
 
   try {
-    const resenias = await request(`/resenias/cliente/${userId}`);
-    const list = document.getElementById('resenias-list');
-    const sorted = sortByPuntaje(resenias || [], reseniasClienteSort);
-
-    if (!sorted.length) {
-      list.innerHTML = '<div class="empty-state">Sin reseñas</div>';
-    } else {
-      list.innerHTML = sorted.map((r) => `
-        <div class="card" style="margin-bottom:0.75rem">
-          <strong>${formatPuntaje(r.puntaje)}</strong> — ${esc(r.comentario || 'Sin comentario')}
-          <div class="card-meta">${esc(r.direccionResenia)} · ${formatDate(r.fechaCreacion)}</div>
-        </div>`).join('');
-    }
+    const [resenias, reservas] = await Promise.all([
+      request(endpointReseniasEnviadas('CLIENTE')),
+      fetchReservasFinalizadas('CLIENTE'),
+    ]);
+    document.getElementById('resenias-list').innerHTML =
+      renderReseniasEnviadasHtml(resenias, reseniasClienteSort, 'CLIENTE');
+    fillReservaSelect(document.getElementById('resenia-reserva-cliente'), reservas, 'CLIENTE');
 
     const form = document.getElementById('form-resenia');
     form.onsubmit = async (e) => {
       e.preventDefault();
-      const fd = new FormData(form);
-      setLoading(true);
-      try {
-        await request('/resenias', {
-          method: 'POST',
-          body: {
-            idCliente: userId,
-            idTrabajador: Number(fd.get('idTrabajador')),
-            puntaje: Number(fd.get('puntaje')),
-            comentario: fd.get('comentario'),
-            direccionResenia: fd.get('direccionResenia'),
-          },
-        });
-        showToast('Reseña publicada', 'success');
-        form.reset();
-        await renderResenias();
-      } catch (err) {
-        showToast(err.message, 'error');
-      } finally {
-        setLoading(false);
-      }
+      await submitReseniaForm(form, 'CLIENTE', renderResenias);
     };
   } finally {
     setLoading(false);

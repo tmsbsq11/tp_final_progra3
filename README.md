@@ -112,7 +112,8 @@ com.grupo3.oficio
 ###  Notificaciones
 
 - Notificación automática por cambios de estado en reservas
-
+- Notificación automática por creacion de resenias hacia tu perfil
+  
 ---
 
 ##  Seguridad

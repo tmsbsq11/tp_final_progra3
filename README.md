@@ -133,7 +133,6 @@ Autenticación basada en JWT con control de acceso por roles.
 
 Teniamos la intencion de agregar una api mail y una api para verificar DNI pero por problemas tecnicos solo quedo la estructura de la api mail para notificaciones
 
-### Configuracion necesaria
 ---
 ##  Instalación y ejecución
 

@@ -212,4 +212,5 @@ cd frontend
 
 ---
 ### Enlace presentacion oral
+https://canva.link/lrkcp61zw3abxoh
 ---

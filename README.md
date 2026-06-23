@@ -10,7 +10,7 @@ Proyecto organizado para Programación 3.
 
 ##  Integrantes del grupo
 
-- Julian Anchoverry
+- Julian Anchoverri
 - Tomas Corrado Busquets
 - Pedro Gabriel Fernandez Raya
 

@@ -90,7 +90,7 @@ public class ServicioReservaController {
     public ResponseEntity<ServicioReserva> aceptarReserva(@PathVariable Integer id){
         return ResponseEntity.ok(servicioReservaService.cambiarReservaEstado(id,EstadoReserva.APROBADO));
     }
-    @PreAuthorize("hasRole('TRABAJADOR')")
+    @PreAuthorize("hasAnyRole('TRABAJADOR', 'CLIENTE')")
     @PatchMapping("/rechazar/{id}")
     public ResponseEntity<ServicioReserva> rechazarReserva(@PathVariable Integer id){
         return ResponseEntity.ok(servicioReservaService.cambiarReservaEstado(id,EstadoReserva.RECHAZADO));

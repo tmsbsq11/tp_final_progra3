@@ -151,11 +151,65 @@ cd tp_final_progra3
 ```
 ### 2. Configurar la base de datos
 
-### 3. Variables de Entorno
-### Ejemplos de requests y responses
----
+Crear una base de datos MySQL vacía:
 
-### Usuarios de prueba
+```sql
+CREATE DATABASE oficiosya;
+```
+
+La aplicación usa `spring.jpa.hibernate.ddl-auto=update` (o `create`), así que las tablas se generan automáticamente al iniciar.
+
+### 3. Variables de entorno
+
+Crear el archivo `src/main/resources/application.properties` con la siguiente configuración:
+
+```properties
+# Base de datos
+spring.datasource.url=jdbc:mysql://localhost:3306/oficiosya
+spring.datasource.username=TU_USUARIO_MYSQL
+spring.datasource.password=TU_PASSWORD_MYSQL
+spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver
+
+# JPA / Hibernate
+spring.jpa.hibernate.ddl-auto=update
+spring.jpa.show-sql=true
+
+# JWT
+jwt.secret=TU_CLAVE_SECRETA_BASE64
+jwt.expiration=86400000
+
+# Mail (opcional, solo estructura)
+spring.mail.host=smtp.gmail.com
+spring.mail.port=587
+spring.mail.username=TU_EMAIL
+spring.mail.password=TU_PASSWORD_APP
+spring.mail.properties.mail.smtp.auth=true
+spring.mail.properties.mail.smtp.starttls.enable=true
+
+# Puerto del servidor
+server.port=8080
+```
+
+### 4. Ejecutar el backend
+
+```bash
+./mvnw spring-boot:run
+```
+
+O desde un IDE como IntelliJ IDEA, ejecutar la clase `OficioApplication.java`.
+
+La API quedará disponible en: `http://localhost:8080`
+
+La documentación Swagger estará en: `http://localhost:8080/swagger-ui/index.html`
+
+### 5. Ejecutar el frontend
+
+```bash
+cd frontend
+# Abrir index.html directamente en el navegador,
+# o usar un servidor local como Live Server (VS Code)
+```
+
 ---
 ### Enlace presentacion oral
 ---

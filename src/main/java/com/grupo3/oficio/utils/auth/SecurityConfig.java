@@ -36,7 +36,12 @@ public class SecurityConfig {
                 .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/auth/**").permitAll()
-
+                        // Documentacion
+                        .requestMatchers(
+                                "/v3/api-docs/**",
+                                "/swagger-ui/**",
+                                "/swagger-ui.html"
+                        ).permitAll()
                         // --- servicio_reservas: rutas específicas primero ---
                         .requestMatchers(HttpMethod.GET, "/api/servicio_reservas/enviadas/**").hasAnyRole("CLIENTE", "ADMIN")
                         .requestMatchers(HttpMethod.GET, "/api/servicio_reservas/recibidas/**").hasRole("TRABAJADOR")

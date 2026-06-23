@@ -213,4 +213,18 @@ cd frontend
 ---
 ### Enlace presentacion oral
 https://canva.link/lrkcp61zw3abxoh
+
+---
+### Enlaces y usuarios de prueba
+
+2 julian@gmail.com : 123456 (trabajador)
+3 tomas@gmail.com : 123456 (trabajador)
+1 pedro@gmail.com : 123456 (cliente) 
+4 admin@gmail.com : admin
+
+https://front-tpfp3.vercel.app/
+https://spring-boot-backend-production-ebe2.up.railway.app/
+https://spring-boot-backend-production-ebe2.up.railway.app/swagger-ui/index.html
+
+
 ---

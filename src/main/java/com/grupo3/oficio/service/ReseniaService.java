@@ -61,7 +61,7 @@ public class ReseniaService {
         resenia.setComentario(reseniaDTO.getComentario());
         resenia.setFechaCreacion(LocalDateTime.now());
         resenia.setDireccionResenia(reseniaDTO.getDireccionResenia());
-        Resenia reseniaGuardada = reseniaRepo.save(resenia);
+        Resenia reseniaGuardada = reseniaRepo.saveAndFlush(resenia);
         if(resenia.getDireccionResenia().equals(DireccionResenia.CLIENTEATRABAJADOR)) {//Si el trabajador es el destinatario le avisa de la nueva resenia porq es publica
             notificacionService.crearNotificacion(
                     new CrearNotificacionDTO(

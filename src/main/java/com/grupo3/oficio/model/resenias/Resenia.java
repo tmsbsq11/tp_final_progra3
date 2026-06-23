@@ -20,11 +20,11 @@ public class Resenia {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "id_cliente")
     private Cliente cliente;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "id_trabajador")
     private Trabajador trabajador;
 

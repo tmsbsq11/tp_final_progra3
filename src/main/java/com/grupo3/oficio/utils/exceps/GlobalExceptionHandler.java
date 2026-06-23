@@ -44,10 +44,11 @@ public class GlobalExceptionHandler {
         return buildError(HttpStatus.BAD_REQUEST, ex.getMessage(),request);
     }
 
-    @ExceptionHandler(Exception.class)
+    /*@ExceptionHandler(Exception.class)
     public ResponseEntity<Map<String, String>> handleGeneric(Exception ex,HttpServletRequest request) {
         return buildError(HttpStatus.INTERNAL_SERVER_ERROR, "Error interno del servidor",request);
-    }
+    }*/
+
     private ResponseEntity<Map<String, String>> buildError(HttpStatus status, String message, HttpServletRequest request) {
         Map<String, String> error = new HashMap<>();
         error.put("message", message);

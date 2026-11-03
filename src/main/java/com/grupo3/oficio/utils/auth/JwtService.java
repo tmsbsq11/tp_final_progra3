@@ -21,7 +21,6 @@ public class JwtService {
     private static final long EXPIRACION_MS = 1000 * 60 * 60 * 24; //24hs
 
     public String generarToken(UserDetails user) {
-        System.out.println("SECRET KEY: " + secretKey);// no deberia salir por consola y tampoco deberia estar en el app.prop
         return Jwts.builder()
                 .subject(user.getUsername())
                 .issuedAt(new Date())

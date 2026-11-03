@@ -37,6 +37,11 @@ public class AuthController {
         if(dto==null){
             throw new IllegalArgumentException("Debe ingresar los datos");
         }
+
+        if(dto.getRol() != Rol.CLIENTE && dto.getRol() != Rol.TRABAJADOR){
+            throw new IllegalArgumentException("Solo se permite registrar clientes o trabajadores.");
+        }
+
         if (usuarioRepo.findByCorreo(dto.getCorreo()).isPresent()) {
             throw new IllegalArgumentException("El email ya está registrado");
         }

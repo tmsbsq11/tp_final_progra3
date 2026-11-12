@@ -5,4 +5,6 @@ import { Login } from './features/auth/login/login';
 export const routes: Routes = [
   { path: '', component: Home },
   { path: 'login', component: Login },
+  {path: 'register', loadComponent: () => import('./features/auth/register/register').then(m => m.Register)},
+  {path: '**',redirectTo: '',pathMatch: 'full'}
 ];

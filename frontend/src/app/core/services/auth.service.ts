@@ -12,4 +12,9 @@ export class AuthService {
       responseType: 'text',
     });
   }
+  register(correo: string, password: string) {
+    return this.http.post('/api/auth/register', { correo, password }, {
+      responseType: 'text',
+    });
+  }
 }

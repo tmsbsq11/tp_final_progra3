@@ -48,7 +48,7 @@ export class Login implements OnInit {
           if (status === 401) {
             this.mensaje.set('Revisá tu correo y contraseña.');
           }else if(status === 403){ 
-            this.mensaje.set('No tenés permisos para acceder a esta aplicación.');
+            this.mensaje.set('No tenés permisos para acceder a esta aplicación.');//lo usamos para probar el login, juntar despues
           }else {
             this.mensaje.set('No se pudo iniciar sesión. Revisá si Spring está corriendo.');
           }

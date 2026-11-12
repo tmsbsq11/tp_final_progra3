@@ -8,5 +8,6 @@ export const routes: Routes = [
   { path: 'login', component: Login },
   {path: 'register', loadComponent: () => import('./features/auth/register/register').then(m => m.Register)},
   {path: 'servicios', component: ListaServicios},
+  { path: 'admin/categorias', loadComponent: () => import('./features/categorias/categoria-form/categoria-form').then(m => m.CategoriaForm) },
   {path: '**',redirectTo: '',pathMatch: 'full'},
 ];

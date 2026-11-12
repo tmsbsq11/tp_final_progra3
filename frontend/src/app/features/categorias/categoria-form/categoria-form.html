@@ -1,0 +1,13 @@
+<h1>Nueva categoría</h1>
+<form [formGroup]="formulario" (ngSubmit)="crear()">
+  <label for="nombre">Nombre</label>
+  <input id="nombre" type="text" formControlName="nombre" />
+
+  <label><input type="checkbox" formControlName="isActive" /> Activa</label>
+  <label><input type="checkbox" formControlName="needsCertification" /> Requiere certificación</label>
+
+  <button type="submit" [disabled]="formulario.invalid || enviando()">
+    {{ enviando() ? 'Creando…' : 'Crear categoría' }}
+  </button>
+</form>
+<p aria-live="polite">{{ mensaje() }}</p>

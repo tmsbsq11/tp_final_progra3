@@ -1,1 +1,17 @@
-<p>lista-servicios works!</p>
+<h1>Servicios disponibles</h1>
+
+@if(cargado()){
+    <p>Cargando servicios...</p>
+}@else if(mensaje()){
+    <p class="mensaje">{{ mensaje() }}</p>
+}@else{
+    @for(servicio of servicios(); track servicio.id){
+        <article>
+            <h2>{{ servicio.titulo }}</h2>
+            <p><strong>Descripción:</strong> {{ servicio.descripcion }}</p>
+            <p><strong>Categoria:</strong> {{ servicio.categoria.nombre }}</p>
+        </article>
+    }@empty {
+        <p class="mensaje">No hay servicios disponibles.</p>
+    }
+}

@@ -15,6 +15,8 @@ export class ListaServicios implements OnInit {
   servicios = signal<Servicio[]>([]); //inicializo la señal con un array vacio para que no tire error 
   cargado = signal(false); //inicializo la señal con false pq todavia no se cargaron los servicios
   mensaje = signal(''); //inicializo la señal con un string vacio
+  categorias = signal<{id : number; nombre : string}[]>([]); //inicializo la señal vacia
+  mensajeCategoria = signal(''); 
 
   constructor (
     private clienteServicios: ClienteServicios //para poder usar los metodos del cliente de servicios
@@ -22,12 +24,13 @@ export class ListaServicios implements OnInit {
 
   ngOnInit(): void {
     this.cargarServicios();
+    this.cargarCategorias();
   }
 
-  cargarServicios() : void{
+  cargarServicios(busqueda = '', idCatalogo ?: number) : void{
     this.cargado.set(true);
     
-    this.clienteServicios.buscarServicios()
+    this.clienteServicios.buscarServicios(busqueda, idCatalogo)
     .pipe(finalize(() => this.cargado.set(false))) //cuando termina de cargar, cambia el estado de cargado a false
     .subscribe({
       next : (servicios) => {
@@ -43,4 +46,15 @@ export class ListaServicios implements OnInit {
     });
   }
 
+  cargarCategorias() : void{
+    this.clienteServicios.obtenerCategorias()
+    .subscribe({
+      next : (categorias) => {
+        this.categorias.set(categorias);
+      },
+      error : () => {
+        this.mensajeCategoria.set('No se pudieron cargar las categorias.');
+      }
+    });
+  }
 }

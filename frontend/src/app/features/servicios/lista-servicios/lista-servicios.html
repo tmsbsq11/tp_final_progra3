@@ -1,17 +1,59 @@
 <h1>Servicios disponibles</h1>
 
-@if(cargado()){
-    <p>Cargando servicios...</p>
-}@else if(mensaje()){
-    <p class="mensaje">{{ mensaje() }}</p>
-}@else{
-    @for(servicio of servicios(); track servicio.id){
-        <article>
-            <h2>{{ servicio.titulo }}</h2>
-            <p><strong>Descripción:</strong> {{ servicio.descripcion }}</p>
-            <p><strong>Categoria:</strong> {{ servicio.categoria.nombre }}</p>
-        </article>
-    }@empty {
-        <p class="mensaje">No hay servicios disponibles.</p>
+<section class="filtros" aria-label="Filtros de servicios">
+
+    <div class="filtros">
+        <label for = "busqueda">Buscar servicios:</label>
+        <input type="search" id="busqueda" #busqueda placeholder="Ej. Plomería">
+        <!-- #busqueda permite leer el valor del campo desde el botón Buscar. -->    
+        <label for="categoria">Categoria: </label>
+        <select id="categoria" #categoria>
+            <option value="">Todas</option>
+            @for (opcion of categorias(); track opcion.id) {
+                <!-- menu desplegable de categorias -->
+                <option [value]="opcion.id">{{ opcion.nombre }}</option>
+            }
+        </select>
+    </div>
+
+    <div class="botones">
+        <button 
+            type = "button" 
+            (click) = "cargarServicios(busqueda.value, categoria.value ? +categoria.value : undefined)"
+            [disabled]="cargado()"><!-- el ? y : funcionan como un if/else y el select #categoria devuelve el valor como texto -->
+            Buscar
+        </button>
+
+        <button
+            type="button"
+            (click)="busqueda.value = ''; categoria.value = ''; cargarServicios()"
+            [disabled]="cargado()">
+            Limpiar filtros
+        </button>
+    </div>
+
+    @if(mensajeCategoria()){
+        <p class="mensaje">{{ mensajeCategoria() }}</p>
     }
-}
+
+</section>
+
+<section class = "resultados" aria-label="Resultados de la búsqueda">
+
+    @if(cargado()){
+        <p>Cargando servicios...</p>
+    }@else if(mensaje()){
+        <p class="mensaje">{{ mensaje() }}</p>
+    }@else{
+        @for(servicio of servicios(); track servicio.id){
+            <article>
+                <h2>{{ servicio.titulo }}</h2>
+                <p><strong>Descripción:</strong> {{ servicio.descripcion }}</p>
+                <p><strong>Categoria:</strong> {{ servicio.categoria.nombre }}</p>
+            </article>
+        }@empty {
+            <p class="mensaje">No hay servicios disponibles.</p>
+        }
+    }
+
+</section>

@@ -1,4 +1,7 @@
-<h1>Iniciar sesión</h1>
+@if(authService.estaAutenticado()){
+  <button (click)="authService.logout()">Cerrar sesión</button>
+}@else {
+  <h1>Iniciar sesión</h1>
 
 <form [formGroup]="formulario" (ngSubmit)="ingresar()">
   <label for="correo">Correo</label>
@@ -13,3 +16,4 @@
 </form>
 
 <p aria-live="polite">{{ mensaje() }}</p>
+}

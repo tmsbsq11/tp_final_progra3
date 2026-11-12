@@ -3,10 +3,12 @@ package com.grupo3.oficio.service.reservas;
 import com.grupo3.oficio.model.CrearNotificacionDTO;
 import com.grupo3.oficio.model.reservas.ServicioReservaDTO;
 import com.grupo3.oficio.model.reservas.ServicioReserva;
+import com.grupo3.oficio.model.trabajos.Servicio;
 import com.grupo3.oficio.model.users.Cliente;
 import com.grupo3.oficio.model.users.Trabajador;
 import com.grupo3.oficio.repository.reservas.ServicioReservaRepository;
 import com.grupo3.oficio.service.NotificacionService;
+import com.grupo3.oficio.service.servicio.ServicioService;
 import com.grupo3.oficio.service.users.ClienteService;
 import com.grupo3.oficio.service.users.TrabajadorService;
 import com.grupo3.oficio.utils.enums.EstadoReserva;
@@ -14,8 +16,10 @@ import com.grupo3.oficio.utils.enums.Rol;
 import com.grupo3.oficio.utils.enums.TipoNotificacion;
 import com.grupo3.oficio.utils.exceps.FechaReservadaException;
 import com.grupo3.oficio.utils.exceps.UsuarioInactivoRuntimeException;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -27,19 +31,32 @@ public class ServicioReservaService {
     private final ClienteService clienteService;
     private final TrabajadorService trabajadorService;
     private final NotificacionService notificacionService;
+    private final ServicioService servicioService;
 
-    public ServicioReservaService(ServicioReservaRepository reservaRepo, ClienteService clienteService, TrabajadorService trabajadorService, NotificacionService notificacionService) {
+    public ServicioReservaService(ServicioReservaRepository reservaRepo, ClienteService clienteService, TrabajadorService trabajadorService, NotificacionService notificacionService, ServicioService servicioService) {
         this.reservaRepo = reservaRepo;
-        this.clienteService= clienteService;
-        this.trabajadorService=trabajadorService;
+        this.clienteService = clienteService;
+        this.trabajadorService = trabajadorService;
         this.notificacionService = notificacionService;
+        this.servicioService = servicioService;
     }
 
-    public List<ServicioReserva> mostrarTodasReservas(){
+    public List<ServicioReserva> mostrarTodasReservas() {
         return reservaRepo.findAll();
     }
 
-    public List<ServicioReserva> mostrarPorEstado(EstadoReserva estadoReserva){
+    public List<ServicioReserva> mostrarReservasPropias(String correo) {
+        return reservaRepo.findByTrabajadorId(trabajadorService.buscarPorEmail(correo).getId());
+    }
+
+    public List<ServicioReserva> mostrarReservasEnviadas() {
+        String correo = SecurityContextHolder.getContext()
+                .getAuthentication()
+                .getName();
+        return reservaRepo.findByClienteId(clienteService.buscarPorEmail(correo).getId());
+    }
+
+    public List<ServicioReserva> mostrarPorEstado(EstadoReserva estadoReserva) {
         if (estadoReserva == null) {
             throw new IllegalArgumentException(
                     "El estado es obligatorio");
@@ -49,9 +66,25 @@ public class ServicioReservaService {
                 .toList();
     }
 
-    public ServicioReserva buscarReservaPorId(Integer id){
+    public List<ServicioReserva> mostrarReservasPropiasEstado(EstadoReserva estadoReserva, String correo) {
+        if (estadoReserva == null) {
+            throw new IllegalArgumentException(
+                    "El estado es obligatorio");
+        }
+        return reservaRepo.findByTrabajadorId(trabajadorService.buscarPorEmail(correo).getId()).stream()
+                .filter(reserva -> reserva.getEstadoReserva().equals(estadoReserva))
+                .toList();
+    }
+    public List<ServicioReserva> mostrarReservasEnviadasEstado(EstadoReserva estadoReserva){
+        String correo = SecurityContextHolder.getContext()
+                .getAuthentication()
+                .getName();
+        return reservaRepo.findByClienteId(clienteService.buscarPorEmail(correo).getId()).stream().filter(reserva -> reserva.getEstadoReserva().equals(estadoReserva))
+                .toList();
+    }
+    public ServicioReserva buscarReservaPorId(Integer id) {
         return reservaRepo.findById(id)
-                .orElseThrow(()->new NoSuchElementException("No se encontró la reserva con el id " + id));
+                .orElseThrow(() -> new NoSuchElementException("No se encontró la reserva con el id " + id));
     }
 
     public ServicioReserva cambiarReservaEstado(Integer id, EstadoReserva estadoNuevo) {
@@ -80,8 +113,25 @@ public class ServicioReservaService {
                             + " a "
                             + estadoNuevo);
         }
-
+        boolean hayConflicto =
+                reservaRepo
+                        .existsByTrabajadorAndEstadoReservaAndInicioLessThanAndFinGreaterThan(
+                                reserva.getTrabajador(),
+                                EstadoReserva.APROBADO,
+                                reserva.getFin().plusMinutes(reserva.getTrabajador().getMinutosMinimoEntreReservas()),
+                                reserva.getInicio().minusMinutes(reserva.getTrabajador().getMinutosMinimoEntreReservas())
+                        );
+        if (hayConflicto) {
+            throw new FechaReservadaException(
+                    "El trabajador ya tiene una reserva aceptada en ese horario");
+        }
         reserva.setEstadoReserva(estadoNuevo);
+        if(estadoActual != EstadoReserva.APROBADO &&reserva.getEstadoReserva().equals(EstadoReserva.APROBADO)){//si esta aprobado que cancele las demas en el mismo horario
+            List<ServicioReserva> pendientes=reservaRepo.findByTrabajadorAndEstadoReservaAndInicioLessThanAndFinGreaterThan(reserva.getTrabajador(),EstadoReserva.PENDIENTE,reserva.getFin(),reserva.getInicio());
+            pendientes.stream().filter(r -> !r.getId().equals(reserva.getId())).forEach(r -> r.setEstadoReserva(EstadoReserva.RECHAZADO));//filter me saca la reserva actual por las dudas
+        reservaRepo.saveAll(pendientes); //guardo los cambios
+        }
+
         notificacionService.crearNotificacion(
                 new CrearNotificacionDTO(
                         "CAMBIO DE ESTADO DE RESERVA",
@@ -94,7 +144,7 @@ public class ServicioReservaService {
         return reservaRepo.save(reserva);
     }
 
-    public ServicioReservaDTO registrarUnaReserva(ServicioReservaDTO servicioReservaDTO){
+    public ServicioReservaDTO registrarUnaReserva(ServicioReservaDTO servicioReservaDTO) {
         //validaciones
         if (servicioReservaDTO == null) {
             throw new IllegalArgumentException("La reserva no puede ser nula");
@@ -108,56 +158,64 @@ public class ServicioReservaService {
         if (servicioReservaDTO.getFechaReservada() == null) {
             throw new IllegalArgumentException("La fecha reservada es obligatoria");
         }
-        if (servicioReservaDTO.getFechaReservada().isBefore(LocalDateTime.now())) {
+        if (servicioReservaDTO.getFechaReservada().isBefore(LocalDate.now())) {
             throw new IllegalArgumentException(
                     "No se puede reservar una fecha pasada"
             );
         }
-        if (servicioReservaDTO.getFechaInicio() == null ||
-                servicioReservaDTO.getFechaFin() == null) {
-
+        if (servicioReservaDTO.getHoraInicio() == null || servicioReservaDTO.getHoraFin() == null) {
             throw new IllegalArgumentException(
                     "Debe indicar fecha de inicio y fin"
             );
         }
-        if (!servicioReservaDTO.getFechaInicio()
-                .isBefore(servicioReservaDTO.getFechaFin())) {
-
+        if (!servicioReservaDTO.getHoraInicio().isBefore(servicioReservaDTO.getHoraFin())) {
             throw new IllegalArgumentException(
                     "La fecha de inicio debe ser anterior a la fecha de fin"
             );
         }
 
+        long pendientesDelCliente = reservaRepo.countByCliente_IdAndEstadoReserva(servicioReservaDTO.getIdCliente(), EstadoReserva.PENDIENTE);
+        if (pendientesDelCliente >= 5) {
+            throw new IllegalArgumentException(
+                    "Ya tenés demasiadas reservas pendientes. Esperá una respuesta antes de crear más.");
+        }
+
+
+        LocalDateTime fechaInicio = LocalDateTime.of(servicioReservaDTO.getFechaReservada(), servicioReservaDTO.getHoraInicio());
+        LocalDateTime fechaFin = LocalDateTime.of(servicioReservaDTO.getFechaReservada(), servicioReservaDTO.getHoraFin());
+
+        if (fechaInicio.isBefore(LocalDateTime.now())) {
+            throw new IllegalArgumentException("No se puede reservar una fecha pasada");
+        }
+
         Cliente cliente = clienteService.buscarPorId(servicioReservaDTO.getIdCliente());
-        if(!cliente.getIsActive()) {
-        throw new UsuarioInactivoRuntimeException("El cliente debe estar activo para realizar una reserva");
+
+        if (reservaRepo.existsByClienteAndInicioLessThanAndFinGreaterThan(
+                cliente, fechaFin, fechaInicio)) {
+            throw new IllegalArgumentException(
+                    "Un cliente solo puede crear una reserva por franja horaria");
+        }
+        if (!cliente.getIsActive()) {
+            throw new UsuarioInactivoRuntimeException("El cliente debe estar activo para realizar una reserva");
         }
         Trabajador trabajador = trabajadorService.buscarPorId(servicioReservaDTO.getIdTrabajador());
-        if(!trabajador.getIsActive()) {
+        if (!trabajador.getIsActive()) {
             throw new UsuarioInactivoRuntimeException("El trabajador debe estar activo para realizar una reserva");
         }
-
-        LocalDateTime fechaReservada = servicioReservaDTO.getFechaReservada();
-
-        if (fechaReservada.isBefore(servicioReservaDTO.getFechaInicio()) ||
-                fechaReservada.isAfter(servicioReservaDTO.getFechaFin())) {
-
-            throw new IllegalArgumentException(
-                    "La fecha reservada debe estar entre inicio y fin"
-            );
+        Servicio servicio = servicioService.buscarPorId(servicioReservaDTO.getIdServicio());
+        if (!servicio.getIsActive()) {
+            throw new IllegalArgumentException("Servicio Inactivo"); //cambiar por excepc personalizada
         }
 
         boolean hayConflicto =
-                reservaRepo
-                        .existsByTrabajadorAndEstadoReservaAndInicioLessThanAndFinGreaterThan(
-                                trabajador,
-                                EstadoReserva.APROBADO,
-                                servicioReservaDTO.getFechaFin().plusMinutes(trabajador.getMinutosMinimoEntreReservas()),
-                                servicioReservaDTO.getFechaInicio().minusMinutes(trabajador.getMinutosMinimoEntreReservas())
-                        );
+                reservaRepo.existsByTrabajadorAndEstadoReservaAndInicioLessThanAndFinGreaterThan(
+                        trabajador,
+                        EstadoReserva.APROBADO,
+                        fechaFin.plusMinutes(trabajador.getMinutosMinimoEntreReservas()),
+                        fechaInicio.minusMinutes(trabajador.getMinutosMinimoEntreReservas())
+                );
         if (hayConflicto) {
-            throw new FechaReservadaException(
-                    "El trabajador ya tiene una reserva en ese horario");
+            throw new FechaReservadaException("El trabajador ya tiene una reserva en ese horario");
         }
 
         ServicioReserva reserva = new ServicioReserva();
@@ -165,12 +223,13 @@ public class ServicioReservaService {
         servicioReservaDTO.setEstadoReserva(EstadoReserva.PENDIENTE);
         reserva.setFechaCreacion(LocalDateTime.now());
         servicioReservaDTO.setFechaCreacion(LocalDateTime.now());
-        reserva.setFechaReservada(fechaReservada);
+        reserva.setFechaReservada(fechaInicio);
         reserva.setCliente(cliente);
         reserva.setTrabajador(trabajador);
-        reserva.setInicio(servicioReservaDTO.getFechaInicio());
-        reserva.setFin(servicioReservaDTO.getFechaFin());
-        ServicioReserva reservaGuardada= reservaRepo.save(reserva);
+        reserva.setInicio(fechaInicio);
+        reserva.setFin(fechaFin);
+        reserva.setServicio(servicio);
+        ServicioReserva reservaGuardada = reservaRepo.save(reserva);
         notificacionService.crearNotificacion(
                 new CrearNotificacionDTO(
                         "Nueva reserva",
@@ -184,7 +243,7 @@ public class ServicioReservaService {
     }
 
     //Puede ser que haya que reemplazar con eliminado inteligente o simplemente cambiar estado a RECHAZADO
-    public void eliminarReserva(ServicioReserva reserva){
+    public void eliminarReserva(ServicioReserva reserva) {
         buscarReservaPorId(reserva.getId());
         reservaRepo.delete(reserva);
     }

@@ -1,6 +1,8 @@
 package com.grupo3.oficio.service.users;
 
 import com.grupo3.oficio.model.users.Cliente;
+import com.grupo3.oficio.model.users.ClienteEntradaDTO;
+import com.grupo3.oficio.model.users.ClienteSalidaDTO;
 import com.grupo3.oficio.repository.users.ClienteRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Service;
@@ -14,6 +16,49 @@ public class ClienteService {
     private final ClienteRepository clienteRepository;
 
     public ClienteService(ClienteRepository clienteRepository) { this.clienteRepository = clienteRepository; }
+
+    private ClienteSalidaDTO convertirAClienteSalidaDTO(Cliente cliente) {
+        if (cliente == null) return null;
+
+        ClienteSalidaDTO dto = new ClienteSalidaDTO();
+        dto.setId(cliente.getId());
+        dto.setCorreo(cliente.getCorreo());
+        dto.setUsername(cliente.getUsername());
+        dto.setIsActive(cliente.getIsActive());
+        dto.setNombre(cliente.getNombre());
+        dto.setApellido(cliente.getApellido());
+        dto.setDni(cliente.getDni());
+        dto.setDireccionFoto(cliente.getDireccionFoto());
+        dto.setFechaCreacion(cliente.getFechaCreacion());
+        dto.setRol(cliente.getRol());
+        dto.setPuntaje(cliente.getPuntaje());
+        dto.setDescripcion(cliente.getDescripcion());
+
+        return dto;
+    }
+
+    private Cliente convertirAClienteEntidad(ClienteEntradaDTO dto) {
+        if (dto == null) return null;
+
+        Cliente cliente = new Cliente();
+        cliente.setId(dto.getId());
+        cliente.setCorreo(dto.getCorreo());
+        cliente.setUsername(dto.getUsername());
+        cliente.setPassword(dto.getPassword());
+        cliente.setIsActive(dto.getIsActive());
+        cliente.setNombre(dto.getNombre());
+        cliente.setApellido(dto.getApellido());
+        cliente.setDni(dto.getDni());
+        cliente.setDireccionFoto(dto.getDireccionFoto());
+        cliente.setFechaCreacion(dto.getFechaCreacion());
+        cliente.setRol(dto.getRol());
+        cliente.setPuntaje(dto.getPuntaje());
+        cliente.setDescripcion(dto.getDescripcion());
+
+        return cliente;
+    }
+
+
 
     //CRUD
         //create

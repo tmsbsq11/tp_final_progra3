@@ -24,16 +24,16 @@ public class ReseniaService {
     TrabajadorService trabajadorService;
     NotificacionService notificacionService;
 
-    public ReseniaService(ReseniaRepository reseniaRepo,ClienteService clienteService, TrabajadorService trabajadorService) {
+    public ReseniaService(ReseniaRepository reseniaRepo,ClienteService clienteService, TrabajadorService trabajadorService, NotificacionService notificacionService) {
         this.reseniaRepo = reseniaRepo;
         this.clienteService = clienteService;
         this.trabajadorService = trabajadorService;
+        this.notificacionService = notificacionService;
     }
 
     //CRUD
     //create
     public Resenia crearResenia(CrearReseniaDTO reseniaDTO) {
-
         Trabajador trabajador = trabajadorService.buscarPorId(reseniaDTO.getIdTrabajador());
         Cliente cliente = clienteService.buscarPorId(reseniaDTO.getIdCliente());
         if(cliente == null){
@@ -61,6 +61,7 @@ public class ReseniaService {
         resenia.setComentario(reseniaDTO.getComentario());
         resenia.setFechaCreacion(LocalDateTime.now());
         resenia.setDireccionResenia(reseniaDTO.getDireccionResenia());
+        Resenia reseniaGuardada = reseniaRepo.saveAndFlush(resenia);
         if(resenia.getDireccionResenia().equals(DireccionResenia.CLIENTEATRABAJADOR)) {//Si el trabajador es el destinatario le avisa de la nueva resenia porq es publica
             notificacionService.crearNotificacion(
                     new CrearNotificacionDTO(
@@ -71,8 +72,10 @@ public class ReseniaService {
                             Rol.TRABAJADOR
                     )
             );
+            actualizarPuntajeTrabajador(trabajador);
         }
-        return reseniaRepo.save(resenia);
+
+        return reseniaGuardada;
     }
 
     //read
@@ -83,6 +86,7 @@ public class ReseniaService {
     public Resenia buscarPorId(Integer id) {
         return reseniaRepo.findById(id).orElseThrow(() -> new NoSuchElementException("No se encontro el id de la resenia que se quizo buscar"));
     }
+
     public List<Resenia> mostrarReseniaATrabajador(Integer idTrabajador){
         return reseniaRepo.findByTrabajadorIdAndDireccionResenia(idTrabajador,DireccionResenia.CLIENTEATRABAJADOR);// listar las resenias de los clientes al trabajador que se busca
     }
@@ -105,6 +109,19 @@ public class ReseniaService {
                 .average()
                 .orElse(0.0);//valor por defecto
     }
+
+    private void actualizarPuntajeTrabajador(Trabajador trabajador) {
+        Double promedio = promedioPuntajeTrabajador(trabajador.getId());
+        trabajador.setPuntaje(promedio);
+        trabajadorService.actualizar(trabajador.getId(), trabajador); // ver nota abajo
+    }
+
+    private void actualizarPuntajeCliente(Cliente cliente) {
+        Double promedio = promedioPuntajeCliente(cliente.getId());
+        cliente.setPuntaje(promedio);
+        clienteService.actualizar(cliente.getId(), cliente); // ver nota abajo
+    }
+
     //update
     public Resenia actualizarResenia( ReseniaDTO reseniaDTO, Integer id) {
         Resenia resenia=buscarPorId(id);
@@ -131,12 +148,19 @@ public class ReseniaService {
         resenia.setCliente(cliente);
         resenia.setTrabajador(trabajador);
         resenia.setPuntaje(reseniaDTO.getPuntaje());
-        return reseniaRepo.save(resenia);
+        Resenia actualizada = reseniaRepo.save(resenia);
+        if(resenia.getDireccionResenia().equals(DireccionResenia.CLIENTEATRABAJADOR)) {
+            actualizarPuntajeTrabajador(trabajador);
+        }
+        return actualizada;
     }
 
     //delete
     public void eliminarResenia(Integer id) {
         Resenia resenia = buscarPorId(id);
         reseniaRepo.delete(resenia);
+        if(resenia.getDireccionResenia().equals(DireccionResenia.CLIENTEATRABAJADOR)) {
+            actualizarPuntajeTrabajador(resenia.getTrabajador());
+        }
     }
 }

@@ -36,16 +36,40 @@ public class SecurityConfig {
                 .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/auth/**").permitAll()
-                        .requestMatchers("/api/servicio_reservas/**").hasAnyRole("CLIENTE","ADMIN")
-                        .requestMatchers(HttpMethod.GET,"/api/servicios").authenticated()
-                        .requestMatchers("/api/servicios/**").hasAnyRole("TRABAJADOR","ADMIN")
+                        // Documentacion
+                        .requestMatchers(
+                                "/v3/api-docs/**",
+                                "/swagger-ui/**",
+                                "/swagger-ui.html"
+                        ).permitAll()
+                        // --- servicio_reservas: rutas específicas primero ---
+                        .requestMatchers(HttpMethod.GET, "/api/servicio_reservas/enviadas/**").hasAnyRole("CLIENTE", "ADMIN")
+                        .requestMatchers(HttpMethod.GET, "/api/servicio_reservas/recibidas/**").hasRole("TRABAJADOR")
+                        .requestMatchers(HttpMethod.GET, "/api/servicio_reservas/estado/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.GET, "/api/servicio_reservas").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.GET, "/api/servicio_reservas/**").hasRole("ADMIN") // catch-all: cubre /{id}
+                        .requestMatchers(HttpMethod.PATCH, "/api/servicio_reservas/**").hasRole("TRABAJADOR")
+                        .requestMatchers(HttpMethod.POST, "/api/servicio_reservas/**").hasAnyRole("CLIENTE", "ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/api/servicio_reservas/**").hasRole("ADMIN")
+
+                        // --- servicios ---
+                        .requestMatchers(HttpMethod.GET, "/api/servicios/**").authenticated()
+                        .requestMatchers("/api/servicios/**").hasAnyRole("TRABAJADOR", "ADMIN")
+
+                        // --- categorias ---
                         .requestMatchers(HttpMethod.GET, "/api/categorias/**").authenticated()
-                        .requestMatchers("/api/categorias/**").hasAnyRole("ADMIN")//ver si conviene q sea auth y despues poner todo menos mostrar categorias para admin
-                        .requestMatchers("/api/clientes/**").hasAnyRole("ADMIN","CLIENTE")
-                        .requestMatchers("/api/trabajadores/**").hasAnyRole("ADMIN","TRABAJADOR")
-                        .requestMatchers("/api/admins/**").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.GET,"/api/noificaciones/**").authenticated()
-                        .requestMatchers("/api/noificaciones/**").hasRole("ADMIN")
+                        .requestMatchers("/api/categorias/**").hasAnyRole("ADMIN") //ver si conviene q sea auth y despues poner todo menos mostrar categorias para admin
+
+                        // --- clientes / trabajadores / admins ---
+                        .requestMatchers("/api/clientes/**").hasAnyRole("ADMIN", "CLIENTE")
+                        .requestMatchers("/api/trabajadores/**").hasAnyRole("ADMIN", "TRABAJADOR")
+                        .requestMatchers(HttpMethod.GET, "/api/admin/**").hasRole("ADMIN")
+                        .requestMatchers("/api/admin/**").hasRole("ADMIN")
+
+                        // --- notificaciones ---
+                        .requestMatchers(HttpMethod.GET, "/api/notificaciones/**").authenticated()
+                        .requestMatchers("/api/notificaciones/**").hasRole("ADMIN")
+
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)

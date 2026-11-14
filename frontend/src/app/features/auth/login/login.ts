@@ -2,7 +2,7 @@ import { Component, OnInit, signal } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { finalize } from 'rxjs';
 import { AuthService } from '../../../core/services/auth.service';
-
+import { Router } from '@angular/router'
 @Component({
   selector: 'app-login',
   imports: [ReactiveFormsModule],
@@ -16,7 +16,8 @@ export class Login implements OnInit {
 
   constructor(
     private fb: FormBuilder,
-    private authService: AuthService,
+    public authService: AuthService,
+    private router: Router
   ) {}
 
   ngOnInit(): void {
@@ -42,7 +43,12 @@ export class Login implements OnInit {
       .subscribe({
         next: (token) => {
           sessionStorage.setItem('oficiosya_token', token);
+
+  console.log('Token:', token);
+  console.log('ID usuario:', this.authService.getUserId());
+  console.log('Rol usuario:', this.authService.getUserRole());
           this.mensaje.set('Sesión iniciada.');
+          this.router.navigate(['home']);// redireccion a pag principal
         },
         error: ({ status }) => {
           if (status === 401) {

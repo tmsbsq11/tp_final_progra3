@@ -70,3 +70,4 @@ application-dev.yml
 generated/
 out/
 bin/
+src/main/resources/application.properties

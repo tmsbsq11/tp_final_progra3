@@ -4,7 +4,12 @@
     <ul>
         <li><a href="">Inicio</a></li>
         <li><a href="">Perfil</a></li>
+        @if(!authService.estaAutenticado()){
+        <li><a routerLink="/login" routerLinkActive="active">Login</a></li>
+        <li><a routerLink="/register" routerLinkActive="active">Registrarse</a></li>
+        }@else{
+          <li><a (click)="authService.logout()">Cerrar Sesion</a></li>
+        }
     </ul>
-
   </nav>
 </header>

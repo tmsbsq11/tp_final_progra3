@@ -22,8 +22,8 @@ export class AuthService {
       responseType: 'text',
     });
   }
-  register(correo: string, password: string) {
-    return this.http.post('/api/auth/register', { correo, password }, {
+  register(correo: string, password: string,rol: string,nombre: string) {
+    return this.http.post('/api/auth/register', { correo, password,rol,nombre }, {
       responseType: 'text',
     });
   }

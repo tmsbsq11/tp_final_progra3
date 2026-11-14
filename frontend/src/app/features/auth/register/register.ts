@@ -19,8 +19,10 @@ export class Register implements OnInit {
    }
   ngOnInit(): void {
   this.formulario = this.fb.group({
+    nombre:['',[Validators.required]],
     correo:['',[Validators.required,Validators.email]],
     password:['',[Validators.required]],
+    rol:['CLIENTE',Validators.required],
   })
   }
  registrar():void{
@@ -28,15 +30,20 @@ export class Register implements OnInit {
     this.formulario.markAllAsTouched();
     return;
   }
-  const {correo,password}=this.formulario.getRawValue();
+  const {correo,password,rol,nombre}=this.formulario.getRawValue();
 
   this.mensaje.set('');
   this.enviando.set(true);
 
-  this.authService.register(correo,password).pipe(finalize(()=>this.enviando.set(false))).subscribe({
+  this.authService.register(correo,password,rol,nombre).pipe(finalize(()=>this.enviando.set(false))).subscribe({
     next: ()=>{
       this.mensaje.set('Usuario registrado correctamente. Inicie sesión.');
-      this.formulario.reset();
+      this.formulario.reset({
+            nombre: '',
+            correo: '',
+            password: '',
+            rol: 'CLIENTE'
+          });
     },
     error:({status})=>{
       if(status===409){

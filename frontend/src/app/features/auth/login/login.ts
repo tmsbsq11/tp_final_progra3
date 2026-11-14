@@ -43,6 +43,10 @@ export class Login implements OnInit {
       .subscribe({
         next: (token) => {
           sessionStorage.setItem('oficiosya_token', token);
+
+  console.log('Token:', token);
+  console.log('ID usuario:', this.authService.getUserId());
+  console.log('Rol usuario:', this.authService.getUserRole());
           this.mensaje.set('Sesión iniciada.');
           this.router.navigate(['home']);// redireccion a pag principal
         },

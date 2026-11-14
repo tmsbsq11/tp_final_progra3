@@ -72,7 +72,7 @@ public class AuthController {
                 new UsernamePasswordAuthenticationToken(dto.getCorreo(), dto.getPassword())
         );
         User usuario = usuarioRepo.findByCorreo(dto.getCorreo()).get();
-        String token = jwtService.generarToken(usuario);
+        String token = jwtService.generarToken(usuario,usuario.getId(),usuario.getRol().toString());
         return ResponseEntity.ok(token);
     }
 }

@@ -5,7 +5,7 @@ import { ListaServicios } from './features/servicios/lista-servicios/lista-servi
 import { authGuard } from './core/guards/auth.guard';
 export const routes: Routes = [
   { path: '', component: Home },
-  { path: 'login', component: Login },
+  { path: 'login', loadComponent: () => import('./features/auth/login/login').then(m => m.Login) },
   {path: 'register', loadComponent: () => import('./features/auth/register/register').then(m => m.Register)},
   {path: 'servicios', component: ListaServicios, canActivate: [authGuard]},
   {path: '**',redirectTo: '',pathMatch: 'full'},

@@ -1,10 +1,22 @@
+@if(authService.estaAutenticado()){
+  <button (click)="authService.logout()">Cerrar sesión</button>
+}@else {
 <h1>Registro</h1>
 <form [formGroup]="formulario" (ngSubmit)="registrar()">
+    <label for="nombre">Nombre de Usuario</label>
+    <input type="text" id="nombre" formControlName="nombre" placeholder="Ingrese su nombre de usuario">
     <label for="correo">Correo</label>
     <input id="correo" type="email" formControlName="correo" placeholder="Ingrese su email">
     <label for="password">Contraseña</label>
     <input id="password" type="password" formControlName="password" placeholder="Ingrese su contraseña">
-    <button type="submit" [disabled]="formulario.invalid || enviando()">
+    <label for="role">Rol</label>
+    <select id="rol" formControlName="rol">
+        <option value="">Elija su rol</option>
+        <option value="CLIENTE">Cliente</option>
+        <option value="TRABAJADOR">Trabajador</option>
+    </select>
+    <button type="submit" [disabled]="formulario.invalid|| enviando()" (click)="mensaje()">
         {{ enviando() ? 'Registrando…' : 'Registrarse' }}
     </button>
 </form>
+}

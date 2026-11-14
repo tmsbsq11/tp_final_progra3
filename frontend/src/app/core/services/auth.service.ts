@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
-import { Injectable, inject, signal } from '@angular/core';
-import { Router } from '@angular/router';
+import { Injectable, inject,signal } from '@angular/core';
+import {Router} from '@angular/router'
+import {jwtDecode} from 'jwt-decode';
 @Injectable({ providedIn: 'root' })
 export class AuthService {
 
@@ -21,8 +22,8 @@ export class AuthService {
       responseType: 'text',
     });
   }
-  register(correo: string, password: string) {
-    return this.http.post('/api/auth/register', { correo, password }, {
+  register(correo: string, password: string,rol: string,nombre: string) {
+    return this.http.post('/api/auth/register', { correo, password,rol,nombre }, {
       responseType: 'text',
     });
   }
@@ -31,4 +32,34 @@ export class AuthService {
     this.autenticado.set(false);
     this.router.navigate(['/login']);
   }
+  getToken(): string|null {
+    return sessionStorage.getItem('oficiosya_token');
+  }
+  getUserId(): number|null {
+    const token = this.getToken();
+    if(!token) return null;
+    try {
+      const payload = jwtDecode<TokenPayload>(token);
+      return payload.id ?? null;
+    } catch {
+      return null;
+    }
+  }
+    getUserRole(): string|null {
+      const token = this.getToken();
+      if(!token) return null;
+      try{
+        const payload = jwtDecode<TokenPayload>(token);
+        return payload.role ?? null;
+      } catch {
+        return null;
+      }
+    }
+
 }
+interface TokenPayload {
+    id:number;
+    correo: string,
+    role: string
+  }
+  

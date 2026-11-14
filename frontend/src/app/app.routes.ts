@@ -8,9 +8,10 @@ import { authGuard } from './core/guards/auth.guard';
 export const routes: Routes = [
   { path: '', component: Home },
   { path: 'admin/categorias', loadComponent: () => import('./features/categorias/categoria-form/categoria-form').then(m => m.CategoriaForm) },
+  { path: 'admin/categorias/lista', loadComponent: () => import('./features/categorias/categorias-lista/categorias-lista').then(m => m.CategoriasLista) },
   { path: 'servicios/:id/reservar', loadComponent: () => import('./features/reservas/reserva-form').then(m => m.ReservaForm) },
   { path: 'login', loadComponent: () => import('./features/auth/login/login').then(m => m.Login) },
-  {path: 'register', loadComponent: () => import('./features/auth/register/register').then(m => m.Register)},
-  {path: 'servicios', component: ListaServicios, canActivate: [authGuard]},
-  {path: '**',redirectTo: '',pathMatch: 'full'},
+  { path: 'register', loadComponent: () => import('./features/auth/register/register').then(m => m.Register)},
+  { path: 'servicios', component: ListaServicios, canActivate: [authGuard]},
+  { path: '**',redirectTo: '',pathMatch: 'full'},
 ];

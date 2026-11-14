@@ -4,8 +4,9 @@ import { ClienteServicios } from '../client/cliente-servicios';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { Servicio } from '../model/servicio.model';
 import { finalize } from 'rxjs';
+import { RouterLink } from '@angular/router';
 @Component({
-  imports: [],
+  imports: [RouterLink],
   selector: 'app-lista-servicios',
   styleUrl: './lista-servicios.css',
   templateUrl: './lista-servicios.html',

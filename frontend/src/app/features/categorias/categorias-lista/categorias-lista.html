@@ -1,0 +1,53 @@
+<h1>Categorías</h1>
+<p><a routerLink="/admin/categorias">Nueva categoría</a></p>
+
+@if (cargando()) {
+  <p>Cargando…</p>
+} @else {
+  <table>
+    <thead>
+      <tr>
+        <th>Nombre</th>
+        <th>Estado</th>
+        <th>Requiere certificación</th>
+        <th>Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      @for (c of categorias(); track c.id) {
+        <tr>
+          <td>{{ c.nombre }}</td>
+          <td>{{ c.isActive ? 'Activa' : 'Inactiva' }}</td>
+          <td>{{ c.needsCertification ? 'Sí' : 'No' }}</td>
+          <td>
+            <button type="button" (click)="editar(c)">Editar</button>
+            <button type="button" (click)="cambiarEstado(c)">
+              {{ c.isActive ? 'Desactivar' : 'Reactivar' }}
+            </button>
+          </td>
+        </tr>
+      } @empty {
+        <tr><td colspan="4">No hay categorías todavía.</td></tr>
+      }
+    </tbody>
+  </table>
+}
+
+@if (editando(); as actual) {
+  <h2>Editar "{{ actual.nombre }}"</h2>
+  <form [formGroup]="formulario" (ngSubmit)="guardar()">
+    <label for="nombre">Nombre</label>
+    <input id="nombre" type="text" formControlName="nombre" />
+
+    <label>
+      <input type="checkbox" formControlName="needsCertification" /> Requiere certificación
+    </label>
+
+    <button type="submit" [disabled]="formulario.invalid || guardando()">
+      {{ guardando() ? 'Guardando…' : 'Guardar' }}
+    </button>
+    <button type="button" (click)="cancelar()">Cancelar</button>
+  </form>
+}
+
+<p aria-live="polite">{{ mensaje() }}</p>

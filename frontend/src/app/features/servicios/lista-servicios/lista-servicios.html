@@ -50,6 +50,8 @@
                 <h2>{{ servicio.titulo }}</h2>
                 <p><strong>Descripción:</strong> {{ servicio.descripcion }}</p>
                 <p><strong>Categoria:</strong> {{ servicio.categoria.nombre }}</p>
+
+                <a [routerLink]="['/servicios', servicio.id, 'reservar']">Reservar</a>
             </article>
         }@empty {
             <p class="mensaje">No hay servicios disponibles.</p>

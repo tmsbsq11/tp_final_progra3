@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
-
+import { jwtDecode } from 'jwt-decode';
 @Injectable({ providedIn: 'root' })
 export class AuthService {
 
@@ -17,4 +17,34 @@ export class AuthService {
       responseType: 'text',
     });
   }
+  getToken(): string|null {
+    return sessionStorage.getItem('oficiosya_token');
+  }
+  getUserId(): number|null {
+    const token = this.getToken();
+    if(!token) return null;
+    try {
+      const payload = jwtDecode<TokenPayload>(token);
+      return payload.id ?? null;
+    } catch {
+      return null;
+    }
+  }
+    getUserRole(): string|null {
+      const token = this.getToken();
+      if(!token) return null;
+      try{
+        const payload = jwtDecode<TokenPayload>(token);
+        return payload.role ?? null;
+      } catch {
+        return null;
+      }
+    }
+
 }
+interface TokenPayload {
+    id:number;
+    correo: string,
+    role: string
+  }
+  

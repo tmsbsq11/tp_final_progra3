@@ -1,0 +1,22 @@
+@if (cargando()) {
+    <p>Cargando…</p>
+  } @else if (servicio(); as s) {
+    <h1>Reservar: {{ s.titulo }}</h1>
+    <p>Trabajador: {{ s.trabajador.nombre }}</p>
+  
+    <form [formGroup]="formulario" (ngSubmit)="reservar()">
+      <label for="fecha">Fecha</label>
+      <input id="fecha" type="date" formControlName="fechaReservada" [min]="hoy" />
+  
+      <label for="inicio">Hora de inicio</label>
+      <input id="inicio" type="time" formControlName="horaInicio" />
+  
+      <label for="fin">Hora de fin</label>
+      <input id="fin" type="time" formControlName="horaFin" />
+  
+      <button type="submit" [disabled]="formulario.invalid || enviando()">
+        {{ enviando() ? 'Reservando…' : 'Reservar' }}
+      </button>
+    </form>
+  }
+  <p aria-live="polite">{{ mensaje() }}</p>

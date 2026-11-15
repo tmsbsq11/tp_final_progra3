@@ -1,0 +1,37 @@
+<h1>Reservas recibidas</h1>
+
+@if (cargando()) {
+  <p>Cargando…</p>
+} @else if (!mensaje()) {
+  <label for="filtro">Estado</label>
+  <select id="filtro" (change)="cambiarFiltro($event)">
+    <option value="TODAS">Todas</option>
+    <option value="PENDIENTE">Pendientes</option>
+    <option value="APROBADO">Aprobadas</option>
+    <option value="RECHAZADO">Rechazadas o canceladas</option>
+    <option value="FINALIZADO">Finalizadas</option>
+  </select>
+
+  @for (r of visibles(); track r.id) {
+    <article>
+      <h2>{{ r.servicio.titulo }}</h2>
+      <p><strong>Cliente:</strong> {{ r.cliente.nombre }}</p>
+      <p><strong>Cuándo:</strong> {{ r.inicio | date: 'dd/MM/yyyy HH:mm' }} a {{ r.fin | date: 'HH:mm' }}</p>
+      <p><strong>Estado:</strong> {{ etiquetas[r.estadoReserva] }}</p>
+
+      @if (r.estadoReserva === 'PENDIENTE') {
+        <button type="button" (click)="aceptar(r)" [disabled]="procesando() !== null">
+          Aceptar
+        </button>
+        <button type="button" (click)="rechazar(r)" [disabled]="procesando() !== null">
+          Rechazar
+        </button>
+      }
+    </article>
+  } @empty {
+    <p>No hay reservas para mostrar.</p>
+  }
+}
+
+<p aria-live="polite">{{ mensaje() }}</p>
+<p aria-live="polite">{{ aviso() }}</p>

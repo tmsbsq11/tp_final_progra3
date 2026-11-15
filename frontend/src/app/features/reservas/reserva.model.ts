@@ -10,10 +10,11 @@ export interface ReservaNueva {
 export type EstadoReserva = 'PENDIENTE' | 'APROBADO' | 'RECHAZADO' | 'FINALIZADO';
 
 export interface ReservaDetalle {
-  id: number;
-  estadoReserva: EstadoReserva;
-  inicio: string;
-  fin: string;
-  servicio: { id: number; titulo: string };
-  trabajador: { id: number; nombre: string };
-}
+    id: number;
+    estadoReserva: EstadoReserva;
+    inicio: string;
+    fin: string;
+    servicio: { id: number; titulo: string };
+    trabajador: { id: number; nombre: string };
+    cliente: { id: number; nombre: string };
+  }

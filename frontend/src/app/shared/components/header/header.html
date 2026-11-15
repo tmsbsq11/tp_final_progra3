@@ -41,6 +41,11 @@
             </li>
             @if (authService.getUserRole()?.toLowerCase() === 'trabajador') {
               <li>
+                <a routerLink="/reservas-recibidas" routerLinkActive="activo" (click)="menu.open = false">
+                  Reservas recibidas
+                </a>
+              </li>
+              <li>
                 <a routerLink="/mis-postulaciones/nueva" (click)="menu.open = false">
                   Agregar postulación
                 </a>

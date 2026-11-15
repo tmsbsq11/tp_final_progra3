@@ -1,15 +1,59 @@
-<header>
-  <h1>OficiosYa</h1>
-  <nav>
-    <ul>
-        <li><a href="">Inicio</a></li>
-        <li><a href="">Perfil</a></li>
-        @if(!authService.estaAutenticado()){
-        <li><a routerLink="/login" routerLinkActive="active">Login</a></li>
-        <li><a routerLink="/register" routerLinkActive="active">Registrarse</a></li>
-        }@else{
-          <li><a (click)="authService.logout()">Cerrar Sesion</a></li>
-        }
-    </ul>
-  </nav>
+<header class="encabezado">
+  <div class="encabezado-interior">
+<a class="marca" routerLink="/">OficiosYa</a>
+    <details class="menu-desplegable" #menu>
+      <summary class="menu-toggle" aria-label="Menú principal">
+        <span aria-hidden="true">☰</span>
+      </summary>
+
+      <nav class="menu-panel" aria-label="Navegación principal">
+        <ul class="menu">
+          <li>
+            <a
+              routerLink="/"
+              routerLinkActive="activo"
+              [routerLinkActiveOptions]="{ exact: true }"
+              (click)="menu.open = false">
+              Inicio
+            </a>
+          </li>
+          @if (authService.estaAutenticado()) {
+            @if (perfilRoute === '/perfil/cliente' || perfilRoute === '/perfil/trabajador') {
+              <li>
+                <a [routerLink]="perfilRoute" routerLinkActive="activo" (click)="menu.open = false">
+                  Mi perfil
+                </a>
+              </li>
+            }
+
+            @if (authService.getUserRole()?.toLowerCase() === 'cliente') {
+              <li>
+                <a routerLink="/mis-reservas" routerLinkActive="activo" (click)="menu.open = false">
+                  Mis reservas
+                </a>
+              </li>
+            }
+
+            <li>
+              <a routerLink="/servicios" routerLinkActive="activo" (click)="menu.open = false">
+                Servicios
+              </a>
+            </li>
+            @if (authService.getUserRole()?.toLowerCase() === 'trabajador') {
+              <li>
+                <a routerLink="/mis-postulaciones/nueva" (click)="menu.open = false">
+                  Agregar postulación
+                </a>
+              </li>
+            }
+            <li>
+              <button type="button" (click)="menu.open = false; authService.logout()">
+                Cerrar sesión
+              </button>
+            </li>
+          }
+        </ul>
+      </nav>
+    </details>
+  </div>
 </header>

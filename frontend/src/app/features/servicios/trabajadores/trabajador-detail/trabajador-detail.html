@@ -1,0 +1,30 @@
+<a routerLink="/servicios">Volver a los oficios</a>
+<h1>Detalle del trabajador</h1>
+
+@if (cargando()) {
+  <p>Cargando ficha...</p>
+} @else if (mensaje()) {
+  <p role="alert">{{ mensaje() }}</p>
+} @else if (trabajador(); as perfil) {
+  <div class="perfil">
+    <h2>{{ perfil.nombre }}</h2>
+
+    @if (perfil.descripcion) {
+      <p>{{ perfil.descripcion }}</p>
+    }
+
+    <p><strong>Puntaje:</strong> {{ perfil.puntaje ?? 'Sin puntaje todavía' }}</p>
+  </div>
+
+  <section class="publicaciones" aria-label="Servicios del trabajador">
+    <h3>Servicios disponibles</h3>
+
+    @for (servicio of publicaciones(); track servicio.id) {
+      <article>
+        <h4>{{ servicio.titulo }}</h4>
+        <p>{{ servicio.descripcion }}</p>
+        <p><strong>Categoría:</strong> {{ servicio.categoria.nombre }}</p>
+      </article>
+    }
+  </section>
+}

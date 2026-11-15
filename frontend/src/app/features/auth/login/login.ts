@@ -42,7 +42,7 @@ export class Login implements OnInit {
       .pipe(finalize(() => this.enviando.set(false)))
       .subscribe({
         next: (token) => {
-          sessionStorage.setItem('oficiosya_token', token);
+          this.authService.guardarSesion(token); //cambie la linea pq el método guarda el token y actualiza la señal que lee el menú para mostrar Cerrar sesión
 
   console.log('Token:', token);
   console.log('ID usuario:', this.authService.getUserId());

@@ -1,0 +1,116 @@
+:host {
+  display: block;
+  box-sizing: border-box;
+  max-width: 72rem;
+  margin-inline: auto;
+  padding: 2rem 1rem 3rem;
+  color: #173f56;
+}
+
+h1 {
+  margin: 1rem 0 1.5rem;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+  text-align: center;
+  font-size: clamp(1.75rem, 4vw, 2.5rem);
+}
+
+.formulario,
+.aviso {
+  box-sizing: border-box;
+  max-width: 36rem;
+  margin: 0 auto 1rem;
+  padding: clamp(1rem, 4vw, 1.75rem);
+  border: 1px solid #cddfea;
+  border-radius: 16px;
+  background-color: #fff;
+}
+
+.formulario {
+  border-top: 6px solid #90c5e1;
+  box-shadow: 0 4px 12px rgb(23 63 86 / 8%);
+}
+
+.formulario fieldset {
+  display: grid;
+  gap: 0.4rem;
+  min-width: 0;
+  margin: 0 0 1rem;
+  padding: 0;
+  border: 0;
+}
+
+.formulario label {
+  font-weight: 600;
+}
+
+.formulario :is(input, select, textarea) {
+  box-sizing: border-box;
+  width: 100%;
+  min-height: 44px;
+  padding: 0.65rem 0.8rem;
+  border: 1px solid #aabfcd;
+  border-radius: 10px;
+  background-color: #f7fbff;
+  color: inherit;
+  font: inherit;
+}
+
+.formulario textarea {
+  resize: vertical;
+}
+
+.formulario fieldset p {
+  margin: 0;
+  font-size: 0.9rem;
+}
+
+.aviso {
+  text-align: center;
+}
+
+.error {
+  color: #a12632;
+}
+
+.acciones {
+  display: flex;
+  justify-content: center;
+  margin-top: 1.25rem;
+}
+
+.volver,
+.acciones button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  min-height: 44px;
+  padding: 0.65rem 1rem;
+  border: 1px solid #b6d5e8;
+  border-radius: 12px;
+  background-color: #e1f0fa;
+  color: #17577c;
+  font: inherit;
+  font-weight: 600;
+  text-align: center;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.volver:hover,
+.acciones button:enabled:hover {
+  background-color: #c7e2f3;
+}
+
+.acciones button:disabled {
+  opacity: 0.55;
+  cursor: default;
+}
+
+:host :is(a, button, input, select, textarea):focus-visible {
+  outline: 3px solid #287bb1;
+  outline-offset: 2px;
+}

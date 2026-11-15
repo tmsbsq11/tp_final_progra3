@@ -1,0 +1,13 @@
+@let cliente = clientePerfil();
+
+@if(cliente){
+<h2>Perfil {{authService.getUserRole()}}</h2>
+<p>Bienvenido {{cliente.nombre}} {{cliente.apellido}}! </p>
+<p>Dni: {{cliente.dni}}</p>
+<p>Correo: {{cliente.correo}}</p>
+<p>Puntaje:{{cliente.puntaje}}</p>
+<p>Fecha de creacion de la cuenta: {{cliente.fechaCreacion.slice(0,10)}}</p>
+
+<button>Editar datos</button>
+}
+

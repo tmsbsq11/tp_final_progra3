@@ -1,0 +1,64 @@
+<section class="postulaciones" aria-labelledby="titulo-postulaciones">
+  <header class="cabecera-postulaciones">
+    <h1 id="titulo-postulaciones">Mis postulaciones</h1>
+    <a class="accion-postulacion" routerLink="/mis-postulaciones/nueva">
+      <span aria-hidden="true">+</span> Agregar postulación
+    </a>
+  </header>
+
+<section class="filtros" aria-label="Filtros de mis postulaciones">
+  <label for="texto-filtro">Buscar por título o descripción</label>
+  <input id="texto-filtro" type="search" #texto [value]="textoFiltro()" (input)="textoFiltro.set(texto.value)">
+
+  <label for="categoria-filtro">Categoría</label>
+  <select id="categoria-filtro" #categoria [value]="categoriaFiltro()" (change)="categoriaFiltro.set(categoria.value)">
+    <option value="">Todas</option>
+    @for (opcion of categoriasFiltro(); track opcion[0]) {
+      <option [value]="opcion[0]">{{ opcion[1] }}</option>
+    }
+  </select>
+
+  <button type="button" class="accion-postulacion" (click)="textoFiltro.set(''); categoriaFiltro.set('')">
+    Limpiar filtros
+  </button>
+</section>
+
+  @if (mensajeBaja()) {
+    <p class="aviso" role="alert">{{ mensajeBaja() }}</p>
+  }
+
+  @if (cargando()) {
+    <p class="aviso" role="status">Cargando tus postulaciones…</p>
+  } @else if (mensaje()) {
+    <p class="aviso" role="alert">{{ mensaje() }}</p>
+  } @else {
+    <div class="tarjetas">
+        @for (publicacion of publicacionesFiltradas(); track publicacion.id) {
+          <article class="tarjeta">
+            <p class="categoria">{{ publicacion.categoria.nombre }}</p>
+            <h2>{{ publicacion.titulo }}</h2>
+            <p class="descripcion">{{ publicacion.descripcion }}</p>
+
+            <ul class="estados" aria-label="Estado de la publicación">
+                <li [class.positivo]="publicacion.isActive">
+                  {{ publicacion.isActive ? 'Activa' : 'Inactiva' }}
+                </li>
+                <li [class.positivo]="publicacion.isApproved">
+                  {{ publicacion.isApproved ? 'Aprobada' : 'Sin aprobar' }}
+                </li>
+            </ul>
+            <a class="accion-postulacion"[routerLink]="['/mis-postulaciones', publicacion.id, 'editar']">
+              Editar
+            </a>
+            @if (publicacion.isActive) {
+              <button type="button" class="accion-postulacion" [disabled]="bajaEnCurso()" (click)="darDeBaja(publicacion)">
+                Dar de baja
+              </button>
+            }
+          </article>
+        } @empty {
+        <p class="aviso">Todavía no tenés postulaciones.</p>
+      }
+    </div>
+  }
+</section>

@@ -27,6 +27,12 @@ export class AuthService {
       responseType: 'text',
     });
   }
+
+guardarSesion(token: string): void {
+  sessionStorage.setItem(this.tokenKey, token);
+  this.autenticado.set(true);
+}
+
   logout():void {
     sessionStorage.removeItem('oficiosya_token');
     this.autenticado.set(false);
@@ -55,8 +61,8 @@ export class AuthService {
         return null;
       }
     }
-
 }
+
 interface TokenPayload {
     id:number;
     correo: string,

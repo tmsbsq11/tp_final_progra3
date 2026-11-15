@@ -18,11 +18,13 @@ export class MisReservas implements OnInit {
   filtro = signal<Filtro>('TODAS');
   cargando = signal(true);
   mensaje = signal('');
+  aviso = signal('');
+  cancelando = signal<number | null>(null); // id de la reserva que se está cancelando
 
   etiquetas: Record<EstadoReserva, string> = {
     PENDIENTE: 'Pendiente',
     APROBADO: 'Aprobada',
-    RECHAZADO: 'Rechazada',
+    RECHAZADO: 'Rechazada o cancelada',
     FINALIZADO: 'Finalizada',
   };
 
@@ -52,5 +54,29 @@ export class MisReservas implements OnInit {
 
   cambiarFiltro(evento: Event): void {
     this.filtro.set((evento.target as HTMLSelectElement).value as Filtro);
+  }
+
+  cancelar(reserva: ReservaDetalle): void {
+    if (this.cancelando() !== null) return;
+    if (!confirm(`¿Cancelar la reserva de "${reserva.servicio.titulo}"?`)) return;
+
+    this.aviso.set('');
+    this.cancelando.set(reserva.id);
+
+    this.reservasService
+      .cancelarReserva(reserva.id)
+      .pipe(finalize(() => this.cancelando.set(null)))
+      .subscribe({
+        next: () => {
+          this.reservas.update((lista) =>
+            lista.map((r): ReservaDetalle =>
+              r.id === reserva.id ? { ...r, estadoReserva: 'RECHAZADO' } : r
+            )
+          );
+          this.aviso.set('Reserva cancelada.');
+        },
+        error: ({ error }) =>
+          this.aviso.set(error?.message ?? 'No se pudo cancelar la reserva.'),
+      });
   }
 }

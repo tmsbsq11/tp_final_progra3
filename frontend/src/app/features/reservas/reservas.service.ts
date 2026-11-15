@@ -23,4 +23,8 @@ export class ReservasService {
   misReservas() {
     return this.http.get<ReservaDetalle[]>('/api/servicio_reservas/enviadas');
   }
+
+  cancelarReserva(id: number) {
+    return this.http.patch<unknown>(`/api/servicio_reservas/rechazar/${id}`, null);
+  }
 }

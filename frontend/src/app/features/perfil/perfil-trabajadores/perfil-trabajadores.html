@@ -1,0 +1,10 @@
+@let trabajador=trabajadorPerfil();
+@if(trabajador){
+    <h2>Perfil Trabajador</h2>
+<p>Bienvenido {{trabajador.nombre}} {{trabajador.apellido}}!</p>
+
+<p>Dni: {{trabajador.dni}}</p>
+<p>Correo: {{trabajador.correo}}</p>
+<p>Puntaje:{{trabajador.puntaje}}</p>
+<p>Fecha de creacion de la cuenta: {{trabajador.fechaCreacion.slice(0,10)}}</p>
+}

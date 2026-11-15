@@ -1,0 +1,27 @@
+<h1>Mis reservas</h1>
+
+@if (cargando()) {
+  <p>Cargando…</p>
+} @else if (!mensaje()) {
+  <label for="filtro">Estado</label>
+  <select id="filtro" (change)="cambiarFiltro($event)">
+    <option value="TODAS">Todas</option>
+    <option value="PENDIENTE">Pendientes</option>
+    <option value="APROBADO">Aprobadas</option>
+    <option value="RECHAZADO">Rechazadas</option>
+    <option value="FINALIZADO">Finalizadas</option>
+  </select>
+
+  @for (r of visibles(); track r.id) {
+    <article>
+      <h2>{{ r.servicio.titulo }}</h2>
+      <p><strong>Trabajador:</strong> {{ r.trabajador.nombre }}</p>
+      <p><strong>Cuándo:</strong> {{ r.inicio | date: 'dd/MM/yyyy HH:mm' }} a {{ r.fin | date: 'HH:mm' }}</p>
+      <p><strong>Estado:</strong> {{ etiquetas[r.estadoReserva] }}</p>
+    </article>
+  } @empty {
+    <p>No tenés reservas para mostrar.</p>
+  }
+}
+
+<p aria-live="polite">{{ mensaje() }}</p>

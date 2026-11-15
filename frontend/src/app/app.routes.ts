@@ -3,6 +3,7 @@ import { Home } from './features/home/home';
 import { ListaServicios } from './features/servicios/lista-servicios/lista-servicios';
 import { ReservaForm } from './features/reservas/reserva-form';
 import { authGuard } from './core/guards/auth.guard';
+import { TrabajadorList } from './features/servicios/trabajadores/trabajador-list/trabajador-list';
 
 export const routes: Routes = [
   { path: '', component: Home },
@@ -14,6 +15,8 @@ export const routes: Routes = [
   {path: 'perfil/cliente', loadComponent: ()=> import('./features/perfil/perfil-clientes/perfilClientes').then(m=>m.PerfilClientes)},
   {path:'perfil/trabajador',loadComponent: ()=> import('./features/perfil/perfil-trabajadores/perfil-trabajadores').then(m=>m.PerfilTrabajadores)},
   { path: 'servicios', component: ListaServicios, canActivate: [authGuard]},
+  { path: 'trabajadores', component: TrabajadorList, canActivate: [authGuard]},
+  {path: 'trabajadores/:id',loadComponent: () => import('./features/servicios/trabajadores/trabajador-detail/trabajador-detail').then(m => m.TrabajadorDetail),canActivate: [authGuard]},
   { path: 'mis-reservas', loadComponent: () => import('./features/reservas/mis-reservas/mis-reservas').then(m => m.MisReservas) },
   { path: '**',redirectTo: '',pathMatch: 'full'},
 ];

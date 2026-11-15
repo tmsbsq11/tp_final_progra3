@@ -1,10 +1,9 @@
 import { Component, OnInit, signal } from '@angular/core';
-import { inject } from '@angular/core';
 import { ClienteServicios } from '../client/cliente-servicios';
-import { toSignal } from '@angular/core/rxjs-interop';
 import { Servicio } from '../model/servicio.model';
 import { finalize } from 'rxjs';
 import { RouterLink } from '@angular/router';
+
 @Component({
   imports: [RouterLink],
   selector: 'app-lista-servicios',
@@ -18,6 +17,7 @@ export class ListaServicios implements OnInit {
   mensaje = signal(''); //inicializo la señal con un string vacio
   categorias = signal<{id : number; nombre : string}[]>([]); //inicializo la señal vacia
   mensajeCategoria = signal(''); 
+  mostrarResultados = signal(false);
 
   constructor (
     private clienteServicios: ClienteServicios //para poder usar los metodos del cliente de servicios
@@ -29,6 +29,8 @@ export class ListaServicios implements OnInit {
   }
 
   cargarServicios(busqueda = '', idCatalogo ?: number) : void{
+
+    this.mensaje.set(''); //limpio el mensaje de error
     this.cargado.set(true);
     
     this.clienteServicios.buscarServicios(busqueda, idCatalogo)
@@ -58,4 +60,26 @@ export class ListaServicios implements OnInit {
       }
     });
   }
+
+
+textoBuscado = signal('');
+
+buscar(busqueda: string, idCategoria?: number): void {
+  const texto = busqueda.trim();
+
+  if (!texto && idCategoria === undefined) {
+    this.limpiarFiltros();
+    return;
+  }
+
+  this.textoBuscado.set(texto);
+  this.mostrarResultados.set(true);
+  this.cargarServicios(texto, idCategoria);
+}
+
+limpiarFiltros(): void {
+  this.mostrarResultados.set(false);
+  this.mensaje.set('');
+}
+
 }

@@ -48,6 +48,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/api/servicio_reservas/estado/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.GET, "/api/servicio_reservas").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.GET, "/api/servicio_reservas/**").hasRole("ADMIN") // catch-all: cubre /{id}
+                        .requestMatchers(HttpMethod.PATCH, "/api/servicio_reservas/rechazar/**").hasAnyRole("TRABAJADOR", "CLIENTE")
                         .requestMatchers(HttpMethod.PATCH, "/api/servicio_reservas/**").hasRole("TRABAJADOR")
                         .requestMatchers(HttpMethod.POST, "/api/servicio_reservas/**").hasAnyRole("CLIENTE", "ADMIN")
                         .requestMatchers(HttpMethod.DELETE, "/api/servicio_reservas/**").hasRole("ADMIN")

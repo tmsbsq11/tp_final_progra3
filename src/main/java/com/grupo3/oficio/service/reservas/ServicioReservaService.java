@@ -18,6 +18,8 @@ import com.grupo3.oficio.utils.exceps.FechaReservadaException;
 import com.grupo3.oficio.utils.exceps.UsuarioInactivoRuntimeException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.Authentication;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -247,4 +249,20 @@ public class ServicioReservaService {
         buscarReservaPorId(reserva.getId());
         reservaRepo.delete(reserva);
     }
+
+    public ServicioReserva rechazarReserva(Integer id, Authentication auth) {
+    boolean esCliente = auth.getAuthorities().stream()
+            .anyMatch(a -> a.getAuthority().equals("ROLE_CLIENTE"));
+
+    if (esCliente) {
+        ServicioReserva reserva = buscarReservaPorId(id);
+        if (!reserva.getCliente().getCorreo().equals(auth.getName())) {
+            throw new AccessDeniedException("La reserva no pertenece a este cliente");
+        }
+        if (reserva.getEstadoReserva() != EstadoReserva.PENDIENTE) {
+            throw new IllegalStateException("Solo se pueden cancelar reservas pendientes");
+        }
+    }
+    return cambiarReservaEstado(id, EstadoReserva.RECHAZADO);
+}
 }

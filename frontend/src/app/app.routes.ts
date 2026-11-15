@@ -18,6 +18,8 @@ export const routes: Routes = [
   { path: 'trabajadores', component: TrabajadorList, canActivate: [authGuard]},
   {path: 'trabajadores/:id',loadComponent: () => import('./features/servicios/trabajadores/trabajador-detail/trabajador-detail').then(m => m.TrabajadorDetail),canActivate: [authGuard]},
   { path: 'mis-reservas', loadComponent: () => import('./features/reservas/mis-reservas/mis-reservas').then(m => m.MisReservas) },
-  {path: 'mis-postulaciones', loadComponent: () => import('./features/servicios/mis-postulaciones/mis-postulaciones').then(m => m.MisPostulaciones), canActivate: [authGuard],},
+  {path: 'mis-postulaciones', loadComponent: () => import('./features/servicios/postulaciones/mis-postulaciones/mis-postulaciones').then(m => m.MisPostulaciones), canActivate: [authGuard]},
+  {path: 'mis-postulaciones/nueva', loadComponent: () => import('./features/servicios/postulaciones/postulacion-form/postulacion-form').then(m => m.PostulacionForm), canActivate: [authGuard]},
+  {path: 'mis-postulaciones/:id/editar', loadComponent: () =>import('./features/servicios/postulaciones/postulacion-form/postulacion-form').then(m => m.PostulacionForm), canActivate: [authGuard]},
   { path: '**',redirectTo: '',pathMatch: 'full'},
 ];

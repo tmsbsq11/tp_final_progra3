@@ -1,8 +1,8 @@
 import { Component, OnInit, signal } from '@angular/core';
 import { finalize } from 'rxjs';
-import { AuthService } from '../../../core/services/auth.service';
-import { ClienteServicios } from '../client/cliente-servicios';
-import { Servicio } from '../model/servicio.model';
+import { AuthService } from '../../../../core/services/auth.service';
+import { ClienteServicios } from '../../client/cliente-servicios';
+import { Servicio } from '../../model/servicio.model';
 import { RouterLink } from '@angular/router';
 
 @Component({
@@ -11,6 +11,7 @@ import { RouterLink } from '@angular/router';
   templateUrl: './mis-postulaciones.html',
   styleUrl: './mis-postulaciones.css',
 })
+
 export class MisPostulaciones implements OnInit {
   publicaciones = signal<Servicio[]>([]);
   cargando = signal(false);

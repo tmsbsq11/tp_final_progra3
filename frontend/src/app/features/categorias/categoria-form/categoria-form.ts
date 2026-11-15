@@ -2,10 +2,11 @@ import { Component, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { finalize } from 'rxjs';
 import { CategoriasService } from '../categorias.service';
+import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-categoria-form',
-  imports: [ReactiveFormsModule],
+  imports: [ReactiveFormsModule, RouterLink],
   templateUrl: './categoria-form.html',
 })
 export class CategoriaForm {

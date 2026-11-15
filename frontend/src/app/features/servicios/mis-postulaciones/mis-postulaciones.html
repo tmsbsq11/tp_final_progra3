@@ -1,0 +1,35 @@
+<section class="postulaciones" aria-labelledby="titulo-postulaciones">
+  <header class="cabecera-postulaciones">
+    <h1 id="titulo-postulaciones">Mis postulaciones</h1>
+    <a class="accion-postulacion" routerLink="/mis-postulaciones/nueva">
+      <span aria-hidden="true">+</span> Agregar postulación
+    </a>
+  </header>
+
+  @if (cargando()) {
+    <p class="aviso" role="status">Cargando tus postulaciones…</p>
+  } @else if (mensaje()) {
+    <p class="aviso" role="alert">{{ mensaje() }}</p>
+  } @else {
+    <div class="tarjetas">
+        @for (publicacion of publicaciones(); track publicacion.id) {
+            <article class="tarjeta">
+                <p class="categoria">{{ publicacion.categoria.nombre }}</p>
+                <h2>{{ publicacion.titulo }}</h2>
+                <p class="descripcion">{{ publicacion.descripcion }}</p>
+
+                <ul class="estados" aria-label="Estado de la publicación">
+                    <li [class.positivo]="publicacion.isActive">
+                    {{ publicacion.isActive ? 'Activa' : 'Inactiva' }}
+                    </li>
+                    <li [class.positivo]="publicacion.isApproved">
+                    {{ publicacion.isApproved ? 'Aprobada' : 'Sin aprobar' }}
+                    </li>
+                </ul>
+            </article>
+        } @empty {
+        <p class="aviso">Todavía no tenés postulaciones.</p>
+      }
+    </div>
+  }
+</section>

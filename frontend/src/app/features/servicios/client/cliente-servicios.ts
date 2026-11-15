@@ -9,7 +9,7 @@ export class ClienteServicios {
     private cliente = inject(HttpClient);
 
     obtenerServicios() {
-        return this.cliente.get(this.url);
+        return this.cliente.get<Servicio[]>(this.url);
     }
     obtenerServicioPorId(id: number) {
         return this.cliente.get(`${this.url}/${id}`);

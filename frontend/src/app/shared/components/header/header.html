@@ -39,7 +39,13 @@
                 Servicios
               </a>
             </li>
-
+            @if (authService.getUserRole()?.toLowerCase() === 'trabajador') {
+              <li>
+                <a routerLink="/mis-postulaciones/nueva" (click)="menu.open = false">
+                  Agregar postulación
+                </a>
+              </li>
+            }
             <li>
               <button type="button" (click)="menu.open = false; authService.logout()">
                 Cerrar sesión

@@ -7,7 +7,7 @@
     <input type="search" id="busqueda" #busqueda placeholder="Ej. Plomería" />
 
     <label for="categoria">Categoría:</label>
-    <select id="categoria" #categoria>
+    <select id="categoria" #categoria (change)="buscar(busqueda.value, categoria.value ? +categoria.value : undefined)">
       <option value="">Todas</option>
       @for (opcion of categorias(); track opcion.id) {
         <option [value]="opcion.id">{{ opcion.nombre }}</option>

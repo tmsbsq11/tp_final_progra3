@@ -30,9 +30,12 @@
   line-height: 1.15;
 }
 
-.accion-postulacion {
+.cabecera-postulaciones .accion-postulacion {
   grid-column: 3;
   justify-self: end;
+}
+
+.accion-postulacion {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -44,19 +47,77 @@
   border-radius: 12px;
   background-color: #e1f0fa;
   color: #17577c;
+  font: inherit;
   font-weight: 600;
   text-align: center;
   text-decoration: none;
+  cursor: pointer;
   transition: background-color 150ms ease;
 }
 
-.accion-postulacion:hover {
+.accion-postulacion:not(:disabled):hover {
   background-color: #c7e2f3;
 }
 
-.accion-postulacion:focus-visible {
+.accion-postulacion:disabled {
+  opacity: 0.55;
+  cursor: default;
+}
+
+.accion-postulacion:focus-visible,
+.filtros :is(input, select):focus-visible {
   outline: 3px solid #287bb1;
   outline-offset: 3px;
+}
+
+.filtros {
+  display: grid;
+  grid-template-columns: minmax(0, 2fr) minmax(0, 1fr) auto;
+  align-items: end;
+  gap: 0.5rem 1rem;
+  margin-bottom: 1.5rem;
+  padding: 1.25rem;
+  border: 1px solid #cddfea;
+  border-radius: 16px;
+  background-color: #fff;
+}
+
+.filtros label {
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.filtros label[for="texto-filtro"] {
+  grid-area: 1 / 1;
+}
+
+.filtros label[for="categoria-filtro"] {
+  grid-area: 1 / 2;
+}
+
+.filtros input {
+  grid-area: 2 / 1;
+}
+
+.filtros select {
+  grid-area: 2 / 2;
+}
+
+.filtros :is(input, select) {
+  box-sizing: border-box;
+  width: 100%;
+  min-width: 0;
+  min-height: 44px;
+  padding: 0.65rem 0.85rem;
+  border: 1px solid #aabfcd;
+  border-radius: 10px;
+  background-color: #f7fbff;
+  color: inherit;
+  font: inherit;
+}
+
+.filtros .accion-postulacion {
+  grid-area: 2 / 3;
 }
 
 .tarjetas {
@@ -83,14 +144,17 @@
 }
 
 .tarjeta h2,
-.tarjeta p,
-.aviso {
+.tarjeta p {
   margin: 0;
 }
 
 .tarjeta h2 {
   font-size: 1.25rem;
   line-height: 1.25;
+}
+
+.tarjeta .accion-postulacion {
+  align-self: center;
 }
 
 .categoria {
@@ -126,11 +190,18 @@
 }
 
 .aviso {
-  grid-column: 1 / -1;
+  margin: 0 0 1rem;
   text-align: center;
   line-height: 1.5;
 }
 
+.tarjetas > .aviso {
+  grid-column: 1 / -1;
+  margin: 0;
+}
+
+/* Los @media aplican estilos según el ancho de la ventana.
+   Así, la pantalla se adapta a computadoras, tablets y celulares. */
 @media (max-width: 850px) {
   .tarjetas {
     grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -138,20 +209,34 @@
 }
 
 @media (max-width: 700px) {
-  .cabecera-postulaciones {
+  .cabecera-postulaciones,
+  .filtros {
     grid-template-columns: minmax(0, 1fr);
   }
 
   .cabecera-postulaciones h1,
-  .accion-postulacion {
+  .cabecera-postulaciones .accion-postulacion {
     grid-column: 1;
+    justify-self: center;
+  }
+
+  .filtros label[for],
+  .filtros input,
+  .filtros select,
+  .filtros .accion-postulacion {
+    grid-area: auto;
+  }
+
+  .filtros :is(input, select) {
+    margin-bottom: 0.5rem;
+  }
+
+  .filtros .accion-postulacion {
     justify-self: center;
   }
 }
 
-/* Los @media aplican estilos según el ancho de la ventana.
-   Así, la pantalla se adapta a computadoras, tablets y celulares. */
-@media (max-width: 520px) { 
+@media (max-width: 520px) {
   .tarjetas {
     grid-template-columns: minmax(0, 1fr);
   }

@@ -13,12 +13,10 @@
               routerLink="/"
               routerLinkActive="activo"
               [routerLinkActiveOptions]="{ exact: true }"
-              (click)="menu.open = false"
-            >
+              (click)="menu.open = false">
               Inicio
             </a>
           </li>
-
           @if (authService.estaAutenticado()) {
             @if (perfilRoute === '/perfil/cliente' || perfilRoute === '/perfil/trabajador') {
               <li>

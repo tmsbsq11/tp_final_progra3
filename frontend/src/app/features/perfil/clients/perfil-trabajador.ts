@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Service } from '@angular/core';
-
+import { Trabajador } from '../models/perfil.model';
 @Service()
 export class PerfilTrabajadorClient {
     private readonly http=inject(HttpClient);
@@ -9,16 +9,7 @@ export class PerfilTrabajadorClient {
     obtenerPerfil(){
         return this.http.get<Trabajador>(this.url);
     }
-}
-export interface Trabajador{
-    id:string|number,
-    correo:string,
-    username:string,
-    dni:number,
-    descripcion:string,
-    fechaCreacion:string,
-    puntaje:number,
-    nombre:string,
-    apellido:string,
-
+    actualizarPerfil(perfilActualizado:Trabajador){
+        return this.http.put<Trabajador>(this.url,perfilActualizado);
+    }
 }

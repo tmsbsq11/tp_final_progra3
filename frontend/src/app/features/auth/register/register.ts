@@ -46,9 +46,9 @@ export class Register implements OnInit {
           });
     },
     error:({status})=>{
-      if(status===409){
+      if(status===400){
         this.mensaje.set('El correo ya está registrado. Inicie sesión.');
-      }else if(status===400){
+      }else if(status===409){//en el back no tenemos error 409, correguir
         this.mensaje.set('Los datos proporcionados no son válidos.');
       }else
       {

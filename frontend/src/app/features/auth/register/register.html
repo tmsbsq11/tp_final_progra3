@@ -5,18 +5,36 @@
 <form [formGroup]="formulario" (ngSubmit)="registrar()">
     <label for="nombre">Nombre de Usuario</label>
     <input type="text" id="nombre" formControlName="nombre" placeholder="Ingrese su nombre de usuario">
+    @if(formulario.get('nombre')?.hasError('required')&&formulario.get('nombre')?.touched){
+<p class="error">El nombre de usuario es olbigatorio</p>
+    }
     <label for="correo">Correo</label>
     <input id="correo" type="email" formControlName="correo" placeholder="Ingrese su email">
+    @if(formulario.get('correo')?.hasError('email')&&formulario.get('correo')?.touched){
+        <p class="error">Debe ingresar un email</p>
+    }
+    @if(formulario.get('correo')?.hasError('required')&&formulario.get('correo')?.touched){
+        <p class="error">El email es obligatorio</p>
+    }
     <label for="password">Contraseña</label>
     <input id="password" type="password" formControlName="password" placeholder="Ingrese su contraseña">
-    <label for="role">Rol</label>
-    <select id="rol" formControlName="rol">
+    @if(formulario.get('password')?.hasError('required')&&formulario.get('password')?.touched){
+        <p class="error">La contraseña es obligatoria</p>
+    }
+    <label for="rol">Rol</label>
+    <select id="rol" formControlName="rol" required>
         <option value="">Elija su rol</option>
         <option value="CLIENTE">Cliente</option>
         <option value="TRABAJADOR">Trabajador</option>
     </select>
-    <button type="submit" [disabled]="formulario.invalid|| enviando()" (click)="mensaje()">
+    @if(formulario.get('rol')?.hasError('required')&&formulario.get('rol')?.touched){
+        <p class="class">Debe elegir entre Cliente o Trabajador</p>
+    }
+    <button type="submit" [disabled]="formulario.invalid|| enviando()">
         {{ enviando() ? 'Registrando…' : 'Registrarse' }}
     </button>
+    @if(mensaje()){
+        <p class="error">{{mensaje()}}</p>
+    }
 </form>
 }

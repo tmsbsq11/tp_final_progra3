@@ -1,0 +1,39 @@
+<form (ngSubmit)="guardarCambios()">
+
+  <label for="nombre">Nombre</label>
+  <input
+    id="nombre"
+    name="nombre"
+    [(ngModel)]="perfil.nombre"
+    required
+  />
+
+  <label for="apellido">Apellido</label>
+  <input
+    id="apellido"
+    name="apellido"
+    [(ngModel)]="perfil.apellido"
+    required
+  />
+
+  <label for="username">Username</label>
+  <input
+    id="username"
+    name="username"
+    [(ngModel)]="perfil.username"
+    required
+  />
+
+  <label for="dni">DNI</label>
+  <input
+    id="dni"
+    name="dni"
+    [(ngModel)]="perfil.dni"
+    required
+  />
+
+  <button type="submit">Guardar cambios</button>
+  <button type="button" (click)="cancelarEdicion()">
+  Cancelar
+</button>
+</form>

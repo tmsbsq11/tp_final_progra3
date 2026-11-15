@@ -1,0 +1,151 @@
+:host {
+  display: block;
+  box-sizing: border-box;
+  max-width: 72rem;
+  margin-inline: auto;
+  padding: 2.5rem 1rem 3rem;
+  color: #173f56;
+  text-align: center;
+}
+
+h1 {
+  margin: 0 0 1.75rem;
+  text-align: center;
+  font-size: clamp(1.75rem, 4vw, 2.5rem);
+}
+
+.filtros {
+  display: grid;
+  gap: 1rem;
+  margin-bottom: 2rem;
+  padding: 1.25rem;
+  border: 1px solid #cddfea;
+  border-radius: 16px;
+  background: #fff;
+}
+
+.campos {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto minmax(0, 12rem);
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.campos label {
+  font-weight: 600;
+}
+
+.campos :is(input, select) {
+  box-sizing: border-box;
+  width: 100%;
+  min-height: 44px;
+  padding: 0.65rem 0.85rem;
+  border: 1px solid #aabfcd;
+  border-radius: 10px;
+  background: #f7fbff;
+  color: inherit;
+  font: inherit;
+}
+
+.botones {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.botones button,
+:is(.oficios, .resultados) article a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  min-height: 44px;
+  padding: 0.65rem 1rem;
+  border: 1px solid #b6d5e8;
+  border-radius: 12px;
+  background-color: #e1f0fa;
+  color: #17577c;
+  font: inherit;
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background-color 150ms ease;
+}
+
+.botones {
+  justify-content: center;
+}
+
+.oficios article a,
+.resultados article a {
+  align-self: center;
+}
+
+.botones button:not(:disabled):hover,
+:is(.oficios, .resultados) article a:hover {
+  background-color: #c7e2f3;
+}
+
+.botones button:disabled {
+  opacity: 0.55;
+  cursor: default;
+}
+
+:host :is(a, button, input, select):focus-visible {
+  outline: 3px solid #287bb1;
+  outline-offset: 3px;
+}
+
+.oficios > h2 {
+  margin: 0 0 1rem;
+}
+
+.catalogo-grilla,
+.resultados {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1.25rem;
+}
+
+.resultados > p {
+  grid-column: 1 / -1;
+}
+
+:is(.oficios, .resultados) article {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding: 1.25rem;
+  border: 1px solid #cddfea;
+  border-radius: 16px;
+  background: #fff;
+  box-shadow: 0 4px 12px rgb(23 63 86 / 8%);
+}
+
+article :is(h2, h3, p) {
+  margin: 0;
+}
+
+article p {
+  line-height: 1.5;
+}
+
+article a {
+  align-self: flex-start;
+  margin-top: auto;
+}
+
+@media (max-width: 850px) {
+  .catalogo-grilla,
+  .resultados {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 600px) {
+  .campos,
+  .catalogo-grilla,
+  .resultados {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

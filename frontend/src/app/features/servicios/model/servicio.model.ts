@@ -1,3 +1,5 @@
+import { Trabajador } from "./trabajador.model";
+
 export interface Servicio {
     id ?: number|string;
     isActive : boolean;
@@ -8,10 +10,7 @@ export interface Servicio {
     };
     titulo : string;
     descripcion : string;
-    trabajador : {
-        id :number
-        nombre : string;
+    trabajador : Trabajador;
     }; //Spring busca la categoría y el trabajador y los asocia al servicio, por eso no pongo solo los id como en el dto
-}
 export type ServicioModeloFormulario = Omit<Servicio,'id'>;
 //ver si guardamos los estado reserva aca

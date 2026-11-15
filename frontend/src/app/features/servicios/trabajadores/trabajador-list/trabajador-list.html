@@ -1,0 +1,26 @@
+<a routerLink="/servicios">Volver a los oficios</a>
+<h1>Trabajadores del oficio</h1>
+
+@if (cargando()) {
+  <p>Cargando trabajadores...</p>
+} @else if (mensaje()) {
+  <p role="alert">{{ mensaje() }}</p>
+} @else {
+    @for (grupo of trabajadores(); track grupo.trabajador.id) {
+        <article>
+        <h2>{{ grupo.trabajador.nombre }}</h2>
+            <ul>
+                @for (servicio of grupo.publicaciones; track servicio.id) {
+                    <li>{{ servicio.titulo }}</li>
+                }
+                <li>
+                <a [routerLink]="['/trabajadores', grupo.trabajador.id]">
+                    Ver detalle
+                </a>
+                </li>
+            </ul>
+        </article>
+    } @empty {
+        <p>No hay trabajadores con publicaciones disponibles en este oficio.</p>
+    }
+}

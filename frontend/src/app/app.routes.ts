@@ -13,5 +13,6 @@ export const routes: Routes = [
   { path: 'login', loadComponent: () => import('./features/auth/login/login').then(m => m.Login) },
   { path: 'register', loadComponent: () => import('./features/auth/register/register').then(m => m.Register)},
   { path: 'servicios', component: ListaServicios, canActivate: [authGuard]},
+  { path: 'mis-reservas', loadComponent: () => import('./features/reservas/mis-reservas/mis-reservas').then(m => m.MisReservas) },
   { path: '**',redirectTo: '',pathMatch: 'full'},
 ];

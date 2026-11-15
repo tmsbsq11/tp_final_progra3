@@ -10,4 +10,7 @@ import { AuthService } from '../../../core/services/auth.service';
 export class Header {
   constructor(public authService: AuthService,
   ) {}
+  get perfilRoute(): string {
+  return `/perfil/${this.authService.getUserRole()?.toLowerCase()}`;
+}
 }

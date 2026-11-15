@@ -55,8 +55,8 @@ export class AuthService {
         return null;
       }
     }
-
 }
+
 interface TokenPayload {
     id:number;
     correo: string,

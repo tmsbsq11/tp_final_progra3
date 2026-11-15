@@ -1,0 +1,24 @@
+:host {
+  display: block;
+}
+
+.pie {
+  background-color: #173f56;
+  color: #fff;
+  border-top: 1px solid #102e40;
+}
+
+.pie-interior {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem 0.75rem;
+  padding: 1rem;
+  text-align: center;
+}
+
+.pie-interior span {
+  color: #d1e5f2;
+  font-size: 0.875rem;
+}

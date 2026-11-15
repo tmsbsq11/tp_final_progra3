@@ -1,0 +1,113 @@
+:host {
+  display: block;
+}
+
+.encabezado {
+  background-color: #fbfdff;
+  border-bottom: 1px solid #cddfea;
+  color: #173f56;
+}
+
+.encabezado-interior {
+  display: grid;
+  grid-template-columns: minmax(44px, 1fr) auto minmax(44px, 1fr);
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.6rem 1rem;
+}
+
+.marca {
+  grid-column: 2;
+  grid-row: 1;
+  justify-self: center;
+  color: inherit;
+  font-size: clamp(1.4rem, 2.5vw, 1.85rem);
+  font-weight: 700;
+  line-height: 1.2;
+  text-decoration: none;
+}
+
+.marca span {
+  font-size: 0.75em;
+}
+
+.menu-desplegable {
+  position: relative;
+  grid-column: 3;
+  grid-row: 1;
+  justify-self: end;
+}
+
+.menu-toggle {
+  display: grid;
+  place-items: center;
+  box-sizing: border-box;
+  width: 44px;
+  height: 44px;
+  border: 1px solid #b6d5e8;
+  border-radius: 10px;
+  background-color: #e1f0fa;
+  color: #17577c;
+  font-size: 1.4rem;
+  line-height: 1;
+  list-style: none;
+  cursor: pointer;
+  transition: background-color 150ms ease;
+}
+
+.menu-toggle::-webkit-details-marker {
+  display: none;
+}
+
+.menu-toggle:hover,
+.menu-desplegable[open] .menu-toggle {
+  background-color: #c7e2f3;
+}
+
+.menu-panel {
+  position: absolute;
+  inset-block-start: calc(100% + 0.5rem);
+  inset-inline-end: 0;
+  z-index: 10;
+  box-sizing: border-box;
+  width: min(14rem, calc(100vw - 1.5rem));
+  padding-block: 0.35rem;
+  border: 1px solid #cddfea;
+  border-radius: 12px;
+  background-color: #fff;
+  box-shadow: 0 6px 18px rgb(23 63 86 / 15%);
+}
+
+.menu {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.menu :is(a, button) {
+  display: flex;
+  align-items: center;
+  box-sizing: border-box;
+  width: 100%;
+  min-height: 44px;
+  padding: 0.65rem 1rem;
+  border: 0;
+  background-color: transparent;
+  color: #17577c;
+  font: inherit;
+  font-weight: 400;
+  text-align: start;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background-color 150ms ease;
+}
+
+.menu :is(a, button):hover,
+.menu a.activo {
+  background-color: #edf6fd;
+}
+
+.encabezado :is(a, button, summary):focus-visible {
+  outline: 2px solid #287bb1;
+  outline-offset: 2px;
+}

@@ -14,5 +14,6 @@ export const routes: Routes = [
   {path: 'perfil/cliente', loadComponent: ()=> import('./features/perfil/perfil-clientes/perfilClientes').then(m=>m.PerfilClientes)},
   {path:'perfil/trabajador',loadComponent: ()=> import('./features/perfil/perfil-trabajadores/perfil-trabajadores').then(m=>m.PerfilTrabajadores)},
   { path: 'servicios', component: ListaServicios, canActivate: [authGuard]},
+  { path: 'mis-reservas', loadComponent: () => import('./features/reservas/mis-reservas/mis-reservas').then(m => m.MisReservas) },
   { path: '**',redirectTo: '',pathMatch: 'full'},
 ];

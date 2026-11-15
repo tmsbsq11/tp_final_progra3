@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { Servicio } from '../servicios/model/servicio.model';
-import { ReservaNueva } from './reserva.model';
+import { ReservaDetalle, ReservaNueva } from './reserva.model';
 
 @Injectable({ providedIn: 'root' })
 export class ReservasService {
@@ -18,5 +18,9 @@ export class ReservasService {
 
   crear(reserva: ReservaNueva) {
     return this.http.post<unknown>('/api/servicio_reservas', reserva);
+  }
+
+  misReservas() {
+    return this.http.get<ReservaDetalle[]>('/api/servicio_reservas/enviadas');
   }
 }

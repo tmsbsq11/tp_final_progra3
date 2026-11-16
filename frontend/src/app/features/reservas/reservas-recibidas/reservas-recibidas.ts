@@ -1,5 +1,5 @@
 import { DatePipe } from '@angular/common';
-import { Component, OnInit, computed, inject, signal } from '@angular/core';
+import { Component, OnDestroy, OnInit, computed, inject, signal } from '@angular/core';
 import { finalize } from 'rxjs';
 import { EstadoReserva, ReservaDetalle } from '../reserva.model';
 import { ReservasService } from '../reservas.service';
@@ -11,8 +11,11 @@ type Filtro = EstadoReserva | 'TODAS';
   imports: [DatePipe],
   templateUrl: './reservas-recibidas.html',
 })
-export class ReservasRecibidas implements OnInit {
+
+export class ReservasRecibidas implements OnInit,OnDestroy {
+
   private reservasService = inject(ReservasService);
+  private temporizadorVencimiento?: ReturnType<typeof setInterval>;//chequea cada 10 segundos
 
   reservas = signal<ReservaDetalle[]>([]);
   filtro = signal<Filtro>('TODAS');
@@ -38,7 +41,59 @@ export class ReservasRecibidas implements OnInit {
   });
 
   ngOnInit(): void {
-    this.cargar();
+  this.cargar();
+  this.temporizadorVencimiento = setInterval(() => {
+  this.finalizarAprobadaFinalizada();
+  this.rechazarPendienteVencida();
+}, 10_000);
+  
+}
+
+ngOnDestroy(): void {
+  clearInterval(this.temporizadorVencimiento);
+}
+
+private rechazarPendienteVencida(): void {
+  if (this.cargando() || this.procesando() !== null) return;
+
+  const ahora = Date.now();
+  const vencida = this.reservas().find(
+    (reserva) =>
+      reserva.estadoReserva === 'PENDIENTE' &&
+      new Date(reserva.inicio).getTime() <= ahora
+  );
+
+  if (vencida) {
+    this.cambiarEstado(vencida, 'rechazar');
+  }
+}
+
+  private finalizarAprobadaFinalizada(): void {
+    if (this.cargando() || this.procesando() !== null) return;
+
+    const ahora = Date.now();
+    const vencida = this.reservas().find(
+      (reserva) =>
+        reserva.estadoReserva === 'APROBADO' &&
+        new Date(reserva.fin).getTime() <= ahora
+    );
+  
+    if(!vencida) return;
+
+    this.procesando.set(vencida.id);
+
+    this.reservasService.finalizarReserva(vencida.id).pipe(finalize(() => this.procesando.set(null))).subscribe({
+      next: () => {
+        this.cargar();
+      },
+      error: ({ status, error }) => {
+        this.aviso.set(error?.message ?? 'No se pudo finalizar la reserva.');
+
+        if (status === 409) {
+          this.cargar();
+        }
+      },
+    });
   }
 
   cargar(): void {
@@ -57,6 +112,7 @@ export class ReservasRecibidas implements OnInit {
           ),
       });
   }
+  
 
   cambiarFiltro(evento: Event): void {
     this.filtro.set((evento.target as HTMLSelectElement).value as Filtro);
@@ -70,6 +126,7 @@ export class ReservasRecibidas implements OnInit {
     if (!confirm(`¿Rechazar la reserva de ${reserva.cliente.nombre}?`)) return;
     this.cambiarEstado(reserva, 'rechazar');
   }
+
 
   private cambiarEstado(reserva: ReservaDetalle, accion: 'aceptar' | 'rechazar'): void {
     if (this.procesando() !== null) return;

@@ -7,6 +7,7 @@ export interface Perfil {
     fechaCreacion: string;
     puntaje: number;
     nombre: string;
+    descripcion: string;
 }
 
 export interface Cliente extends Perfil{
@@ -31,5 +32,4 @@ export interface Trabajador extends Perfil{
     puntaje:number,
     nombre:string,
     apellido:string,
-
 }

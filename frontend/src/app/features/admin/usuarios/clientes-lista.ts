@@ -1,9 +1,9 @@
 import { DatePipe } from '@angular/common';
 import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { finalize } from 'rxjs';
-import { FiltroEstado, compararPorNombre, normalizar, pasaFiltroEstado } from '../filtros';
-import { ClienteAdmin } from '../usuario.model';
-import { UsuariosAdminService } from '../usuarios-admin.service';
+import { FiltroEstado, compararPorNombre, normalizar, pasaFiltroEstado } from './filtros';
+import { ClienteAdmin } from './usuario.model';
+import { UsuariosAdminService } from './usuarios-admin.service';
 
 @Component({
   selector: 'app-clientes-lista',

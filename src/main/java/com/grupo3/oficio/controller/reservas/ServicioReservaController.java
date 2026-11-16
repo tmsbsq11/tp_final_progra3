@@ -85,15 +85,26 @@ public class ServicioReservaController {
         servicioReservaService.eliminarReserva(servicioReservaService.buscarReservaPorId(id));
         return ResponseEntity.ok("La reserva se elimino correctamente");
     }
+
     @PreAuthorize("hasRole('TRABAJADOR')")
     @PatchMapping("/aceptar/{id}")
     public ResponseEntity<ServicioReserva> aceptarReserva(@PathVariable Integer id){
         return ResponseEntity.ok(servicioReservaService.cambiarReservaEstado(id,EstadoReserva.APROBADO));
     }
+
+    @PreAuthorize("hasRole('TRABAJADOR')")
+    @PatchMapping("/finalizar/{id}")
+    public ResponseEntity<ServicioReserva> finalizarReserva(
+            @PathVariable Integer id,
+            Authentication auth) {
+        return ResponseEntity.ok(servicioReservaService.finalizarReserva(id, auth));
+    }
+
     @PreAuthorize("hasAnyRole('TRABAJADOR', 'CLIENTE')")
     @PatchMapping("/rechazar/{id}")
     public ResponseEntity<ServicioReserva> rechazarReserva(@PathVariable Integer id, Authentication auth){
         return ResponseEntity.ok(servicioReservaService.rechazarReserva(id, auth));
     }
+
 }
 

@@ -4,11 +4,12 @@ import { ListaServicios } from './features/servicios/lista-servicios/lista-servi
 import { ReservaForm } from './features/reservas/reserva-form';
 import { authGuard } from './core/guards/auth.guard';
 import { TrabajadorList } from './features/servicios/trabajadores/trabajador-list/trabajador-list';
+import { adminGuard } from './core/guards/admin.guard';
 
 export const routes: Routes = [
   { path: '', component: Home },
-  { path: 'admin/clientes', canActivate: [adminGuard], loadComponent: () => import('./features/admin/usuarios/clientes-lista/clientes-lista').then(m => m.ClientesLista) },
-  { path: 'admin/trabajadores', canActivate: [adminGuard], loadComponent: () => import('./features/admin/usuarios/trabajadores-lista/trabajadores-lista').then(m => m.TrabajadoresLista) },
+  { path: 'admin/clientes', canActivate: [adminGuard], loadComponent: () => import('./features/admin/usuarios/clientes-lista').then(m => m.ClientesLista) },
+  { path: 'admin/trabajadores', canActivate: [adminGuard], loadComponent: () => import('./features/admin/usuarios/trabajadores-lista').then(m => m.TrabajadoresLista) },
   { path: 'admin/categorias', loadComponent: () => import('./features/categorias/categoria-form/categoria-form').then(m => m.CategoriaForm), canActivate: [authGuard] },
   { path: 'admin/categorias/lista', loadComponent: () => import('./features/categorias/categorias-lista/categorias-lista').then(m => m.CategoriasLista), canActivate: [authGuard] },
   { path: 'servicios/:id/reservar', loadComponent: () => import('./features/reservas/reserva-form').then(m => m.ReservaForm), canActivate: [authGuard] },
@@ -24,8 +25,8 @@ export const routes: Routes = [
   { path: 'mis-postulaciones', loadComponent: () => import('./features/servicios/postulaciones/mis-postulaciones/mis-postulaciones').then(m => m.MisPostulaciones), canActivate: [authGuard]},
   { path: 'mis-postulaciones/nueva', loadComponent: () => import('./features/servicios/postulaciones/postulacion-form/postulacion-form').then(m => m.PostulacionForm), canActivate: [authGuard]},
   { path: 'mis-postulaciones/:id/editar', loadComponent: () =>import('./features/servicios/postulaciones/postulacion-form/postulacion-form').then(m => m.PostulacionForm), canActivate: [authGuard]},
-  {path: 'resenias/nueva/:idReserva', loadComponent: () => import('./features/resenias/resenia-form/resenia-form').then(m => m.ReseniaForm), canActivate: [authGuard],},
-  {path: 'resenias/trabajador/:idTrabajador', loadComponent: () => import('./features/resenias/resenias-list/resenias-list').then(m => m.ReseniasList), canActivate: [authGuard],},
-  {path: 'resenias/:idResenia', loadComponent: () => import('./features/resenias/resenia-detail/resenia-detail').then(m => m.ReseniaDetail), canActivate: [authGuard],},
+  { path: 'resenias/nueva/:idReserva', loadComponent: () => import('./features/resenias/resenia-form/resenia-form').then(m => m.ReseniaForm), canActivate: [authGuard],},
+  { path: 'resenias/trabajador/:idTrabajador', loadComponent: () => import('./features/resenias/resenias-list/resenias-list').then(m => m.ReseniasList), canActivate: [authGuard],},
+  { path: 'resenias/:idResenia', loadComponent: () => import('./features/resenias/resenia-detail/resenia-detail').then(m => m.ReseniaDetail), canActivate: [authGuard],},
   { path: '**',redirectTo: '',pathMatch: 'full'},
 ];

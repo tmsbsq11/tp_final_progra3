@@ -7,6 +7,7 @@
 <p>Correo: {{cliente.correo}}</p>
 <p>Puntaje:{{cliente.puntaje}}</p>
 <p>Fecha de creacion de la cuenta: {{cliente.fechaCreacion.slice(0,10)}}</p>
+<p>Descripcion: {{cliente.descripcion}}</p>
 
 <button (click)="editando.set((v)=>!v)">{{!editando()? "Editar datos":"Editando..." }}</button>
 @if(editando()){

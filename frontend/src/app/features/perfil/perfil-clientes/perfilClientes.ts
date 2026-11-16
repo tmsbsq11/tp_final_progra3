@@ -2,8 +2,7 @@ import { Component, inject, OnInit, signal } from '@angular/core';
 import { AuthService } from '../../../core/services/auth.service';
 import { ClientePerfilClient } from '../clients/perfil-client';
 import { FormularioPerfil } from '../formulario-perfil/formulario-perfil';
-import { Cliente, Perfil } from '../models/perfil.model';
-import { ClientesClient } from '../clients/clientes-client';
+import { Cliente } from '../models/perfil.model';
 @Component({
   imports: [FormularioPerfil],
   selector: 'app-perfilClientes',

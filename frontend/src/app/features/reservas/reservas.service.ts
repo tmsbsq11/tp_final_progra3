@@ -39,4 +39,11 @@ export class ReservasService {
   rechazarReserva(id: number) {
     return this.http.patch<unknown>(`/api/servicio_reservas/rechazar/${id}`, null);
   }
+
+  finalizarReserva(id: number) {
+  return this.http.patch<ReservaDetalle>(
+    `/api/servicio_reservas/finalizar/${id}`,
+    null
+  );
+}
 }

@@ -25,6 +25,11 @@ public interface ServicioReservaRepository extends JpaRepository<ServicioReserva
             Cliente cliente,
             LocalDateTime fechaFin,
             LocalDateTime fechaInicio);
+    boolean existsByClienteAndEstadoReservaInAndInicioLessThanAndFinGreaterThan(
+            Cliente cliente,
+            List<EstadoReserva> estados,
+            LocalDateTime fechaFin,
+            LocalDateTime fechaInicio);
     boolean existsByTrabajadorAndInicioLessThanAndFinGreaterThan(
             Trabajador trabajador,
             LocalDateTime fechaFin,

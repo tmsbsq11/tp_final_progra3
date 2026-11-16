@@ -115,8 +115,14 @@ public class ServicioReservaService {
                             + " a "
                             + estadoNuevo);
         }
+        if (estadoNuevo == EstadoReserva.APROBADO &&
+                !reserva.getInicio().isAfter(LocalDateTime.now())) {
+            throw new IllegalArgumentException(
+                    "No se puede aceptar una reserva cuyo horario de inicio ya llegó o pasó."
+            );
+        }
         boolean hayConflicto =
-                reservaRepo
+                estadoNuevo == EstadoReserva.APROBADO && reservaRepo
                         .existsByTrabajadorAndEstadoReservaAndInicioLessThanAndFinGreaterThan(
                                 reserva.getTrabajador(),
                                 EstadoReserva.APROBADO,
@@ -192,10 +198,13 @@ public class ServicioReservaService {
 
         Cliente cliente = clienteService.buscarPorId(servicioReservaDTO.getIdCliente());
 
-        if (reservaRepo.existsByClienteAndInicioLessThanAndFinGreaterThan(
-                cliente, fechaFin, fechaInicio)) {
+        if (reservaRepo.existsByClienteAndEstadoReservaInAndInicioLessThanAndFinGreaterThan(
+                cliente,
+                List.of(EstadoReserva.PENDIENTE, EstadoReserva.APROBADO),
+                fechaFin,
+                fechaInicio)) {
             throw new IllegalArgumentException(
-                    "Un cliente solo puede crear una reserva por franja horaria");
+                    "Ya tenés una reserva pendiente o aprobada que se superpone con ese horario.");
         }
         if (!cliente.getIsActive()) {
             throw new UsuarioInactivoRuntimeException("El cliente debe estar activo para realizar una reserva");
@@ -248,6 +257,24 @@ public class ServicioReservaService {
     public void eliminarReserva(ServicioReserva reserva) {
         buscarReservaPorId(reserva.getId());
         reservaRepo.delete(reserva);
+    }
+
+    public ServicioReserva finalizarReserva(Integer id, Authentication auth) {
+        ServicioReserva reserva = buscarReservaPorId(id);
+
+        if (!auth.getName().equals(reserva.getTrabajador().getCorreo())) {
+            throw new AccessDeniedException("La reserva no pertenece a este trabajador");
+        }
+
+        if (reserva.getEstadoReserva() != EstadoReserva.APROBADO) {
+            throw new IllegalStateException("Solo se pueden finalizar reservas aprobadas");
+        }
+
+        if (reserva.getFin() == null || reserva.getFin().isAfter(LocalDateTime.now())) {
+            throw new IllegalStateException("Solo podés finalizar la reserva cuando termine su horario");
+        }
+
+        return cambiarReservaEstado(id, EstadoReserva.FINALIZADO);
     }
 
     public ServicioReserva rechazarReserva(Integer id, Authentication auth) {

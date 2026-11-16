@@ -46,6 +46,18 @@
                 </a>
               </li>
             }
+            @if (authService.getUserRole()?.toLowerCase() === 'admin') {
+            <li>
+              <a routerLink="/admin/clientes" routerLinkActive="activo" (click)="menu.open = false">
+                Clientes
+              </a>
+            </li>
+            <li>
+              <a routerLink="/admin/trabajadores" routerLinkActive="activo" (click)="menu.open = false">
+                Trabajadores
+              </a>
+            </li>
+            }
             <li>
               <button type="button" (click)="menu.open = false; authService.logout()">
                 Cerrar sesión

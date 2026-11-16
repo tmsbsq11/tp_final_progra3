@@ -7,6 +7,8 @@ import { TrabajadorList } from './features/servicios/trabajadores/trabajador-lis
 
 export const routes: Routes = [
   { path: '', component: Home },
+  { path: 'admin/clientes', canActivate: [adminGuard], loadComponent: () => import('./features/admin/usuarios/clientes-lista/clientes-lista').then(m => m.ClientesLista) },
+  { path: 'admin/trabajadores', canActivate: [adminGuard], loadComponent: () => import('./features/admin/usuarios/trabajadores-lista/trabajadores-lista').then(m => m.TrabajadoresLista) },
   { path: 'admin/categorias', loadComponent: () => import('./features/categorias/categoria-form/categoria-form').then(m => m.CategoriaForm) },
   { path: 'admin/categorias/lista', loadComponent: () => import('./features/categorias/categorias-lista/categorias-lista').then(m => m.CategoriasLista) },
   { path: 'servicios/:id/reservar', loadComponent: () => import('./features/reservas/reserva-form').then(m => m.ReservaForm) },

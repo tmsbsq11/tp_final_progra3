@@ -1,0 +1,82 @@
+<h1>Trabajadores</h1>
+
+<div>
+  <label for="busqueda">Buscar</label>
+  <input
+    id="busqueda"
+    type="search"
+    placeholder="Nombre, apellido, correo o DNI"
+    [value]="texto()"
+    (input)="cambiarTexto($event)"
+  />
+
+  <label for="estado">Estado</label>
+  <select id="estado" [value]="estado()" (change)="cambiarEstado($event)">
+    <option value="TODOS">Todos</option>
+    <option value="ACTIVOS">Activos</option>
+    <option value="INACTIVOS">Inactivos</option>
+  </select>
+
+  <button type="button" (click)="limpiarFiltros()">Limpiar filtros</button>
+</div>
+
+@if (cargando()) {
+<p>Cargando…</p>
+} @else if (mensaje()) {
+<p role="alert">{{ mensaje() }}</p>
+<button type="button" (click)="cargar()">Reintentar</button>
+} @else {
+<p>Mostrando {{ visibles().length }} de {{ trabajadores().length }}</p>
+
+<!-- scroll horizontal para que no quede mal con tantas columnas -->
+<div style="overflow-x: auto">
+  <table>
+    <thead>
+    <tr>
+      <th>ID</th>
+      <th>Nombre</th>
+      <th>Apellido</th>
+      <th>Correo</th>
+      <th>Username</th>
+      <th>DNI</th>
+      <th>Rol</th>
+      <th>Estado</th>
+      <th>Puntaje</th>
+      <th>Descripción</th>
+      <th>Mín. entre reservas (min)</th>
+      <th>Latitud</th>
+      <th>Longitud</th>
+      <th>Foto</th>
+      <th>Alta</th>
+    </tr>
+    </thead>
+    <tbody>
+    @for (t of visibles(); track t.id) {
+    <tr>
+      <td>{{ t.id }}</td>
+      <td>{{ t.nombre ?? '—' }}</td>
+      <td>{{ t.apellido ?? '—' }}</td>
+      <td>{{ t.correo }}</td>
+      <td>{{ t.username ?? '—' }}</td>
+      <td>{{ t.dni ?? '—' }}</td>
+      <td>{{ t.rol }}</td>
+      <td>{{ t.isActive ? 'Activo' : 'Inactivo' }}</td>
+      <td>{{ t.puntaje ?? '—' }}</td>
+      <td>{{ t.descripcion ?? '—' }}</td>
+      <td>{{ t.minutosMinimoEntreReservas ?? '—' }}</td>
+      <td>{{ t.latitud ?? '—' }}</td>
+      <td>{{ t.longitud ?? '—' }}</td>
+      <td>{{ t.direccionFoto ?? '—' }}</td>
+      <td>{{ t.fechaCreacion ? (t.fechaCreacion | date: 'dd/MM/yyyy HH:mm') : '—' }}</td>
+    </tr>
+    } @empty {
+    <tr>
+      <td colspan="15">
+        {{ trabajadores().length === 0 ? 'Todavía no hay registros.' : 'Ningún resultado coincide con los filtros.' }}
+      </td>
+    </tr>
+    }
+    </tbody>
+  </table>
+</div>
+}

@@ -1,0 +1,55 @@
+<a [routerLink]="rol() === 'trabajador' ? '/reservas-recibidas' : '/mis-reservas'">
+  ← Volver a reservas
+</a>
+
+<h1>{{ rol() === 'trabajador' ? 'Reseñar al cliente' : 'Reseñar al trabajador' }}</h1>
+
+@if (cargando()) {
+    <p role="status">Cargando reserva…</p>
+} @else if (idReseniaCreada(); as id) {
+    <a [routerLink]="['/resenias', id]">Ver la reseña enviada</a>
+} @else if (reserva(); as seleccionada) {
+    <form class="formulario" [formGroup]="formulario" (ngSubmit)="onSubmit()">
+        <p>
+        {{ rol() === 'trabajador' ? seleccionada.cliente.nombre : seleccionada.trabajador.nombre }}
+        · {{ seleccionada.servicio.titulo }}
+        </p>
+
+        <fieldset>
+        <label for="puntaje">Puntaje</label>
+        <select id="puntaje" formControlName="puntaje">
+            <option [ngValue]="null" disabled>Elegí un puntaje</option>
+            @for (valor of [1, 2, 3, 4, 5]; track valor) {
+            <option [ngValue]="valor">{{ valor }}</option>
+            }
+        </select>
+
+        @if (formulario.get('puntaje')?.touched && formulario.get('puntaje')?.invalid) {
+            <p class="error">Elegí un puntaje del 1 al 5.</p>
+        }
+        </fieldset>
+
+        <fieldset>
+        <label for="comentario">Comentario</label>
+        <textarea id="comentario" rows="4" formControlName="comentario"></textarea>
+
+        @if (formulario.get('comentario')?.touched) {
+            @if (formulario.get('comentario')?.hasError('required')) {
+                <p class="error">Escribí un comentario.</p>
+            } @else if (formulario.get('comentario')?.hasError('minlength')) {
+                <p class="error">El comentario tiene que tener al menos 10 caracteres.</p>
+            } @else if (formulario.get('comentario')?.hasError('maxlength')) {
+                <p class="error">El comentario puede tener como máximo 200 caracteres.</p>
+            }
+        }
+        </fieldset>
+
+        <button type="submit" [disabled]="enviando()">
+        {{ enviando() ? 'Enviando…' : 'Enviar reseña' }}
+        </button>
+    </form>
+}
+
+@if (mensaje()) {
+    <p role="status">{{ mensaje() }}</p>
+}

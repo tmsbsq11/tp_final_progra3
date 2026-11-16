@@ -1,0 +1,29 @@
+<h1>Detalle de la reseña</h1>
+
+@if (cargando()) {
+    <p class="aviso" role="status">Cargando reseña…</p>
+} @else if (mensaje()) {
+    <p class="aviso" role="alert">{{ mensaje() }}</p>
+} @else if (resenia(); as detalle) {
+  @if (detalle.direccionResenia === 'CLIENTEATRABAJADOR' && detalle.trabajador; as trabajador) {
+        
+    <a class="accion volver" [routerLink]="['/resenias', 'trabajador', trabajador.id]">
+        ← Volver al listado
+    </a>
+    }
+
+    <article class="tarjeta">
+
+        <h2>{{ detalle.puntaje }} de 5</h2>
+        <p class="fecha">{{ detalle.fechaCreacion | date: 'dd/MM/yyyy' }}</p>
+        <p class="comentario">{{ detalle.comentario }}</p>
+
+        @if (puedeSolicitarRevision()) {
+            <details>
+                <summary aria-label="Opciones de la reseña">⋯</summary>
+                <button class="accion" type="button" disabled>Solicitar revisión</button>
+                <p>El envío de solicitudes todavía no está disponible.</p>
+            </details>
+        }
+    </article>
+}

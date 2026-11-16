@@ -1,0 +1,75 @@
+:host {
+  display: block;
+  max-width: 44rem;
+  margin-inline: auto;
+  padding: 2rem 1rem 3rem;
+  color: #173f56;
+}
+
+h1 {
+  margin: 0 0 1.5rem;
+  text-align: center;
+}
+
+.tarjeta,
+.aviso {
+  margin-block: 1rem;
+  padding: 1.25rem;
+  border: 1px solid #cddfea;
+  border-radius: 16px;
+  background: #fff;
+}
+
+.tarjeta h2 {
+  margin: 0;
+  font-size: 1.25rem;
+}
+
+.fecha {
+  color: #425d71;
+  font-size: 0.9rem;
+}
+
+.comentario {
+  overflow-wrap: anywhere;
+  white-space: pre-wrap;
+  line-height: 1.5;
+}
+
+.accion {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  box-sizing: border-box;
+  padding: 0.55rem 0.85rem;
+  border: 1px solid #b6d5e8;
+  border-radius: 12px;
+  background: #e1f0fa;
+  color: #17577c;
+  font: inherit;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+a.accion:hover {
+  background: #c7e2f3;
+}
+
+.accion:focus-visible,
+summary:focus-visible {
+  outline: 3px solid #287bb1;
+  outline-offset: 3px;
+}
+
+.accion:disabled {
+  opacity: 0.65;
+}
+
+summary {
+  width: fit-content;
+  cursor: pointer;
+}
+
+details .accion {
+  margin-top: 0.75rem;
+}

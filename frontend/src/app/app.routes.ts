@@ -24,5 +24,8 @@ export const routes: Routes = [
   { path: 'mis-postulaciones', loadComponent: () => import('./features/servicios/postulaciones/mis-postulaciones/mis-postulaciones').then(m => m.MisPostulaciones), canActivate: [authGuard]},
   { path: 'mis-postulaciones/nueva', loadComponent: () => import('./features/servicios/postulaciones/postulacion-form/postulacion-form').then(m => m.PostulacionForm), canActivate: [authGuard]},
   { path: 'mis-postulaciones/:id/editar', loadComponent: () =>import('./features/servicios/postulaciones/postulacion-form/postulacion-form').then(m => m.PostulacionForm), canActivate: [authGuard]},
+  {path: 'resenias/nueva/:idReserva', loadComponent: () => import('./features/resenias/resenia-form/resenia-form').then(m => m.ReseniaForm), canActivate: [authGuard],},
+  {path: 'resenias/trabajador/:idTrabajador', loadComponent: () => import('./features/resenias/resenias-list/resenias-list').then(m => m.ReseniasList), canActivate: [authGuard],},
+  {path: 'resenias/:idResenia', loadComponent: () => import('./features/resenias/resenia-detail/resenia-detail').then(m => m.ReseniaDetail), canActivate: [authGuard],},
   { path: '**',redirectTo: '',pathMatch: 'full'},
 ];

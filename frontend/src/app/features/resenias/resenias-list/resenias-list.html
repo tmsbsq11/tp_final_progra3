@@ -1,0 +1,21 @@
+<h1>Reseñas del trabajador</h1>
+
+@if (cargando()) {
+  <p class="aviso" role="status">Cargando reseñas…</p>
+} @else if (mensaje()) {
+  <p class="aviso" role="alert">{{ mensaje() }}</p>
+} @else {
+  @for (resenia of resenias(); track resenia.id) {
+    <article class="tarjeta">
+      <h2>{{ resenia.puntaje }} de 5</h2>
+      <p class="fecha">{{ resenia.fechaCreacion | date: 'dd/MM/yyyy' }}</p>
+      <p class="comentario">{{ resenia.comentario }}</p>
+
+      <a class="accion" [routerLink]="['/resenias', resenia.id]">
+        Ver detalle
+      </a>
+    </article>
+  } @empty {
+    <p class="aviso">Este trabajador todavía no recibió reseñas.</p>
+  }
+}

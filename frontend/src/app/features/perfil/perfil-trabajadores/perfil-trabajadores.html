@@ -7,4 +7,12 @@
 <p>Correo: {{trabajador.correo}}</p>
 <p>Puntaje:{{trabajador.puntaje}}</p>
 <p>Fecha de creacion de la cuenta: {{trabajador.fechaCreacion.slice(0,10)}}</p>
+<button (click)="editando.set((v)=>!v)">{{!editando()? "Editar datos":"Editando..." }}</button>
+@if(editando()){
+    <app-formulario-perfil 
+    [perfil]="trabajador"
+    (guardar)="guardarPerfil($event)"
+    (cancelar)="cancelar()">
+    </app-formulario-perfil>
+}
 }

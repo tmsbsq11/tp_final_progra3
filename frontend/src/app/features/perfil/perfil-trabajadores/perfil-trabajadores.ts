@@ -1,8 +1,9 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
-import { PerfilTrabajadorClient, Trabajador } from '../clients/perfil-trabajador';
-
+import { PerfilTrabajadorClient} from '../clients/perfil-trabajador';
+import { FormularioPerfil } from '../formulario-perfil/formulario-perfil';
+import { Trabajador } from '../models/perfil.model';
 @Component({
-  imports: [],
+  imports: [FormularioPerfil],
   selector: 'app-perfil-trabajadores',
   styleUrl: './perfil-trabajadores.css',
   templateUrl: './perfil-trabajadores.html',
@@ -10,12 +11,26 @@ import { PerfilTrabajadorClient, Trabajador } from '../clients/perfil-trabajador
 export class PerfilTrabajadores implements OnInit {
   private readonly client=inject(PerfilTrabajadorClient);
   
+  editando=signal<boolean>(false);
   trabajadorPerfil=signal<Trabajador|null>(null);
   ngOnInit(){
     this.client.obtenerPerfil().subscribe(
       (trabajador)=>
         this.trabajadorPerfil.set(trabajador)
     );
-
+    this.editando.set(false);
   }
-}
+  guardarPerfil(datos: Trabajador){
+
+    this.client.actualizarPerfil(datos).subscribe({
+      next: (trabajadorActualizado) => {
+        this.trabajadorPerfil.set(trabajadorActualizado);
+        this.editando.set(false);
+      },
+      error: () => alert('Error al actualizar el perfil')
+    });
+  }
+  cancelar(){
+    this.editando.set(false);
+  }
+  }

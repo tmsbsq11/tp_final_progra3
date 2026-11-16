@@ -8,7 +8,7 @@
     <option value="TODAS">Todas</option>
     <option value="PENDIENTE">Pendientes</option>
     <option value="APROBADO">Aprobadas</option>
-    <option value="RECHAZADO">Rechazadas</option>
+    <option value="RECHAZADO">Rechazadas o canceladas</option>
     <option value="FINALIZADO">Finalizadas</option>
   </select>
 
@@ -18,6 +18,12 @@
       <p><strong>Trabajador:</strong> {{ r.trabajador.nombre }}</p>
       <p><strong>Cuándo:</strong> {{ r.inicio | date: 'dd/MM/yyyy HH:mm' }} a {{ r.fin | date: 'HH:mm' }}</p>
       <p><strong>Estado:</strong> {{ etiquetas[r.estadoReserva] }}</p>
+
+      @if (r.estadoReserva === 'PENDIENTE') {
+        <button type="button" (click)="cancelar(r)" [disabled]="cancelando() === r.id">
+          {{ cancelando() === r.id ? 'Cancelando…' : 'Cancelar reserva' }}
+        </button>
+      }
     </article>
   } @empty {
     <p>No tenés reservas para mostrar.</p>
@@ -25,3 +31,4 @@
 }
 
 <p aria-live="polite">{{ mensaje() }}</p>
+<p aria-live="polite">{{ aviso() }}</p>

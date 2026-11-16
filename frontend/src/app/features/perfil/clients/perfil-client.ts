@@ -1,5 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Service } from '@angular/core';
+import { Cliente } from '../models/perfil.model';
 
 @Service()
 export class ClientePerfilClient {
@@ -9,15 +10,8 @@ export class ClientePerfilClient {
         obtenerClientePerfil(){
             return this.http.get<Cliente>(this.url);
         }
+        actualizarPerfil(datos:Cliente){
+            return this.http.post<Cliente>(this.url,datos);
+        }
 
-}
-export interface Cliente{
-    id:string,
-    correo: string,
-    username:string,
-    puntaje: number,
-    dni:string|number,
-    apellido:string,
-    fechaCreacion:string,
-    nombre:string,
 }

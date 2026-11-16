@@ -52,6 +52,16 @@
               </li>
             }
             @if (authService.getUserRole()?.toLowerCase() === 'admin') {
+            <li>
+              <a routerLink="/admin/clientes" routerLinkActive="activo" (click)="menu.open = false">
+                Clientes
+              </a>
+            </li>
+            <li>
+              <a routerLink="/admin/trabajadores" routerLinkActive="activo" (click)="menu.open = false">
+                Trabajadores
+              </a>
+            </li>
               <li>
                 <a routerLink="/admin/categorias/lista" routerLinkActive="activo" (click)="menu.open = false">
                   Categorías

@@ -191,6 +191,7 @@ public class TrabajadorService {
         trabajadorExistente.setUsername(datos.getUsername());
         trabajadorExistente.setDni(datos.getDni());
         trabajadorExistente.setMinutosMinimoEntreReservas(datos.getMinutosMinimoEntreReservas());
+        trabajadorExistente.setDescripcion(datos.getDescripcion());
             //COMPLETAR
 
         //password solo si querés permitir cambio

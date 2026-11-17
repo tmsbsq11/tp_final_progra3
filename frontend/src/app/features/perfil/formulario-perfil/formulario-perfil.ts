@@ -1,5 +1,5 @@
-import { Component, EventEmitter, Input, input, Output } from '@angular/core';
-import { Cliente } from '../models/perfil.model';
+import { Component, EventEmitter, Input, Output, SimpleChanges } from '@angular/core';
+import { Cliente, Perfil } from '../models/perfil.model';
 import { Trabajador } from '../models/perfil.model';
 import { FormsModule } from '@angular/forms';
 
@@ -10,28 +10,32 @@ import { FormsModule } from '@angular/forms';
   templateUrl: './formulario-perfil.html',
 })
 export class FormularioPerfil {
-@Input() perfil!: Cliente | Trabajador; //recibe los datos del componente padre
+@Input() perfil!: Cliente|Trabajador; //recibe los datos del componente padre
 
 @Output() guardar = new EventEmitter<Cliente|Trabajador>();
 
 @Output() cancelar= new EventEmitter<void>();
 
+perfilEditable!: Cliente|Trabajador;
+
+ngOnChanges(changes: SimpleChanges){
+if(changes['perfil']&&this.perfil) {
+  this.perfilEditable = {...this.perfil}
+}
+}
+
 guardarCambios(){
   this.guardar.emit({
-    nombre: this.perfil.nombre,
-    apellido: this.perfil.apellido,
-    username: this.perfil.username,
-    dni: this.perfil.dni,
-    id: this.perfil.id,
-    fechaCreacion: this.perfil.fechaCreacion,
-    puntaje: this.perfil.puntaje,
-    descripcion: this.perfil.descripcion,
-    correo: this.perfil.correo,
-
+    ...this.perfilEditable,
   });
 }
 
 cancelarEdicion(){
     this.cancelar.emit();
+    this.perfilEditable={...this.perfil};
+  }
+
+  esTrabajador(): boolean{
+    return 'minutosMinimoEntreReservas' in this.perfilEditable;
   }
 }

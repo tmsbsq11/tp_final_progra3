@@ -15,8 +15,9 @@
         <option value="CLIENTE">Cliente</option>
         <option value="TRABAJADOR">Trabajador</option>
     </select>
-    <button type="submit" [disabled]="formulario.invalid|| enviando()" (click)="mensaje()">
+    <button type="submit" [disabled]="formulario.invalid|| enviando()">
         {{ enviando() ? 'Registrando…' : 'Registrarse' }}
     </button>
+    <a routerLink="/login" routerLinkActive="active">Tiene una cuenta? Inicie sesion</a>
 </form>
 }

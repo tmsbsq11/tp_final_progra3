@@ -2,10 +2,10 @@ import { Component, OnInit, signal } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { finalize } from 'rxjs';
 import { AuthService } from '../../../core/services/auth.service';
-import { Router } from '@angular/router'
+import { Router,RouterLink,RouterLinkActive } from '@angular/router'
 @Component({
   selector: 'app-login',
-  imports: [ReactiveFormsModule],
+  imports: [ReactiveFormsModule,RouterLink,RouterLinkActive],
   templateUrl: './login.html',
 })
 export class Login implements OnInit {

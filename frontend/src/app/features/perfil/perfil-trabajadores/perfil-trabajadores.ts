@@ -1,7 +1,7 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
 import { PerfilTrabajadorClient} from '../clients/perfil-trabajador';
 import { FormularioPerfil } from '../formulario-perfil/formulario-perfil';
-import { Trabajador } from '../models/perfil.model';
+import { Cliente, Trabajador } from '../models/perfil.model';
 @Component({
   imports: [FormularioPerfil],
   selector: 'app-perfil-trabajadores',
@@ -20,8 +20,8 @@ export class PerfilTrabajadores implements OnInit {
     );
     this.editando.set(false);
   }
-  guardarPerfil(datos: Trabajador){
-
+  guardarPerfil(datos: Cliente|Trabajador){
+    if(!('minutosMinimoEntreReservas' in datos)) return;//para que solo funcione con tranajadores
     this.client.actualizarPerfil(datos).subscribe({
       next: (trabajadorActualizado) => {
         this.trabajadorPerfil.set(trabajadorActualizado);

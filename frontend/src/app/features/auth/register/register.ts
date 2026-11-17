@@ -1,10 +1,11 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { FormGroup,FormBuilder,Validators ,ReactiveFormsModule} from '@angular/forms';
 import { signal } from '@angular/core';
 import { AuthService } from '../../../core/services/auth.service';
 import { finalize } from 'rxjs';
+import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 @Component({
-  imports: [ReactiveFormsModule],
+  imports: [ReactiveFormsModule, RouterLinkActive,RouterLink],
   selector: 'app-register',
   styleUrl: './register.css',
   templateUrl: './register.html',
@@ -14,6 +15,7 @@ export class Register implements OnInit {
 
   mensaje = signal('');
   enviando = signal(false);
+  private router=inject(Router)
 
   constructor(private fb: FormBuilder,private authService: AuthService) {
    }
@@ -37,13 +39,8 @@ export class Register implements OnInit {
 
   this.authService.register(correo,password,rol,nombre).pipe(finalize(()=>this.enviando.set(false))).subscribe({
     next: ()=>{
-      this.mensaje.set('Usuario registrado correctamente. Inicie sesión.');
-      this.formulario.reset({
-            nombre: '',
-            correo: '',
-            password: '',
-            rol: 'CLIENTE'
-          });
+      this.enviando.set(false);
+      this.router.navigate(['/login']);
     },
     error:({status})=>{
       if(status===409){

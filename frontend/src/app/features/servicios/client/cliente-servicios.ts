@@ -28,6 +28,10 @@ export class ClienteServicios {
     return this.cliente.delete(`${this.url}/${id}`);
   }
 
+  activarServicio(id: number) {
+    return this.cliente.put(`${this.url}/activar/${id}`,null);
+  }
+
   //Si no se ingresa texto, la búsqueda se hace sin filtro de texto
   buscarServicios(busqueda = '', idCategoria?: number) {
     //el 1er string es para el nombre y el 2do para el valor del filtro y el ={} es para que empiece en vacio

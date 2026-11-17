@@ -51,8 +51,12 @@
               Editar
             </a>
             @if (publicacion.isActive) {
-              <button type="button" class="accion-postulacion" [disabled]="bajaEnCurso()" (click)="darDeBaja(publicacion)">
+              <button type="button" class="accion-postulacion" [disabled]="operacionEnCurso()" (click)="darDeBaja(publicacion)">
                 Dar de baja
+              </button>
+            }@else {
+              <button type="button" class="accion-postulacion" [disabled]="operacionEnCurso()" (click)="darDeAlta(publicacion)">
+                Dar de alta
               </button>
             }
           </article>

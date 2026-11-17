@@ -157,7 +157,7 @@ public class ClienteService {
         clienteExistente.setApellido(datos.getApellido());
         clienteExistente.setUsername(datos.getUsername());
         clienteExistente.setDni(datos.getDni());
-
+        clienteExistente.setDescripcion(datos.getDescripcion());
         //password solo si querés permitir cambio
         if (datos.getPassword() != null && !datos.getPassword().isBlank()) {
             clienteExistente.setPassword(datos.getPassword());

@@ -4,36 +4,101 @@
   <input
     id="nombre"
     name="nombre"
-    [(ngModel)]="perfil.nombre"
+    minlength="2"
+    maxlength="20"
+    #nombre="ngModel"
+    [(ngModel)]="perfilEditable.nombre"
     required
   />
+  @if(nombre.errors && nombre.touched){
+    @if(nombre.errors['required']){
+      <p>El nombre es obligatorio </p>
+    }
+    @if(nombre.errors['minlength']){
+      <p>El nombre debe tener al menos dos caracteres</p>
+    }
+    @if(nombre.errors['maxlength']){
+      <p>El nombre no puede superar los 50 caracteres</p>
+    }
+  }
 
   <label for="apellido">Apellido</label>
   <input
     id="apellido"
     name="apellido"
-    [(ngModel)]="perfil.apellido"
+    minlength="2"
+    maxlength="20"
+    #apellido="ngModel"
+    [(ngModel)]="perfilEditable.apellido"
     required
   />
-
+ @if(apellido.errors && apellido.touched){
+    @if(apellido.errors['required']){
+      <p>El apellido es obligatorio </p>
+    }
+    @if(apellido.errors['minlength']){
+      <p>El apellido debe tener al menos dos caracteres</p>
+    }
+    @if(apellido.errors['maxlength']){
+      <p>El apellido no puede superar los 50 caracteres</p>
+    }
+  }
   <label for="username">Username</label>
   <input
     id="username"
     name="username"
-    [(ngModel)]="perfil.username"
+    [(ngModel)]="perfilEditable.username"
     required
   />
 
   <label for="dni">DNI</label>
   <input
+  type="number"
     id="dni"
     name="dni"
-    [(ngModel)]="perfil.dni"
+    [(ngModel)]="perfilEditable.dni"
     required
   />
 
+  <label for="descripcion">Descripcion</label>
+  <textarea 
+  id="descripcion"
+    name="descripcion" 
+    #descripcion="ngModel"
+    maxlength="100"
+    [(ngModel)]="perfilEditable.descripcion"
+    required> </textarea>
+   @if(descripcion.errors && descripcion.touched){
+    @if(descripcion.errors['required']){
+      <p>La descripcion es obligatoria </p>
+    }
+    @if(descripcion.errors['maxlength']){
+      <p>La descripcion no puede superar los 200 caracteres</p>
+    }
+  }
+
+ @if(esTrabajador()){
+      <label for="minutosMinimoEntreReservas">Minutos minimos entre reservas</label>
+      <input type="number" name="minutosMinimoEntreReservas"
+       id="minutosMinimoEntreReservas"
+       #minutosMinimoEntreReservas="ngModel"
+       [(ngModel)]="$any(perfilEditable).minutosMinimoEntreReservas"
+       min="0"
+       required>
+
+        @if(minutosMinimoEntreReservas.errors && minutosMinimoEntreReservas.touched){
+    @if(minutosMinimoEntreReservas.errors['required']){
+      <p>El nombre es obligatorio </p>
+    }
+    @if(minutosMinimoEntreReservas.errors['min']){
+      <p>Los minutos entre reservas deben ser positivos</p>
+    }
+  }
+    }
   <button type="submit">Guardar cambios</button>
   <button type="button" (click)="cancelarEdicion()">
+
+   
   Cancelar
 </button>
 </form>

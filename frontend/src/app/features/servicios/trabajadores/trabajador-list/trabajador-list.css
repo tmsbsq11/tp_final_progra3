@@ -1,11 +1,11 @@
 :host {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 18rem), 1fr));
   gap: 1.25rem;
   box-sizing: border-box;
   max-width: 72rem;
   margin-inline: auto;
-  padding: 2.5rem 1rem 3rem;
+  padding: 2rem 1rem 3rem;
   color: #173f56;
 }
 
@@ -14,37 +14,11 @@
 }
 
 h1 {
-  margin: 0 0 0.5rem;
+  margin: 0 0 1.5rem;
   text-align: center;
   font-size: clamp(1.75rem, 4vw, 2.5rem);
 }
 
-a {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  box-sizing: border-box;
-  min-height: 44px;
-  padding: 0.65rem 1rem;
-  border: 1px solid #b6d5e8;
-  border-radius: 12px;
-  background-color: #e1f0fa;
-  color: #17577c;
-  font-weight: 600;
-  text-decoration: none;
-  transition: background-color 150ms ease;
-}
-
-a:hover {
-  background-color: #c7e2f3;
-}
-
-a:focus-visible {
-  outline: 3px solid #287bb1;
-  outline-offset: 3px;
-}
-
-/* Volver a los oficios */
 :host > a {
   justify-self: start;
 }
@@ -55,46 +29,77 @@ a:focus-visible {
 }
 
 article {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.65rem;
+  text-align: center;
   min-width: 0;
   padding: 1.25rem;
   border: 1px solid #cddfea;
-  border-radius: 16px;
+  border-radius: 1rem;
   background: #fff;
   box-shadow: 0 4px 12px rgb(23 63 86 / 8%);
-}
-
-article h2 {
-  margin: 0 0 0.75rem;
-  text-align: center;
   overflow-wrap: anywhere;
 }
 
-article ul {
+article :is(h2, h3, h4, p) {
   margin: 0;
-  padding-inline-start: 1.5rem;
-  line-height: 1.6;
 }
 
-article li:not(:has(> a))::marker {
-  content: "⚙️  ";
+article p {
+  line-height: 1.5;
 }
 
-/* Ver detalle */
-article li:has(> a) {
-  margin-block-start: 1rem;
-  margin-inline-start: -1.5rem;
+a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  min-height: 44px;
+  padding: 0.6rem 0.95rem;
+  border: 1px solid #b6d5e8;
+  border-radius: 0.75rem;
+  background: #e1f0fa;
+  color: #17577c;
+  font: inherit;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+a:hover {
+  background: #c7e2f3;
+}
+
+a:focus-visible {
+  outline: 3px solid #287bb1;
+  outline-offset: 3px;
+}
+
+
+/* Acciones del servicio en una misma fila */
+article {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-rows: repeat(3, auto) 1fr auto;
+  align-items: start;
+  gap: 0.65rem;
+}
+
+article > :not(a) {
+  grid-column: 1 / -1;
+}
+
+article > a {
+  align-self: stretch;
+  justify-self: stretch;
+  margin: 0;
+  padding-inline: 0.35rem;
+  line-height: 1.2;
   text-align: center;
-  list-style: none;
 }
 
-@media (max-width: 850px) {
-  :host {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-}
 
-@media (max-width: 600px) {
-  :host {
-    grid-template-columns: minmax(0, 1fr);
-  }
+article h2 {
+  text-align: center;
 }

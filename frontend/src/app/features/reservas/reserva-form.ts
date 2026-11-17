@@ -1,6 +1,6 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { finalize, forkJoin } from 'rxjs';
 import { Servicio } from '../servicios/model/servicio.model';
 import { ReservasService } from '../reservas/reservas.service';
@@ -13,6 +13,7 @@ import { ReservasService } from '../reservas/reservas.service';
 export class ReservaForm implements OnInit {
   private fb = inject(FormBuilder);
   private route = inject(ActivatedRoute);
+  private router = inject(Router);
   private reservasService = inject(ReservasService);
 
   servicio = signal<Servicio | null>(null);
@@ -80,8 +81,7 @@ export class ReservaForm implements OnInit {
       .pipe(finalize(() => this.enviando.set(false)))
       .subscribe({
         next: () => {
-          this.mensaje.set('Reserva creada.');
-          this.formulario.reset();
+          void this.router.navigate(['/mis-reservas']);
         },
         error: ({ status, error }) => {
           this.mensaje.set(

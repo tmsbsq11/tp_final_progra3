@@ -42,14 +42,20 @@
   <section class="resultados" aria-label="Resultados de la búsqueda">
     @for (servicio of servicios(); track servicio.id) {
       <article>
-        <h2>{{ servicio.titulo }}</h2>
+        
+        <h2>{{ servicio.trabajador.nombre }}</h2>
+        <p><strong>{{ servicio.titulo }}</strong></p>
         <p><strong>Descripción:</strong> {{ servicio.descripcion }}</p>
         <p><strong>Categoría:</strong> {{ servicio.categoria.nombre }}</p>
-        <a routerLink="/trabajadores" [queryParams]="{ idCategoria: servicio.categoria.id, busqueda: textoBuscado() }">
-          Ver trabajadores
+        
+        <!-- Abre el detalle del trabajador y conserva los filtros para volver al listado. -->
+        <a [routerLink]="['/trabajadores', servicio.trabajador.id]" [queryParams]="{ busqueda: textoBuscado() || null, idCategoria: categoriaBuscada() ?? null }">
+          Ver detalle
         </a>
 
-                <a [routerLink]="['/servicios', servicio.id, 'reservar']">Reservar</a>
+        <a [routerLink]="['/servicios', servicio.id, 'reservar']">
+          Reservar
+        </a>
       </article>
 } @empty {
   <p class="mensaje">No hay servicios disponibles.</p>
@@ -64,7 +70,7 @@
       <article class="catalogo-tarjeta">
         <h3>{{ oficio.nombre }}</h3>
         <a routerLink="/trabajadores" [queryParams]="{ idCategoria: oficio.id }">
-          Ver trabajadores
+          Ver solicitudes
         </a>
       </article>
 }

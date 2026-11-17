@@ -3,25 +3,28 @@
   box-sizing: border-box;
   max-width: 72rem;
   margin-inline: auto;
-  padding: 2.5rem 1rem 3rem;
+  padding: 2rem 1rem 3rem;
   color: #173f56;
-  text-align: center;
 }
 
 h1 {
-  margin: 0 0 1.75rem;
+  margin: 0 0 1.5rem;
   text-align: center;
   font-size: clamp(1.75rem, 4vw, 2.5rem);
 }
 
+/* Filtros del catálogo */
 .filtros {
   display: grid;
   gap: 1rem;
   margin-bottom: 2rem;
+  min-width: 0;
   padding: 1.25rem;
   border: 1px solid #cddfea;
-  border-radius: 16px;
+  border-radius: 1rem;
   background: #fff;
+  box-shadow: 0 4px 12px rgb(23 63 86 / 8%);
+  overflow-wrap: anywhere;
 }
 
 .campos {
@@ -41,7 +44,7 @@ h1 {
   min-height: 44px;
   padding: 0.65rem 0.85rem;
   border: 1px solid #aabfcd;
-  border-radius: 10px;
+  border-radius: 0.65rem;
   background: #f7fbff;
   color: inherit;
   font: inherit;
@@ -50,40 +53,12 @@ h1 {
 .botones {
   display: flex;
   flex-wrap: wrap;
+  justify-content: center;
   gap: 0.75rem;
 }
 
-.botones button,
-:is(.oficios, .resultados) article a {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  box-sizing: border-box;
-  min-height: 44px;
-  padding: 0.65rem 1rem;
-  border: 1px solid #b6d5e8;
-  border-radius: 12px;
-  background-color: #e1f0fa;
-  color: #17577c;
-  font: inherit;
-  font-weight: 600;
-  text-decoration: none;
+.botones button {
   cursor: pointer;
-  transition: background-color 150ms ease;
-}
-
-.botones {
-  justify-content: center;
-}
-
-.oficios article a,
-.resultados article a {
-  align-self: center;
-}
-
-.botones button:not(:disabled):hover,
-:is(.oficios, .resultados) article a:hover {
-  background-color: #c7e2f3;
 }
 
 .botones button:disabled {
@@ -91,11 +66,7 @@ h1 {
   cursor: default;
 }
 
-:host :is(a, button, input, select):focus-visible {
-  outline: 3px solid #287bb1;
-  outline-offset: 3px;
-}
-
+/* Tarjetas de categorías y servicios */
 .oficios > h2 {
   margin: 0 0 1rem;
 }
@@ -103,7 +74,7 @@ h1 {
 .catalogo-grilla,
 .resultados {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 18rem), 1fr));
   gap: 1.25rem;
 }
 
@@ -111,18 +82,22 @@ h1 {
   grid-column: 1 / -1;
 }
 
-:is(.oficios, .resultados) article {
+article {
   display: flex;
   flex-direction: column;
-  gap: 0.75rem;
+  align-items: center;
+  gap: 0.65rem;
+  text-align: center;
+  min-width: 0;
   padding: 1.25rem;
   border: 1px solid #cddfea;
-  border-radius: 16px;
+  border-radius: 1rem;
   background: #fff;
   box-shadow: 0 4px 12px rgb(23 63 86 / 8%);
+  overflow-wrap: anywhere;
 }
 
-article :is(h2, h3, p) {
+article :is(h2, h3, h4, p) {
   margin: 0;
 }
 
@@ -130,22 +105,63 @@ article p {
   line-height: 1.5;
 }
 
+.botones button,
 article a {
-  align-self: flex-start;
-  margin-top: auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  min-height: 44px;
+  padding: 0.6rem 0.95rem;
+  border: 1px solid #b6d5e8;
+  border-radius: 0.75rem;
+  background: #e1f0fa;
+  color: #17577c;
+  font: inherit;
+  font-weight: 600;
+  text-decoration: none;
 }
 
-@media (max-width: 850px) {
-  .catalogo-grilla,
-  .resultados {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
+.botones button:not(:disabled):hover,
+article a:hover {
+  background: #c7e2f3;
 }
 
-@media (max-width: 600px) {
-  .campos,
-  .catalogo-grilla,
-  .resultados {
+:is(a, button, input, select):focus-visible {
+  outline: 3px solid #287bb1;
+  outline-offset: 3px;
+}
+
+@media (max-width: 650px) {
+  .campos {
     grid-template-columns: minmax(0, 1fr);
   }
+}
+
+
+/* Acciones del servicio en una misma fila */
+.resultados article {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-rows: repeat(3, auto) 1fr auto;
+  align-items: start;
+  gap: 0.65rem;
+}
+
+.resultados article > :not(a) {
+  grid-column: 1 / -1;
+}
+
+.resultados article > a {
+  align-self: stretch;
+  justify-self: stretch;
+  margin: 0;
+  padding-inline: 0.35rem;
+  line-height: 1.2;
+  text-align: center;
+}
+
+
+article :is(h2, h3) {
+  text-align: center;
 }

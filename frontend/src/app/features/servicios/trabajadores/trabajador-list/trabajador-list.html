@@ -1,26 +1,26 @@
 <a routerLink="/servicios">Volver a los oficios</a>
-<h1>Trabajadores del oficio</h1>
+<h1>Servicios disponibles del oficio</h1>
 
 @if (cargando()) {
-  <p>Cargando trabajadores...</p>
+    <p>Cargando servicios...</p>
 } @else if (mensaje()) {
-  <p role="alert">{{ mensaje() }}</p>
+    <p role="alert">{{ mensaje() }}</p>
 } @else {
-    @for (grupo of trabajadores(); track grupo.trabajador.id) {
+    @for (servicio of servicios(); track servicio.id) {
         <article>
-        <h2>{{ grupo.trabajador.nombre }}</h2>
-            <ul>
-                @for (servicio of grupo.publicaciones; track servicio.id) {
-                    <li>{{ servicio.titulo }}</li>
-                }
-                <li>
-                <a [routerLink]="['/trabajadores', grupo.trabajador.id]">
-                    Ver detalle
-                </a>
-                </li>
-            </ul>
+        <h2>{{ servicio.titulo }}</h2>
+        <p><strong>Trabajador:</strong> {{ servicio.trabajador.nombre }}</p>
+        <p>{{ servicio.descripcion }}</p>
+        <p><strong>Categoría:</strong> {{ servicio.categoria.nombre }}</p>
+
+        <a [routerLink]="['/servicios', servicio.id, 'reservar']">
+            Reservar
+        </a>
+        <a [routerLink]="['/trabajadores', servicio.trabajador.id]" [queryParams]="{ volverCategoria: servicio.categoria.id }">
+        Ver detalle
+        </a>
         </article>
     } @empty {
-        <p>No hay trabajadores con publicaciones disponibles en este oficio.</p>
+    <p>No hay servicios disponibles en este oficio.</p>
     }
 }

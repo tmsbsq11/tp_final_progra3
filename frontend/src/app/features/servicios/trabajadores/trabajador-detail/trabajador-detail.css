@@ -3,8 +3,18 @@
   box-sizing: border-box;
   max-width: 72rem;
   margin-inline: auto;
-  padding: 2.5rem 1rem 3rem;
+  padding: 2rem 1rem 3rem;
   color: #173f56;
+}
+
+h1 {
+  margin: 0 0 1.5rem;
+  text-align: center;
+  font-size: clamp(1.75rem, 4vw, 2.5rem);
+}
+
+:host > a {
+  margin-bottom: 1rem;
 }
 
 :host > a::before {
@@ -12,76 +22,32 @@
   margin-inline-end: 0.5rem;
 }
 
-
-
-h1 {
-  margin: 1.25rem 0 1.75rem;
-  text-align: center;
-  font-size: clamp(1.75rem, 4vw, 2.5rem);
-}
-
-a {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  box-sizing: border-box;
-  min-height: 44px;
-  padding: 0.65rem 1rem;
-  border: 1px solid #b6d5e8;
-  border-radius: 12px;
-  background-color: #e1f0fa;
-  color: #17577c;
-  font-weight: 600;
-  text-decoration: none;
-  transition: background-color 150ms ease;
-}
-
-a:hover {
-  background-color: #c7e2f3;
-}
-
-a:focus-visible {
-  outline: 3px solid #287bb1;
-  outline-offset: 3px;
-}
-
-article {
+/* Ficha, servicios y reseñas */
+.perfil,
+.publicaciones > article,
+.resenias,
+.resenia {
   min-width: 0;
   padding: 1.25rem;
   border: 1px solid #cddfea;
-  border-radius: 16px;
+  border-radius: 1rem;
   background: #fff;
   box-shadow: 0 4px 12px rgb(23 63 86 / 8%);
-}
-
-article h2,
-article h4 {
-  text-align: center;
-  margin: 0 0 0.75rem;
   overflow-wrap: anywhere;
 }
 
-.perfil {
-  padding: 1.5rem;
-  border: 1px solid #cddfea;
-  border-radius: 16px;
-  background: #fff;
-  box-shadow: 0 4px 12px rgb(23 63 86 / 8%);
-}
-
 .perfil h2 {
-  text-align: center;
   margin: 0 0 0.75rem;
 }
 
-p {
+.perfil p {
   margin: 0.5rem 0 0;
   line-height: 1.5;
 }
 
 .publicaciones {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 18rem), 1fr));
   gap: 1.25rem;
   margin-top: 2rem;
 }
@@ -91,19 +57,143 @@ p {
   margin: 0;
 }
 
-.publicaciones h4::before {
-  content: "⚙️";
-  margin-inline-end: 0.5rem;
+.publicaciones > article,
+.resenia {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.65rem;
 }
 
-@media (max-width: 850px) {
-  .publicaciones {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+article :is(h2, h3, h4, p) {
+  margin: 0;
+}
+
+article p {
+  line-height: 1.5;
+}
+
+.publicaciones a {
+  margin-top: auto;
+}
+
+.publicaciones p:last-of-type {
+  padding-bottom: 0.25rem;
+}
+
+a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  min-height: 44px;
+  padding: 0.6rem 0.95rem;
+  border: 1px solid #b6d5e8;
+  border-radius: 0.75rem;
+  background: #e1f0fa;
+  color: #17577c;
+  font: inherit;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+a:hover {
+  background: #c7e2f3;
+}
+
+a:focus-visible {
+  outline: 3px solid #287bb1;
+  outline-offset: 3px;
+}
+
+
+
+/* Valoración del trabajador */
+.perfil {
+  text-align: center;
+}
+
+.valoracion {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem 0.75rem;
+}
+
+.estrellas {
+  --puntaje: 0%;
+  display: inline-block;
+  background: linear-gradient(
+    to right,
+    #9b6200 var(--puntaje),
+    #aabfcd var(--puntaje)
+  );
+  background-clip: text;
+  color: transparent;
+  font-size: 1.5rem;
+  line-height: 1.2;
+  white-space: nowrap;
+}
+
+@media (forced-colors: active) {
+  .estrellas {
+    background: none;
+    color: CanvasText;
   }
 }
 
-@media (max-width: 600px) {
-  .publicaciones {
-    grid-template-columns: minmax(0, 1fr);
-  }
+/* Tarjeta principal de reseñas y tarjetas individuales */
+.resenias {
+  margin-top: 2rem;
+}
+
+.resenias > h3 {
+  margin: 0 0 1rem;
+}
+
+.resenias > p,
+.resenias-grilla > p {
+  margin: 0;
+  line-height: 1.5;
+}
+
+.resenias-grilla {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 16rem), 1fr));
+  gap: 0.85rem;
+}
+
+.resenias-grilla > p {
+  grid-column: 1 / -1;
+}
+
+.resenia {
+  padding: 1rem;
+  background: #f5faff;
+  box-shadow: none;
+}
+
+.resenia time {
+  color: #425e70;
+  font-size: 0.875rem;
+}
+
+
+/* Títulos y desplazamiento interior de las reseñas */
+:is(.perfil, .publicaciones, .resenias) > :is(h2, h3),
+.publicaciones article h4 {
+  text-align: center;
+}
+
+.publicaciones article h4 {
+  align-self: stretch;
+}
+
+.resenias-grilla {
+  max-height: min(24rem, 55vh);
+  overflow-y: auto;
+  overscroll-behavior-y: contain;
+  scrollbar-gutter: stable;
+  padding: 0.15rem 0.5rem 0.15rem 0.15rem;
 }

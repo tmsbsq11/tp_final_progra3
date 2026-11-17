@@ -2,7 +2,8 @@ import { Component, OnInit, signal } from '@angular/core';
 import { ClienteServicios } from '../client/cliente-servicios';
 import { Servicio } from '../model/servicio.model';
 import { finalize } from 'rxjs';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   imports: [RouterLink],
@@ -20,12 +21,26 @@ export class ListaServicios implements OnInit {
   mostrarResultados = signal(false);
 
   constructor (
-    private clienteServicios: ClienteServicios //para poder usar los metodos del cliente de servicios
+    private clienteServicios: ClienteServicios, //para poder usar los metodos del cliente de servicios
+    private route: ActivatedRoute, //para poder leer los parametros de la url
+    private router : Router
   ){}
 
   ngOnInit(): void {
-    this.cargarServicios();
+
+    const params = this.route.snapshot.queryParamMap;
+    const texto = params.get('busqueda') ?? '';
+    const id = Number(params.get('idCategoria'));
+    const idCategoria = Number.isInteger(id) && id > 0 ? id : undefined;
+
     this.cargarCategorias();
+    
+  // Si hay texto o categoría, aplica los filtros; si faltan ambos, carga todos los servicios.
+    if (texto.trim() || idCategoria !== undefined) {
+      this.buscar(texto, idCategoria);
+    } else {
+      this.cargarServicios();
+    }
   }
 
   cargarServicios(busqueda = '', idCatalogo ?: number) : void{
@@ -63,6 +78,7 @@ export class ListaServicios implements OnInit {
 
 
 textoBuscado = signal('');
+categoriaBuscada = signal<number | undefined>(undefined);
 
 buscar(busqueda: string, idCategoria?: number): void {
   const texto = busqueda.trim();
@@ -73,11 +89,14 @@ buscar(busqueda: string, idCategoria?: number): void {
   }
 
   this.textoBuscado.set(texto);
+  this.categoriaBuscada.set(idCategoria);
   this.mostrarResultados.set(true);
   this.cargarServicios(texto, idCategoria);
 }
 
 limpiarFiltros(): void {
+  this.textoBuscado.set('');
+  this.categoriaBuscada.set(undefined);
   this.mostrarResultados.set(false);
   this.mensaje.set('');
 }

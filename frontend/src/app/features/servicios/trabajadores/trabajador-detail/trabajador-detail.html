@@ -1,19 +1,50 @@
-<a routerLink="/servicios">Volver a los oficios</a>
+<a [routerLink]="rutaVolver" [queryParams]="filtrosVolver">
+  Volver al listado
+</a>
+
 <h1>Detalle del trabajador</h1>
 
 @if (cargando()) {
+
   <p>Cargando ficha...</p>
+
 } @else if (mensaje()) {
+
   <p role="alert">{{ mensaje() }}</p>
+
 } @else if (trabajador(); as perfil) {
+
   <div class="perfil">
-    <h2>{{ perfil.nombre }}</h2>
+
+  <h2>{{ perfil.nombre }} {{ perfil.apellido ?? '' }}</h2>
 
     @if (perfil.descripcion) {
       <p>{{ perfil.descripcion }}</p>
     }
 
-    <p><strong>Puntaje:</strong> {{ perfil.puntaje ?? 'Sin puntaje todavía' }}</p>
+    @if (cargandoResenias()) {
+
+      <p>Cargando valoración...</p>
+
+    } @else if (mensajeResenias()) {
+
+      <p>No se pudo calcular la valoración.</p>
+
+    } @else if (porcentajePuntaje() !== null) {
+
+      <p class="valoracion">
+
+        <span class="estrellas" [style.--puntaje]="porcentajePuntaje() + '%'" aria-hidden="true">
+          ★★★★★
+        </span>
+
+        <span><strong>{{ porcentajePuntaje() }} %</strong> · {{ resenias().length }} reseñas</span>
+      
+      </p>
+
+    } @else {
+      <p>Sin reseñas todavía.</p>
+    }
   </div>
 
   <section class="publicaciones" aria-label="Servicios del trabajador">
@@ -24,7 +55,46 @@
         <h4>{{ servicio.titulo }}</h4>
         <p>{{ servicio.descripcion }}</p>
         <p><strong>Categoría:</strong> {{ servicio.categoria.nombre }}</p>
+        <a [routerLink]="['/servicios', servicio.id, 'reservar']">
+          Reservar
+        </a>
       </article>
+    }
+  </section>
+
+  <section class="resenias" aria-labelledby="titulo-resenias">
+
+    <h3 id="titulo-resenias">Reseñas recibidas</h3>
+
+    @if (cargandoResenias()) {
+
+      <p>Cargando reseñas...</p>
+
+    } @else if (mensajeResenias()) {
+
+      <p role="alert">{{ mensajeResenias() }}</p>
+
+    } @else {
+
+      <div class="resenias-grilla">
+
+        @for (resenia of resenias(); track resenia.id) {
+
+          <article class="resenia">
+
+            <p><strong>{{ resenia.puntaje }}/5</strong></p>
+            <p>{{ resenia.comentario }}</p>
+
+            <time [attr.datetime]="resenia.fechaCreacion">
+              {{ resenia.fechaCreacion | date: 'dd/MM/yyyy' }}
+            </time>
+
+          </article>
+          
+        } @empty {
+          <p>Este trabajador todavía no recibió reseñas.</p>
+        }
+      </div>
     }
   </section>
 }

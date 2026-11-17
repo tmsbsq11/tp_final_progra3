@@ -18,7 +18,7 @@ export class MisPostulaciones implements OnInit {
   mensaje = signal('');
   textoFiltro = signal('');
   categoriaFiltro = signal('');
-  bajaEnCurso = signal(false);
+  operacionEnCurso = signal(false);
   mensajeBaja = signal('');
 
   constructor(
@@ -60,7 +60,7 @@ export class MisPostulaciones implements OnInit {
     const idTrabajador = this.authService.getUserId();
 
     if (
-      this.bajaEnCurso() ||
+      this.operacionEnCurso() ||
       !publicacion.isActive ||
       idTrabajador === null ||
       publicacion.trabajador.id !== idTrabajador ||
@@ -76,10 +76,10 @@ export class MisPostulaciones implements OnInit {
     }
 
     this.mensajeBaja.set('');
-    this.bajaEnCurso.set(true);
+    this.operacionEnCurso.set(true);
 
     this.clienteServicios.eliminarServicio(id)
-      .pipe(finalize(() => this.bajaEnCurso.set(false)))
+      .pipe(finalize(() => this.operacionEnCurso.set(false)))
       .subscribe({
         next: () => this.cargar(),
         error: ({ status }) => {
@@ -91,6 +91,43 @@ export class MisPostulaciones implements OnInit {
         },
       });
 }
+
+  darDeAlta(publicacion: Servicio): void{
+    const id=Number(publicacion.id);
+    const idTrabajador=this.authService.getUserId();
+
+    if(
+      this.operacionEnCurso() ||
+      publicacion.isActive ||
+      idTrabajador === null||
+      publicacion.trabajador.id !== idTrabajador ||
+      this.authService.getUserRole()?.toLowerCase() !== 'trabajador'||
+      !Number.isInteger(id)||
+      id <=0
+    ){
+      return;
+    }
+
+    if(!window.confirm(`quiere dar de alta ${publicacion.titulo}? `)){
+      return;
+    }
+
+    this.mensajeBaja.set('');
+    this.operacionEnCurso.set(true);
+
+    this.clienteServicios.activarServicio(id)
+      .pipe(finalize(() => this.operacionEnCurso.set(false)))
+      .subscribe({
+        next: () => this.cargar(),
+        error: ({ status }) => {
+          this.mensajeBaja.set(
+            status === 403
+              ? 'Tu cuenta no tiene permiso para dar de alta esta postulación.'
+              : 'No se pudo dar de alta la postulación.',
+          );
+        },
+      });
+  }
 
   categoriasFiltro = computed(() => {
     const categorias = this.publicaciones().map(servicio =>

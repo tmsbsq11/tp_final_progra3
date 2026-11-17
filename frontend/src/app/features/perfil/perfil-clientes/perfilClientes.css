@@ -1,0 +1,78 @@
+:host {
+  display: block;
+  box-sizing: border-box;
+  width: min(100%, 54rem);
+  margin-inline: auto;
+  padding: clamp(1.5rem, 5vw, 3rem) clamp(1rem, 4vw, 2rem) 3rem;
+  color: #173f56;
+}
+
+.perfil-cabecera {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+h1 {
+  margin: 0;
+  font-size: clamp(1.85rem, 5vw, 2.65rem);
+  line-height: 1.15;
+  overflow-wrap: anywhere;
+}
+
+.perfil-cabecera button {
+  min-height: 44px;
+  padding: 0.55rem 1rem;
+  border: 1px solid #9dc4dc;
+  border-radius: 0.65rem;
+  background: #d9ebf6;
+  color: #174d6d;
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.perfil-cabecera button:hover {
+  background: #c8e1f0;
+}
+
+.perfil-cabecera button:focus-visible {
+  outline: 3px solid #287bb1;
+  outline-offset: 3px;
+}
+
+.perfil-datos {
+  padding: clamp(1rem, 3vw, 1.5rem);
+  border: 1px solid #b9d5e6;
+  border-radius: 0.9rem;
+  background: #deedf7;
+}
+
+.perfil-datos dl {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 12rem), 1fr));
+  gap: 0.9rem 1.5rem;
+  margin: 0;
+}
+
+.perfil-datos dt {
+  color: #365e76;
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+.perfil-datos dd {
+  margin: 0.3rem 0 0;
+  overflow-wrap: anywhere;
+}
+
+.perfil-descripcion {
+  margin: 1rem 0 0;
+  padding-top: 1rem;
+  border-top: 1px solid #b9d5e6;
+  line-height: 1.6;
+  overflow-wrap: anywhere;
+}

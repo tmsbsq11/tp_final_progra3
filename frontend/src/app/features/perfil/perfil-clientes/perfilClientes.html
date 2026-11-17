@@ -1,22 +1,45 @@
 @let cliente = clientePerfil();
 
-@if(cliente){
-<h2>Perfil {{authService.getUserRole()}}</h2>
-<p>Bienvenido {{cliente.nombre}} {{cliente.apellido}}! </p>
-<p>Dni: {{cliente.dni}}</p>
-<p>Correo: {{cliente.correo}}</p>
-<p>Puntaje:{{cliente.puntaje}}</p>
-<p>Fecha de creacion de la cuenta: {{cliente.fechaCreacion.slice(0,10)}}</p>
-<p>Descripcion: {{cliente.descripcion}}</p>
+@if (cliente) {
+  <header class="perfil-cabecera">
+    <h1 id="nombre-perfil">{{ cliente.nombre }} {{ cliente.apellido }}</h1>
 
-<button (click)="editando.set((v)=>!v)">{{!editando()? "Editar datos":"Editando..." }}</button>
-@if(editando()){
-    <app-formulario-perfil 
-    [perfil]="cliente"
-    (guardar)="guardarPerfil($event)"
-    (cancelar)="cancelar()"
-    >
-    </app-formulario-perfil>
-}
-}
+    @if (!editando()) {
+      <button type="button" (click)="editando.set(true)">Editar datos</button>
+    }
+  </header>
 
+  <section class="perfil-datos" aria-labelledby="nombre-perfil">
+    <dl>
+      <div>
+        <dt>DNI</dt>
+        <dd>{{ cliente.dni }}</dd>
+      </div>
+      <div>
+        <dt>Correo</dt>
+        <dd>{{ cliente.correo }}</dd>
+      </div>
+      <div>
+        <dt>Fecha de alta</dt>
+        <dd>{{ cliente.fechaCreacion?.slice(0, 10) || '—' }}</dd>
+      </div>
+    </dl>
+
+    @if (cliente.descripcion) {
+      <p class="perfil-descripcion">{{ cliente.descripcion }}</p>
+    }
+
+    @if (editando()) {
+      <app-formulario-perfil
+        [perfil]="cliente"
+        (guardar)="guardarPerfil($event)"
+        (cancelar)="cancelar()"
+      ></app-formulario-perfil>
+    }
+  </section>
+
+  <app-resenias-list
+    class="resenias-cliente"
+    [perfil]="{ id: cliente.id, tipo: 'cliente' }"
+  ></app-resenias-list>
+}

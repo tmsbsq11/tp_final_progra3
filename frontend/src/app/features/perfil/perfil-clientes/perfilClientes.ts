@@ -3,8 +3,10 @@ import { AuthService } from '../../../core/services/auth.service';
 import { ClientePerfilClient } from '../clients/perfil-client';
 import { FormularioPerfil } from '../formulario-perfil/formulario-perfil';
 import { Cliente } from '../models/perfil.model';
+import { ReseniasList } from '../../resenias/resenias-list/resenias-list';
+
 @Component({
-  imports: [FormularioPerfil],
+  imports: [FormularioPerfil, ReseniasList],
   selector: 'app-perfilClientes',
   styleUrl: './perfilClientes.css',
   templateUrl: './perfilClientes.html',

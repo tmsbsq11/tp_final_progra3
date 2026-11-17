@@ -2,10 +2,12 @@ import { Component, inject, OnInit, signal } from '@angular/core';
 import { PerfilTrabajadorClient} from '../clients/perfil-trabajador';
 import { FormularioPerfil } from '../formulario-perfil/formulario-perfil';
 import { Cliente, Trabajador } from '../models/perfil.model';
+import { ReseniasList } from '../../resenias/resenias-list/resenias-list';
+
 @Component({
-  imports: [FormularioPerfil],
+  imports: [FormularioPerfil, ReseniasList],
   selector: 'app-perfil-trabajadores',
-  styleUrl: './perfil-trabajadores.css',
+  styleUrl: '../perfil-clientes/perfilClientes.css',
   templateUrl: './perfil-trabajadores.html',
 })
 export class PerfilTrabajadores implements OnInit {

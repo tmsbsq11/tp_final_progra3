@@ -1,21 +1,47 @@
-<h1>Reseñas del trabajador</h1>
+@if (perfil) {
+  <section class="resenias-perfil" aria-labelledby="titulo-resenias-perfil">
+    <h2 id="titulo-resenias-perfil">Reseñas recibidas</h2>
 
-@if (cargando()) {
-  <p class="aviso" role="status">Cargando reseñas…</p>
-} @else if (mensaje()) {
-  <p class="aviso" role="alert">{{ mensaje() }}</p>
+    @if (cargando()) {
+      <p role="status">Cargando reseñas…</p>
+    } @else if (mensaje()) {
+      <p role="alert">{{ mensaje() }}</p>
+    } @else {
+      <div class="resenias-grilla">
+        @for (resenia of resenias(); track resenia.id) {
+          <article class="resenia-perfil">
+            <p><strong>{{ resenia.puntaje }}/5</strong></p>
+            <p>{{ resenia.comentario }}</p>
+            <time [attr.datetime]="resenia.fechaCreacion">
+              {{ resenia.fechaCreacion | date: 'dd/MM/yyyy' }}
+            </time>
+          </article>
+        } @empty {
+          <p>Todavía no recibiste reseñas.</p>
+        }
+      </div>
+    }
+  </section>
 } @else {
-  @for (resenia of resenias(); track resenia.id) {
-    <article class="tarjeta">
-      <h2>{{ resenia.puntaje }} de 5</h2>
-      <p class="fecha">{{ resenia.fechaCreacion | date: 'dd/MM/yyyy' }}</p>
-      <p class="comentario">{{ resenia.comentario }}</p>
+  <h1>Reseñas del trabajador</h1>
 
-      <a class="accion" [routerLink]="['/resenias', resenia.id]">
-        Ver detalle
-      </a>
-    </article>
-  } @empty {
-    <p class="aviso">Este trabajador todavía no recibió reseñas.</p>
+  @if (cargando()) {
+    <p class="aviso" role="status">Cargando reseñas…</p>
+  } @else if (mensaje()) {
+    <p class="aviso" role="alert">{{ mensaje() }}</p>
+  } @else {
+    @for (resenia of resenias(); track resenia.id) {
+      <article class="tarjeta">
+        <h2>{{ resenia.puntaje }} de 5</h2>
+        <p class="fecha">{{ resenia.fechaCreacion | date: 'dd/MM/yyyy' }}</p>
+        <p class="comentario">{{ resenia.comentario }}</p>
+
+        <a class="accion" [routerLink]="['/resenias', resenia.id]">
+          Ver detalle
+        </a>
+      </article>
+    } @empty {
+      <p class="aviso">Este trabajador todavía no recibió reseñas.</p>
+    }
   }
 }

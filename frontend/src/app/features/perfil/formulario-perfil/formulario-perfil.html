@@ -1,25 +1,22 @@
-<form (ngSubmit)="guardarCambios()">
+<form #formulario="ngForm" (ngSubmit)="guardarCambios(formulario)">
 
   <label for="nombre">Nombre</label>
   <input
     id="nombre"
     name="nombre"
     minlength="2"
-    maxlength="20"
+    pattern="[\s\S]{0,20}"
     #nombre="ngModel"
-    [(ngModel)]="perfilEditable.nombre"
+    [ngModel]="perfilEditable.nombre"
+    (ngModelChange)="actualizarNombreOApellido('nombre', $event, nombre)"
     required
   />
-  @if(nombre.errors && nombre.touched){
-    @if(nombre.errors['required']){
-      <p>El nombre es obligatorio </p>
-    }
-    @if(nombre.errors['minlength']){
-      <p>El nombre debe tener al menos dos caracteres</p>
-    }
-    @if(nombre.errors['maxlength']){
-      <p>El nombre no puede superar los 50 caracteres</p>
-    }
+  @if (nombre.hasError('pattern')) {
+    <p>El nombre no puede superar los 20 caracteres.</p>
+  } @else if (nombre.touched && nombre.hasError('required')) {
+    <p>El nombre es obligatorio.</p>
+  } @else if (nombre.touched && nombre.hasError('minlength')) {
+    <p>El nombre debe tener al menos dos caracteres.</p>
   }
 
   <label for="apellido">Apellido</label>
@@ -27,22 +24,20 @@
     id="apellido"
     name="apellido"
     minlength="2"
-    maxlength="20"
+    pattern="[\s\S]{0,20}"
     #apellido="ngModel"
-    [(ngModel)]="perfilEditable.apellido"
+    [ngModel]="perfilEditable.apellido"
+    (ngModelChange)="actualizarNombreOApellido('apellido', $event, apellido)"
     required
   />
- @if(apellido.errors && apellido.touched){
-    @if(apellido.errors['required']){
-      <p>El apellido es obligatorio </p>
-    }
-    @if(apellido.errors['minlength']){
-      <p>El apellido debe tener al menos dos caracteres</p>
-    }
-    @if(apellido.errors['maxlength']){
-      <p>El apellido no puede superar los 50 caracteres</p>
-    }
+  @if (apellido.hasError('pattern')) {
+    <p>El apellido no puede superar los 20 caracteres.</p>
+  } @else if (apellido.touched && apellido.hasError('required')) {
+    <p>El apellido es obligatorio.</p>
+  } @else if (apellido.touched && apellido.hasError('minlength')) {
+    <p>El apellido debe tener al menos dos caracteres.</p>
   }
+
   <label for="username">Username</label>
   <input
     id="username"
@@ -65,36 +60,33 @@
   id="descripcion"
     name="descripcion" 
     #descripcion="ngModel"
-    maxlength="100"
+    pattern="[\s\S]{0,100}"
     [(ngModel)]="perfilEditable.descripcion"
-    required> </textarea>
-   @if(descripcion.errors && descripcion.touched){
-    @if(descripcion.errors['required']){
-      <p>La descripcion es obligatoria </p>
-    }
-    @if(descripcion.errors['maxlength']){
-      <p>La descripcion no puede superar los 200 caracteres</p>
-    }
+    required> 
+    </textarea>
+  @if (descripcion.hasError('pattern')) {
+    <p>La descripción no puede superar los 100 caracteres.</p>
+  } @else if (descripcion.touched && descripcion.hasError('required')) {
+    <p>La descripción es obligatoria.</p>
   }
 
  @if(esTrabajador()){
-      <label for="minutosMinimoEntreReservas">Minutos minimos entre reservas</label>
-      <input type="number" name="minutosMinimoEntreReservas"
-       id="minutosMinimoEntreReservas"
-       #minutosMinimoEntreReservas="ngModel"
-       [(ngModel)]="$any(perfilEditable).minutosMinimoEntreReservas"
-       min="0"
-       required>
+  <label for="minutosMinimoEntreReservas">Minutos minimos entre reservas</label>
+  <input type="number" name="minutosMinimoEntreReservas"
+  id="minutosMinimoEntreReservas"
+  #minutosMinimoEntreReservas="ngModel"
+  [(ngModel)]="$any(perfilEditable).minutosMinimoEntreReservas"
+  min="0"
+  required>
 
-        @if(minutosMinimoEntreReservas.errors && minutosMinimoEntreReservas.touched){
-    @if(minutosMinimoEntreReservas.errors['required']){
-      <p>El nombre es obligatorio </p>
+    @if (minutosMinimoEntreReservas.touched) {
+      @if (minutosMinimoEntreReservas.hasError('required')) {
+        <p>Ingresá los minutos mínimos entre reservas.</p>
+      } @else if (minutosMinimoEntreReservas.hasError('min')) {
+        <p>Ingresá 0 minutos o más.</p>
+      }
     }
-    @if(minutosMinimoEntreReservas.errors['min']){
-      <p>Los minutos entre reservas deben ser positivos</p>
-    }
-  }
-    }
+}
   <button type="submit">Guardar cambios</button>
   <button type="button" (click)="cancelarEdicion()">
 

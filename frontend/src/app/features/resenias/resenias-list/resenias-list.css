@@ -73,3 +73,51 @@ summary {
 details .accion {
   margin-top: 0.75rem;
 }
+:host(.resenias-cliente):has(.resenias-perfil) {
+  margin-top: 2rem;
+}
+
+:host(.resenias-cliente) .resenias-perfil {
+  padding: 1.25rem 1.5rem;
+  border: 1px solid #b9d5e6;
+  border-radius: 0.9rem;
+  background: #deedf7;
+}
+
+:host(.resenias-cliente) .resenias-perfil > h2 {
+  margin: 0 0 0.65rem;
+  text-align: center;
+  font-size: 1.35rem;
+}
+
+:host(.resenias-cliente) .resenias-grilla {
+  display: block;
+}
+
+:host(.resenias-cliente) .resenia-perfil {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: start;
+  gap: 0.35rem 0.9rem;
+  padding: 0.9rem 0;
+  border: 0;
+  border-bottom: 1px solid #bad5e6;
+  border-radius: 0;
+  background: transparent;
+}
+
+:host(.resenias-cliente) .resenia-perfil:first-child {
+  border-top: 1px solid #bad5e6;
+}
+
+:host(.resenias-cliente) .resenia-perfil > p:first-child {
+  padding: 0.15rem 0.55rem;
+  border-radius: 999px;
+  background: #d3e8f5;
+  font-size: 0.875rem;
+  white-space: nowrap;
+}
+
+:host(.resenias-cliente) .resenia-perfil time {
+  grid-column: 2;
+}

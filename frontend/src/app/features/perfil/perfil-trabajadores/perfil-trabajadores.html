@@ -1,20 +1,49 @@
-@let trabajador=trabajadorPerfil();
-@if(trabajador){
-    <h2>Perfil Trabajador</h2>
-<p>Bienvenido {{trabajador.nombre}} {{trabajador.apellido}}!</p>
+@let trabajador = trabajadorPerfil();
 
-<p>Dni: {{trabajador.dni}}</p>
-<p>Correo: {{trabajador.correo}}</p>
-<p>Puntaje:{{trabajador.puntaje}}</p>
-<p>Fecha de creacion de la cuenta: {{trabajador.fechaCreacion.slice(0,10)}}</p>
-<p>Descripcion: {{trabajador.descripcion}}</p>
-<p>Minutos entre reservas: {{trabajador.minutosMinimoEntreReservas}}</p>
-<button (click)="editando.set((v)=>!v)">{{!editando()? "Editar datos":"Editando..." }}</button>
-@if(editando()){
-    <app-formulario-perfil 
-    [perfil]="trabajador"
-    (guardar)="guardarPerfil($event)"
-    (cancelar)="cancelar()">
-    </app-formulario-perfil>
-}
+@if (trabajador) {
+  <header class="perfil-cabecera">
+    <h1 id="nombre-perfil">{{ trabajador.nombre }} {{ trabajador.apellido }}</h1>
+
+    @if (!editando()) {
+      <button type="button" (click)="editando.set(true)">Editar datos</button>
+    }
+  </header>
+
+  <section class="perfil-datos" aria-labelledby="nombre-perfil">
+    <dl>
+      <div>
+        <dt>DNI</dt>
+        <dd>{{ trabajador.dni }}</dd>
+      </div>
+      <div>
+        <dt>Correo</dt>
+        <dd>{{ trabajador.correo }}</dd>
+      </div>
+      <div>
+        <dt>Fecha de alta</dt>
+        <dd>{{ trabajador.fechaCreacion?.slice(0, 10) || '—' }}</dd>
+      </div>
+      <div>
+        <dt>Minutos entre reservas</dt>
+        <dd>{{ trabajador.minutosMinimoEntreReservas }}</dd>
+      </div>
+    </dl>
+
+    @if (trabajador.descripcion) {
+      <p class="perfil-descripcion">{{ trabajador.descripcion }}</p>
+    }
+
+    @if (editando()) {
+      <app-formulario-perfil
+        [perfil]="trabajador"
+        (guardar)="guardarPerfil($event)"
+        (cancelar)="cancelar()"
+      ></app-formulario-perfil>
+    }
+  </section>
+
+  <app-resenias-list
+    class="resenias-cliente"
+    [perfil]="{ id: trabajador.id, tipo: 'trabajador' }"
+  ></app-resenias-list>
 }

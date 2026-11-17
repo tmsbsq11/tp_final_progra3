@@ -3,13 +3,16 @@ import { Component, OnDestroy, OnInit, computed, inject, signal } from '@angular
 import { finalize } from 'rxjs';
 import { EstadoReserva, ReservaDetalle } from '../reserva.model';
 import { ReservasService } from '../reservas.service';
+import { RouterLink } from '@angular/router';
+import { AuthService } from '../../../core/services/auth.service';
 
 type Filtro = EstadoReserva | 'TODAS';
 
 @Component({
   selector: 'app-reservas-recibidas',
-  imports: [DatePipe],
+  imports: [DatePipe, RouterLink],
   templateUrl: './reservas-recibidas.html',
+  styleUrls: ['../mis-reservas/mis-reservas.css', './reservas-recibidas.css',],
 })
 
 export class ReservasRecibidas implements OnInit,OnDestroy {
@@ -127,6 +130,15 @@ private rechazarPendienteVencida(): void {
     this.cambiarEstado(reserva, 'rechazar');
   }
 
+  private readonly authService = inject(AuthService);
+
+  // verifica si el trabajador ya envio una reseña para esta reserva en esta sesion
+  yaResenada(idReserva: number): boolean {
+    const idUsuario = this.authService.getUserId();
+
+    return idUsuario !== null &&
+      sessionStorage.getItem(`resenia-enviada:trabajador:${idUsuario}:${idReserva}`) === '1';
+  }
 
   private cambiarEstado(reserva: ReservaDetalle, accion: 'aceptar' | 'rechazar'): void {
     if (this.procesando() !== null) return;

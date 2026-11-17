@@ -3,17 +3,29 @@ import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { finalize } from 'rxjs';
 import { EstadoReserva, ReservaDetalle } from '../reserva.model';
 import { ReservasService } from '../reservas.service';
+import { RouterLink } from '@angular/router';
+import { AuthService } from '../../../core/services/auth.service';
 
 type Filtro = EstadoReserva | 'TODAS';
 
 @Component({
   selector: 'app-mis-reservas',
-  imports: [DatePipe],
+  imports: [DatePipe, RouterLink],
   templateUrl: './mis-reservas.html',
+  styleUrl: './mis-reservas.css',
 })
 export class MisReservas implements OnInit {
   private reservasService = inject(ReservasService);
+  
+  // verifica en esta sesion si el cliente ya envio una reseña para esta reserva
+  private readonly authService = inject(AuthService);
 
+  yaResenada(idReserva: number): boolean {
+    const idUsuario = this.authService.getUserId();
+
+    return idUsuario !== null &&
+      sessionStorage.getItem(`resenia-enviada:cliente:${idUsuario}:${idReserva}`) === '1';
+  }
   reservas = signal<ReservaDetalle[]>([]);
   filtro = signal<Filtro>('TODAS');
   cargando = signal(true);

@@ -16,6 +16,10 @@ export class ReseniasService {
         return this.http.get<ReseniaRecibida[]>(`${this.url}/trabajador/${idTrabajador}`);
     }
 
+    listarDelCliente(idCliente: number) {
+        return this.http.get<ReseniaRecibida[]>(`${this.url}/cliente/${idCliente}`);
+    }
+
     obtenerPorId(idResenia: number) {
         return this.http.get<ReseniaRecibida>(`${this.url}/${idResenia}`);
     }

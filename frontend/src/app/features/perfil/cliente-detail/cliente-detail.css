@@ -1,0 +1,46 @@
+:host {
+  display: block;
+  max-width: 44rem;
+  margin-inline: auto;
+  padding: 2rem 1rem 3rem;
+  color: #173f56;
+}
+
+h1 {
+  text-align: center;
+}
+
+.tarjeta {
+  margin-block: 1rem;
+  padding: 1.25rem;
+  border: 1px solid #cddfea;
+  border-radius: 16px;
+  background: #fff;
+  overflow-wrap: anywhere;
+}
+
+.tarjeta h3 {
+  margin-top: 0;
+}
+
+.accion {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 0 1rem;
+  border: 1px solid #b6d5e8;
+  border-radius: 12px;
+  background: #e1f0fa;
+  color: #17577c;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.accion:hover {
+  background: #c7e2f3;
+}
+
+.accion:focus-visible {
+  outline: 3px solid #287bb1;
+  outline-offset: 2px;
+}

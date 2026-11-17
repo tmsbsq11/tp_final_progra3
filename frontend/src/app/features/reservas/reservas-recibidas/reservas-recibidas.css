@@ -1,0 +1,23 @@
+.reserva-acciones {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  width: 100%;
+  margin-top: auto;
+  padding-top: 0.5rem;
+}
+
+.reserva-acciones .accion {
+  margin-top: 0;
+}
+
+.resenia-enviada {
+  padding: 0.4rem 0.75rem;
+  border-radius: 999px;
+  background: #e4f4ec;
+  color: #205d40;
+  font-size: 0.875rem;
+  font-weight: 600;
+}

@@ -1,0 +1,192 @@
+:host {
+  display: block;
+  color: #173f56;
+}
+
+.mis-reservas {
+  box-sizing: border-box;
+  max-width: 72rem;
+  margin-inline: auto;
+  padding: 2.5rem 1rem 3rem;
+}
+
+h1 {
+  margin: 0 0 1.75rem;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+  text-align: center;
+  font-size: clamp(1.75rem, 4vw, 2.5rem);
+}
+
+.filtros {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1.25rem;
+  padding: 1rem 1.25rem;
+  border: 1px solid #cddfea;
+  border-radius: 16px;
+  background: #fff;
+}
+
+.filtros label {
+  font-weight: 600;
+}
+
+.filtros select {
+  box-sizing: border-box;
+  width: min(100%, 17rem);
+  min-height: 44px;
+  padding: 0.55rem 0.75rem;
+  border: 1px solid #aabfcd;
+  border-radius: 10px;
+  background: #f7fbff;
+  color: inherit;
+  font: inherit;
+}
+
+.reservas-grilla {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 19rem), 1fr));
+  gap: 1.25rem;
+}
+
+.reserva-tarjeta,
+.aviso {
+  padding: 1.25rem;
+  border: 1px solid #cddfea;
+  border-radius: 16px;
+  background: #fff;
+}
+
+.reserva-tarjeta {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.85rem;
+  min-width: 0;
+  box-shadow: 0 4px 12px rgb(23 63 86 / 8%);
+}
+
+.reserva-tarjeta h2 {
+  margin: 0;
+  font-size: 1.25rem;
+  line-height: 1.25;
+  overflow-wrap: anywhere;
+}
+
+.estado {
+  padding: 0.3rem 0.65rem;
+  border-radius: 999px;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.estado[data-estado="PENDIENTE"] {
+  background: #fff1d6;
+  color: #714700;
+}
+
+.estado[data-estado="APROBADO"] {
+  background: #e4f4ec;
+  color: #205d40;
+}
+
+.estado[data-estado="FINALIZADO"] {
+  background: #e1f0fa;
+  color: #17577c;
+}
+
+.estado[data-estado="RECHAZADO"] {
+  background: #edf1f4;
+  color: #405666;
+}
+
+.reserva-datos {
+  display: grid;
+  gap: 0.65rem;
+  margin: 0 0 0.4rem;
+}
+
+.reserva-datos dt {
+  margin-bottom: 0.15rem;
+  color: #405666;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.reserva-datos dd {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+
+.resenia-enviada {
+  align-self: center;
+  padding: 0.4rem 0.75rem;
+  border-radius: 999px;
+  background: #e4f4ec;
+  color: #205d40;
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+.accion {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  align-self: center;
+  box-sizing: border-box;
+  min-height: 44px;
+  margin-top: auto;
+  padding: 0.65rem 1rem;
+  border: 1px solid #b6d5e8;
+  border-radius: 12px;
+  background: #e1f0fa;
+  color: #17577c;
+  font: inherit;
+  font-weight: 600;
+  text-align: center;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.accion:not(:disabled):hover {
+  background: #c7e2f3;
+}
+
+.accion-cancelar {
+  border-color: #ebc1c6;
+  background: #fce9eb;
+  color: #8b2633;
+}
+
+.accion-cancelar:not(:disabled):hover {
+  background: #f5d3d8;
+}
+
+.accion:disabled {
+  opacity: 0.55;
+  cursor: default;
+}
+
+:is(.accion, select):focus-visible {
+  outline: 3px solid #287bb1;
+  outline-offset: 2px;
+}
+
+.aviso {
+  margin: 0 0 1.25rem;
+  text-align: center;
+}
+
+.reservas-grilla > .aviso {
+  grid-column: 1 / -1;
+  margin: 0;
+}
+
+.aviso-error {
+  color: #8b2633;
+}

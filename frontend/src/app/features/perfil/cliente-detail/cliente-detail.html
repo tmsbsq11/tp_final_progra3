@@ -1,0 +1,55 @@
+<a routerLink="/reservas-recibidas">Volver a reservas recibidas</a>
+
+<h1>Detalle del cliente</h1>
+
+@if (cargando()) {
+    <p role="status">Cargando ficha…</p>
+} @else if (mensaje()) {
+    <p role="alert">{{ mensaje() }}</p>
+} @else if (cliente(); as perfil) {
+    
+    <div class="perfil">
+        <h2>{{ perfil.nombre }} {{ perfil.apellido ?? '' }}</h2>
+
+        @if (!cargandoResenias() && !mensajeResenias()) {
+            @if (porcentajePuntaje(); as porcentaje) {
+                <p class="valoracion">
+                    
+                <span class="estrellas" [style.--puntaje]="porcentaje + '%'" aria-hidden="true">
+                    ★★★★★
+                </span>
+                    
+                <span>
+                <strong>{{ porcentaje }} %</strong> ·
+                {{ resenias().length }} {{ resenias().length === 1 ? 'reseña' : 'reseñas' }}
+                </span>
+                </p>
+            }
+        }
+    </div>
+
+    <section class="resenias" aria-labelledby="titulo-resenias-cliente">
+        
+        <h3 id="titulo-resenias-cliente">Reseñas recibidas</h3>
+
+        @if (cargandoResenias()) {
+            <p role="status">Cargando reseñas…</p>
+        } @else if (mensajeResenias()) {
+            <p role="alert">{{ mensajeResenias() }}</p>
+        } @else {
+            <div class="resenias-grilla">
+                @for (resenia of resenias(); track resenia.id) {
+                    <article class="resenia">
+                        <p><strong>{{ resenia.puntaje }}/5</strong></p>
+                        <p>{{ resenia.comentario }}</p>
+                        <time [attr.datetime]="resenia.fechaCreacion">
+                        {{ resenia.fechaCreacion | date: 'dd/MM/yyyy' }}
+                        </time>
+                    </article>
+                } @empty {
+                <p>Este cliente todavía no recibió reseñas.</p>
+                }
+            </div>
+        }
+    </section>
+}

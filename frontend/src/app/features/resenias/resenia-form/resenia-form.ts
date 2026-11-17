@@ -1,11 +1,6 @@
 import { Component, OnInit, signal } from '@angular/core';
-import {
-  FormBuilder,
-  FormGroup,
-  ReactiveFormsModule,
-  Validators,
-} from '@angular/forms';
-import { ActivatedRoute, RouterLink } from '@angular/router';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { finalize } from 'rxjs';
 import { AuthService } from '../../../core/services/auth.service';
 import { ReservaDetalle } from '../../reservas/reserva.model';
@@ -29,11 +24,12 @@ export class ReseniaForm implements OnInit {
     idReseniaCreada = signal<number | null>(null);
 
     constructor(
-        private fb: FormBuilder,
-        private route: ActivatedRoute,
-        private authService: AuthService,
-        private reservasService: ReservasService,
-        private reseniasService: ReseniasService,
+    private fb: FormBuilder,
+    private route: ActivatedRoute,
+    private router: Router,
+    private authService: AuthService,
+    private reservasService: ReservasService,
+    private reseniasService: ReseniasService,
     ) {}
 
     ngOnInit(): void {
@@ -133,11 +129,15 @@ export class ReseniaForm implements OnInit {
         })
         .pipe(finalize(() => this.enviando.set(false)))
         .subscribe({
-            next: resenia => {
+        next: resenia => {
             this.idReseniaCreada.set(resenia.id);
             this.mensaje.set('Reseña enviada.');
-            },
-            error: () => this.mensaje.set('No se pudo enviar la reseña.'),
+            sessionStorage.setItem(`resenia-enviada:${rol}:${idUsuario}:${reserva.id}`, '1');
+
+            const destino = rol === 'cliente' ? '/mis-reservas' : '/reservas-recibidas';
+            this.router.navigate([destino]);
+        },
+        error: () => this.mensaje.set('No se pudo enviar la reseña.'),
         });
     }
 }

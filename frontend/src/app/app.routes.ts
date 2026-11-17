@@ -28,5 +28,6 @@ export const routes: Routes = [
   { path: 'resenias/nueva/:idReserva', loadComponent: () => import('./features/resenias/resenia-form/resenia-form').then(m => m.ReseniaForm), canActivate: [authGuard],},
   { path: 'resenias/trabajador/:idTrabajador', loadComponent: () => import('./features/resenias/resenias-list/resenias-list').then(m => m.ReseniasList), canActivate: [authGuard],},
   { path: 'resenias/:idResenia', loadComponent: () => import('./features/resenias/resenia-detail/resenia-detail').then(m => m.ReseniaDetail), canActivate: [authGuard],},
+  { path: 'clientes/reserva/:idReserva', loadComponent: () => import('./features/perfil/cliente-detail/cliente-detail').then(m => m.ClienteDetail), canActivate: [authGuard],},
   { path: '**',redirectTo: '',pathMatch: 'full'},
 ];

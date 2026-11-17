@@ -16,5 +16,5 @@ export interface ReservaDetalle {
     fin: string;
     servicio: { id: number; titulo: string };
     trabajador: { id: number; nombre: string };
-    cliente: { id: number; nombre: string };
+    cliente: { id: number; nombre: string; apellido?: string | null }; // el campo queda opcional para que la ficha pueda mostrar el nombre si una reserva viene sin apellido
   }

@@ -1,5 +1,6 @@
 <h1>Trabajadores</h1>
-
+<p><a routerLink="/admin/trabajadores/nuevo">Nuevo trabajador</a></p>
+<p role="status">{{ aviso() }}</p>
 <div>
   <label for="busqueda">Buscar</label>
   <input
@@ -28,7 +29,6 @@
 } @else {
 <p>Mostrando {{ visibles().length }} de {{ trabajadores().length }}</p>
 
-<!-- scroll horizontal para que no quede mal con tantas columnas -->
 <div style="overflow-x: auto">
   <table>
     <thead>
@@ -37,7 +37,6 @@
       <th>Nombre</th>
       <th>Apellido</th>
       <th>Correo</th>
-      <th>Username</th>
       <th>DNI</th>
       <th>Rol</th>
       <th>Estado</th>
@@ -48,6 +47,7 @@
       <th>Longitud</th>
       <th>Foto</th>
       <th>Alta</th>
+      <th>Acciones</th>
     </tr>
     </thead>
     <tbody>
@@ -57,9 +57,8 @@
       <td>{{ t.nombre ?? '—' }}</td>
       <td>{{ t.apellido ?? '—' }}</td>
       <td>{{ t.correo }}</td>
-      <td>{{ t.username ?? '—' }}</td>
       <td>{{ t.dni ?? '—' }}</td>
-      <td>{{ t.rol }}</td>
+      <td>{{ t.rol ?? '—' }}</td>
       <td>{{ t.isActive ? 'Activo' : 'Inactivo' }}</td>
       <td>{{ t.puntaje ?? '—' }}</td>
       <td>{{ t.descripcion ?? '—' }}</td>
@@ -68,6 +67,12 @@
       <td>{{ t.longitud ?? '—' }}</td>
       <td>{{ t.direccionFoto ?? '—' }}</td>
       <td>{{ t.fechaCreacion ? (t.fechaCreacion | date: 'dd/MM/yyyy HH:mm') : '—' }}</td>
+      <td>
+        <a [routerLink]="['/admin/trabajadores', t.id, 'editar']">Editar</a>
+        <button type="button" (click)="cambiarActivo(t)">
+          {{ t.isActive ? 'Dar de baja' : 'Reactivar' }}
+        </button>
+      </td>
     </tr>
     } @empty {
     <tr>

@@ -51,23 +51,15 @@ public class ClienteController {
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping
     public ResponseEntity<Cliente> crear(@RequestBody Cliente cliente) {
-        try {
-            Cliente nuevo = clienteService.crear(cliente);
-            return ResponseEntity.ok(nuevo);
-        } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().build();
-        }
+        return ResponseEntity.ok(clienteService.crear(cliente));
     }
+
     @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/{id}")
     public ResponseEntity<Cliente> actualizar(@PathVariable Integer id, @RequestBody Cliente cliente) {
-        try {
-            Cliente actualizado = clienteService.actualizar(id, cliente);
-            return ResponseEntity.ok(actualizado);
-        } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().build();
-        }
+        return ResponseEntity.ok(clienteService.actualizarDatos(id, cliente));
     }
+
     @PostMapping("/perfil")
     public ResponseEntity<Cliente> actualizarPerfil(Authentication auth,@RequestBody Cliente cliente) {
 
@@ -80,11 +72,14 @@ public class ClienteController {
     @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{id}")
     public ResponseEntity<String> borrar(@PathVariable Integer id) {
-        try {
-            clienteService.borrar(id);
-            return ResponseEntity.ok().build();
-        } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().build();
-        }
+        clienteService.desactivar(id); // baja lógica
+        return ResponseEntity.ok("Cliente desactivado");
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @PutMapping("/reactivar/{id}")
+    public ResponseEntity<String> reactivar(@PathVariable Integer id) {
+        clienteService.reactivar(id);
+        return ResponseEntity.ok("Cliente reactivado");
     }
 }

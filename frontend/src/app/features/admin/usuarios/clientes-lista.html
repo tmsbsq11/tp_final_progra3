@@ -1,4 +1,6 @@
 <h1>Clientes</h1>
+<p><a routerLink="/admin/clientes/nuevo">Nuevo cliente</a></p>
+<p role="status">{{ aviso() }}</p>
 
 <div>
   <label for="busqueda">Buscar</label>
@@ -27,7 +29,6 @@
 <button type="button" (click)="cargar()">Reintentar</button>
 } @else {
 <p>Mostrando {{ visibles().length }} de {{ clientes().length }}</p>
-
 <!-- scroll horizontal para que no quede mal con tantas columnas -->
 <div style="overflow-x: auto">
   <table>
@@ -37,7 +38,6 @@
       <th>Nombre</th>
       <th>Apellido</th>
       <th>Correo</th>
-      <th>Username</th>
       <th>DNI</th>
       <th>Rol</th>
       <th>Estado</th>
@@ -45,6 +45,7 @@
       <th>Descripción</th>
       <th>Foto</th>
       <th>Alta</th>
+      <th>Acciones</th>
     </tr>
     </thead>
     <tbody>
@@ -54,14 +55,19 @@
       <td>{{ c.nombre ?? '—' }}</td>
       <td>{{ c.apellido ?? '—' }}</td>
       <td>{{ c.correo }}</td>
-      <td>{{ c.username ?? '—' }}</td>
       <td>{{ c.dni ?? '—' }}</td>
-      <td>{{ c.rol }}</td>
+      <td>{{ c.rol ?? '—' }}</td>
       <td>{{ c.isActive ? 'Activo' : 'Inactivo' }}</td>
       <td>{{ c.puntaje ?? '—' }}</td>
       <td>{{ c.descripcion ?? '—' }}</td>
       <td>{{ c.direccionFoto ?? '—' }}</td>
       <td>{{ c.fechaCreacion ? (c.fechaCreacion | date: 'dd/MM/yyyy HH:mm') : '—' }}</td>
+      <td>
+        <a [routerLink]="['/admin/clientes', c.id, 'editar']">Editar</a>
+        <button type="button" (click)="cambiarActivo(c)">
+          {{ c.isActive ? 'Dar de baja' : 'Reactivar' }}
+        </button>
+      </td>
     </tr>
     } @empty {
     <tr>

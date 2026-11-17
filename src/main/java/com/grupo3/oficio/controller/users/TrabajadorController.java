@@ -74,12 +74,7 @@ public class TrabajadorController {
     @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/{id}")
     public ResponseEntity<Trabajador> actualizar(@PathVariable Integer id, @RequestBody Trabajador trabajador) {
-        try {
-            Trabajador actualizado = trabajadorService.actualizar(id, trabajador);
-            return ResponseEntity.ok(actualizado);
-        } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().build();
-        }
+        return ResponseEntity.ok(trabajadorService.actualizarDatos(id, trabajador));
     }
 
     @PreAuthorize("hasRole('TRABAJADOR')")
@@ -95,11 +90,14 @@ public class TrabajadorController {
     @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{id}")
     public ResponseEntity<String> borrar(@PathVariable Integer id) {
-        try {
-            trabajadorService.borrar(id);
-            return ResponseEntity.ok().build();
-        } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().build();
-        }
+        trabajadorService.desactivar(id);
+        return ResponseEntity.ok("Trabajador desactivado");
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @PutMapping("/reactivar/{id}")
+    public ResponseEntity<String> reactivar(@PathVariable Integer id) {
+        trabajadorService.reactivar(id);
+        return ResponseEntity.ok("Trabajador reactivado");
     }
 }

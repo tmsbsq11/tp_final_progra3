@@ -15,6 +15,15 @@
         <option value="RECHAZADO">Rechazadas o canceladas</option>
         <option value="FINALIZADO">Finalizadas</option>
       </select>
+
+      <label for="categoria-filtro">Categoría</label>
+      <select id="categoria-filtro" #categoria [value]="categoriaFiltro()" (change)="categoriaFiltro.set(categoria.value)">
+        <option value="">Todas las categorías</option>
+
+        @for (opcion of categorias(); track opcion.id) {
+          <option [value]="opcion.id">{{ opcion.nombre }}</option>
+        }
+      </select>
     </div>
 
     @if (aviso()) {
@@ -82,7 +91,7 @@
         </article>
       } @empty {
         <p class="aviso">
-          {{ reservas().length ? 'No hay reservas con ese estado.' : 'Todavía no recibiste reservas.' }}
+          {{ reservas().length ? 'No hay reservas con los filtros seleccionados.' : 'Todavía no recibiste reservas.' }}
         </p>
       }
     </div>

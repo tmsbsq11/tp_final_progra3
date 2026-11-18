@@ -46,6 +46,11 @@
                 </a>
               </li>
               <li>
+                <a routerLink="/mis-postulaciones" routerLinkActive="activo" [routerLinkActiveOptions]="{ exact: true }" (click)="menu.open = false">
+                  Mis postulaciones
+                </a>
+              </li>
+              <li>
                 <a routerLink="/mis-postulaciones/nueva" (click)="menu.open = false">
                   Agregar postulación
                 </a>

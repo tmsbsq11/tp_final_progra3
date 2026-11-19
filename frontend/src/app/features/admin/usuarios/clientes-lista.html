@@ -1,6 +1,6 @@
 <h1>Clientes</h1>
 
-<div>
+<div class="filtros-admin">
   <label for="busqueda">Buscar</label>
   <input
     id="busqueda"
@@ -17,60 +17,68 @@
     <option value="INACTIVOS">Inactivos</option>
   </select>
 
-  <button type="button" (click)="limpiarFiltros()">Limpiar filtros</button>
+  <button type="button" (click)="limpiarFiltros()">
+    Limpiar filtros
+  </button>
 </div>
 
 @if (cargando()) {
-<p>Cargando…</p>
+  <p role="status">Cargando clientes…</p>
 } @else if (mensaje()) {
-<p role="alert">{{ mensaje() }}</p>
-<button type="button" (click)="cargar()">Reintentar</button>
+  <p role="alert">{{ mensaje() }}</p>
+  <button type="button" (click)="cargar()">Reintentar</button>
 } @else {
-<p>Mostrando {{ visibles().length }} de {{ clientes().length }}</p>
+  <p>Mostrando {{ visibles().length }} de {{ clientes().length }}</p>
 
-<!-- scroll horizontal para que no quede mal con tantas columnas -->
-<div style="overflow-x: auto">
-  <table>
-    <thead>
-    <tr>
-      <th>ID</th>
-      <th>Nombre</th>
-      <th>Apellido</th>
-      <th>Correo</th>
-      <th>Username</th>
-      <th>DNI</th>
-      <th>Rol</th>
-      <th>Estado</th>
-      <th>Puntaje</th>
-      <th>Descripción</th>
-      <th>Foto</th>
-      <th>Alta</th>
-    </tr>
-    </thead>
-    <tbody>
+  <div class="usuarios-grilla">
     @for (c of visibles(); track c.id) {
-    <tr>
-      <td>{{ c.id }}</td>
-      <td>{{ c.nombre ?? '—' }}</td>
-      <td>{{ c.apellido ?? '—' }}</td>
-      <td>{{ c.correo }}</td>
-      <td>{{ c.username ?? '—' }}</td>
-      <td>{{ c.dni ?? '—' }}</td>
-      <td>{{ c.rol }}</td>
-      <td>{{ c.isActive ? 'Activo' : 'Inactivo' }}</td>
-      <td>{{ c.puntaje ?? '—' }}</td>
-      <td>{{ c.descripcion ?? '—' }}</td>
-      <td>{{ c.direccionFoto ?? '—' }}</td>
-      <td>{{ c.fechaCreacion ? (c.fechaCreacion | date: 'dd/MM/yyyy HH:mm') : '—' }}</td>
-    </tr>
+      <article class="usuario-tarjeta">
+        <span class="estado-usuario" [class.inactivo]="!c.isActive">
+          {{ c.isActive ? 'Activo' : 'Inactivo' }}
+        </span>
+
+        <h2>{{ c.nombre || c.username }} {{ c.apellido ?? '' }}</h2>
+
+        <div class="usuario-datos">
+          <p><strong>ID</strong> {{ c.id }}</p>
+          <p><strong>Correo</strong> {{ c.correo }}</p>
+          <p><strong>Usuario</strong> {{ c.username ?? '—' }}</p>
+          <p><strong>DNI</strong> {{ c.dni ?? '—' }}</p>
+          <p><strong>Rol</strong> {{ c.rol }}</p>
+          <p><strong>Puntaje</strong> {{ c.puntaje ?? '—' }}</p>
+          <p>
+            <strong>Alta</strong>
+            {{ c.fechaCreacion
+              ? (c.fechaCreacion | date: 'dd/MM/yyyy HH:mm')
+              : '—' }}
+          </p>
+          <p><strong>Foto</strong> {{ c.direccionFoto ?? '—' }}</p>
+        </div>
+
+        <p class="usuario-descripcion">
+          <strong>Descripción</strong>
+          {{ c.descripcion || 'Sin descripción.' }}
+        </p>
+
+        <!-- botones de modificar y dar de baja faltan sus funciones -->
+        <div class="acciones-admin">
+          <button type="button">Modificar</button>
+
+          <button
+            type="button"
+            class="boton-baja"
+            [disabled]="!c.isActive"
+          >
+            Dar de baja
+          </button>
+        </div>
+      </article>
     } @empty {
-    <tr>
-      <td colspan="12">
-        {{ clientes().length === 0 ? 'Todavía no hay registros.' : 'Ningún resultado coincide con los filtros.' }}
-      </td>
-    </tr>
+      <p>
+        {{ clientes().length === 0
+          ? 'Todavía no hay clientes registrados.'
+          : 'Ningún resultado coincide con los filtros.' }}
+      </p>
     }
-    </tbody>
-  </table>
-</div>
+  </div>
 }

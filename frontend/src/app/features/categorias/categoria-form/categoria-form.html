@@ -1,14 +1,53 @@
 <h1>Nueva categoría</h1>
-<p><a routerLink="/admin/categorias/lista">Ver todas las categorías</a></p>
+
+@if (mensaje()) {
+  <div class="aviso-admin">
+    <p role="status">{{ mensaje() }}</p>
+
+    <button
+      type="button"
+      aria-label="Cerrar aviso"
+      (click)="mensaje.set('')"
+    >
+      ×
+    </button>
+  </div>
+}
+
 <form [formGroup]="formulario" (ngSubmit)="crear()">
   <label for="nombre">Nombre</label>
-  <input id="nombre" type="text" formControlName="nombre" />
+  <input
+    id="nombre"
+    type="text"
+    formControlName="nombre"
+    placeholder="Ej. Plomería"
+  />
 
-  <label><input type="checkbox" formControlName="isActive" /> Activa</label>
-  <label><input type="checkbox" formControlName="needsCertification" /> Requiere certificación</label>
+  @if (
+    formulario.get('nombre')?.touched &&
+    formulario.get('nombre')?.hasError('required')
+  ) {
+    <p class="error">El nombre es obligatorio.</p>
+  }
 
-  <button type="submit" [disabled]="formulario.invalid || enviando()">
-    {{ enviando() ? 'Creando…' : 'Crear categoría' }}
-  </button>
+  <label class="opcion-certificacion">
+    <input type="checkbox" formControlName="isActive" />
+    Categoría activa
+  </label>
+
+  <label class="opcion-certificacion">
+    <input type="checkbox" formControlName="needsCertification" />
+    Requiere certificación profesional
+  </label>
+
+  <div class="acciones-admin">
+    <button
+      type="submit"
+      [disabled]="formulario.invalid || enviando()"
+    >
+      {{ enviando() ? 'Creando…' : 'Crear categoría' }}
+    </button>
+
+    <a routerLink="/admin/categorias/lista">Volver al listado</a>
+  </div>
 </form>
-<p aria-live="polite">{{ mensaje() }}</p>

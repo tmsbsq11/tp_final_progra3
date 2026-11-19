@@ -17,8 +17,11 @@ export class Register implements OnInit {
   enviando = signal(false);
   private router=inject(Router)
 
-  constructor(private fb: FormBuilder,private authService: AuthService) {
-   }
+  constructor(
+    private fb: FormBuilder,
+    private authService: AuthService
+  ) {}
+  
   ngOnInit(): void {
   this.formulario = this.fb.group({
     nombre:['',[Validators.required]],

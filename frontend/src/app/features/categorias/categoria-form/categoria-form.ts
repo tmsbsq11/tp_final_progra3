@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, effect, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { finalize } from 'rxjs';
 import { CategoriasService } from '../categorias.service';
@@ -8,8 +8,11 @@ import { RouterLink } from '@angular/router';
   selector: 'app-categoria-form',
   imports: [ReactiveFormsModule, RouterLink],
   templateUrl: './categoria-form.html',
+  styleUrl: '../../admin/admin.css',
 })
+
 export class CategoriaForm {
+  
   private fb = inject(FormBuilder);
   private categoriasService = inject(CategoriasService);
 
@@ -20,6 +23,19 @@ export class CategoriaForm {
   });
   mensaje = signal('');
   enviando = signal(false);
+
+  // elimina el aviso cuando termina su animacion de 3 segundos como los avisos de la lista de categorias
+  private cierreAviso = effect((limpiar) => {
+    if (!this.mensaje()) {
+      return;
+    }
+
+    const temporizador = setTimeout(() => {
+      this.mensaje.set('');
+    }, 3000);
+
+    limpiar(() => clearTimeout(temporizador));
+  });
 
   crear(): void {
     if (this.formulario.invalid || this.enviando()) {

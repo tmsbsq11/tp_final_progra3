@@ -1,0 +1,83 @@
+:host {
+  display: block;
+  width: min(calc(100% - 2rem), 28rem);
+  margin: 3rem auto;
+  padding: clamp(1.25rem, 5vw, 2rem);
+  border: 1px solid #b9d5e6;
+  border-radius: 1rem;
+  background: #deedf7;
+  color: #173f56;
+  box-shadow: 0 6px 20px rgb(23 63 86 / 8%);
+}
+
+h1 {
+  margin: 0 0 1.5rem;
+  text-align: center;
+  font-size: 1.85rem;
+}
+
+form {
+  display: grid;
+  gap: 0.6rem;
+}
+
+label {
+  margin-top: 0.4rem;
+  font-weight: 600;
+}
+
+input,
+select {
+  width: 100%;
+  min-height: 46px;
+  padding: 0.65rem 0.8rem;
+  border: 1px solid #9dc4dc;
+  border-radius: 0.65rem;
+  background: #f5faff;
+  color: #173f56;
+}
+
+button {
+  min-height: 46px;
+  margin-top: 1rem;
+  padding: 0.65rem 1rem;
+  border: 1px solid #17577c;
+  border-radius: 0.65rem;
+  background: #17577c;
+  color: #fff;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+button:hover:not(:disabled) {
+  background: #124664;
+}
+
+button:disabled {
+  opacity: 0.55;
+  cursor: default;
+}
+
+a {
+  display: block;
+  margin-top: 1rem;
+  color: #17577c;
+  text-align: center;
+  line-height: 1.5;
+  text-underline-offset: 3px;
+}
+
+:is(input, select, button, a):focus-visible {
+  outline: 3px solid #287bb1;
+  outline-offset: 3px;
+}
+
+p[aria-live] {
+  margin-bottom: 0;
+  color: #902637;
+  line-height: 1.5;
+}
+
+p[aria-live]:empty {
+  display: none;
+}

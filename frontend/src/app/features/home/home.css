@@ -1,0 +1,77 @@
+:host {
+  display: block;
+  max-width: 62rem;
+  margin-inline: auto;
+  padding: clamp(1.5rem, 5vw, 3rem) 1rem;
+  color: #173f56;
+}
+
+.presentacion {
+  padding: clamp(1.25rem, 4vw, 2.5rem);
+  border: 1px solid #b9d5e6;
+  border-radius: 1rem;
+  background: #deedf7;
+}
+
+h1 {
+  margin: 0 0 1rem;
+  text-align: center;
+  font-size: clamp(2rem, 5vw, 2.75rem);
+}
+
+.introduccion {
+  max-width: 55ch;
+  margin-inline: auto;
+  text-align: center;
+  font-size: 1.15rem;
+}
+
+.presentacion > section {
+  margin-top: 1.75rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid #b9d5e6;
+}
+
+h2 {
+  margin: 0 0 0.75rem;
+  font-size: 1.35rem;
+}
+
+p {
+  margin: 0.65rem 0;
+  line-height: 1.7;
+}
+
+.integrantes {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 15rem), 1fr));
+  gap: 0.75rem;
+  margin: 1rem 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.integrantes li {
+  padding: 0.85rem 1rem;
+  border: 1px solid #bfd8e8;
+  border-radius: 0.65rem;
+  background: #edf6fc;
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+
+.datos-cursada {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 12rem), 1fr));
+  gap: 1rem;
+}
+
+.datos-cursada p {
+  margin: 0;
+}
+
+.datos-cursada strong {
+  display: block;
+  margin-bottom: 0.3rem;
+  font-size: 0.875rem;
+}

@@ -3,11 +3,14 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { finalize } from 'rxjs';
 import { AuthService } from '../../../core/services/auth.service';
 import { Router,RouterLink,RouterLinkActive } from '@angular/router'
+
 @Component({
   selector: 'app-login',
-  imports: [ReactiveFormsModule,RouterLink,RouterLinkActive],
+  imports: [ReactiveFormsModule, RouterLink, RouterLinkActive],
   templateUrl: './login.html',
+  styleUrl: './login.css',
 })
+
 export class Login implements OnInit {
 
   formulario!: FormGroup;

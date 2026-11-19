@@ -9,6 +9,7 @@ import { UsuariosAdminService } from './usuarios-admin.service';
   selector: 'app-trabajadores-lista',
   imports: [DatePipe],
   templateUrl: './trabajadores-lista.html',
+  styleUrl: '../admin.css',
 })
 export class TrabajadoresLista implements OnInit {
   private readonly servicio = inject(UsuariosAdminService);

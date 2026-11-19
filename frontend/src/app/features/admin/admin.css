@@ -1,0 +1,341 @@
+:host {
+  display: block;
+  box-sizing: border-box;
+  max-width: 80rem;
+  margin-inline: auto;
+  padding: 2rem 1rem 3rem;
+  color: #173f56;
+}
+
+h1 {
+  margin: 0 0 1.5rem;
+  text-align: center;
+  font-size: clamp(1.75rem, 4vw, 2.5rem);
+}
+
+label {
+  font-weight: 600;
+}
+
+/* Campos */
+input,
+select {
+  box-sizing: border-box;
+  width: 100%;
+  min-width: 0;
+  min-height: 44px;
+  padding: 0.65rem 0.8rem;
+  border: 1px solid #9dc4dc;
+  border-radius: 0.65rem;
+  background: #f5faff;
+  color: inherit;
+  font: inherit;
+}
+
+input[type='checkbox'] {
+  width: 1.1rem;
+  height: 1.1rem;
+  min-height: auto;
+  margin: 0;
+}
+
+/* Botones y enlaces */
+button,
+a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  padding: 0.6rem 0.9rem;
+  border: 1px solid #9dc4dc;
+  border-radius: 0.65rem;
+  background: #e1f0fa;
+  color: #17577c;
+  font: inherit;
+  font-weight: 600;
+  text-align: center;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+button:disabled {
+  opacity: 0.55;
+  cursor: default;
+}
+
+button:hover:not(:disabled),
+a:hover {
+  background: #c7e2f3;
+}
+
+:is(input, select, button, a):focus-visible {
+  outline: 3px solid #287bb1;
+  outline-offset: 3px;
+}
+
+/* Filtros */
+.filtros-admin {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto 10rem auto;
+  align-items: center;
+  gap: 0.85rem;
+  margin-bottom: 1.5rem;
+  padding: 1.25rem;
+  border: 1px solid #b9d5e6;
+  border-radius: 1rem;
+  background: #deedf7;
+}
+
+.filtros-admin button {
+  white-space: nowrap;
+}
+
+/* Panel y tarjetas */
+.usuarios-grilla {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 22rem), 1fr));
+  gap: 1rem;
+  padding: 1rem;
+  border: 1px solid #b9d5e6;
+  border-radius: 1rem;
+  background: #deedf7;
+}
+
+.usuario-tarjeta {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  min-width: 0;
+  padding: 1.25rem;
+  border: 1px solid #c5ddea;
+  border-radius: 0.85rem;
+  background: #f5faff;
+}
+
+.usuario-tarjeta h2 {
+  margin: 0.85rem 0 1rem;
+  font-size: 1.25rem;
+  line-height: 1.3;
+  overflow-wrap: anywhere;
+}
+
+.usuario-tarjeta p {
+  margin: 0;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+
+/* Estado */
+.estado-usuario {
+  display: inline-block;
+  padding: 0.3rem 0.65rem;
+  border-radius: 999px;
+  background: #d6eee2;
+  color: #205d40;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.estado-usuario.inactivo {
+  background: #e6e9ed;
+  color: #445563;
+}
+
+/* Datos de usuarios */
+.usuario-datos {
+  display: grid;
+  gap: 0.7rem;
+  width: 100%;
+}
+
+.usuario-datos p {
+  display: grid;
+  grid-template-columns: 6rem minmax(0, 1fr);
+  gap: 0.5rem;
+}
+
+.usuario-tarjeta .usuario-descripcion {
+  align-self: stretch;
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid #c5ddea;
+}
+
+.usuario-descripcion strong {
+  display: block;
+  margin-bottom: 0.35rem;
+}
+
+.usuarios-grilla > p {
+  grid-column: 1 / -1;
+  margin: 0;
+  padding: 0.5rem;
+}
+
+/* Acciones */
+.acciones-admin {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.usuario-tarjeta > .acciones-admin {
+  align-self: stretch;
+  margin-top: auto;
+  padding-top: 1.25rem;
+}
+
+button.boton-baja {
+  border-color: #e8b8c0;
+  background: #fae9ec;
+  color: #982b3d;
+}
+
+button.boton-baja:hover:not(:disabled) {
+  background: #f4d5dc;
+}
+
+/* Categorías */
+.cabecera-categorias {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 1.25rem;
+}
+
+.edicion-admin {
+  max-width: 34rem;
+  margin: 2rem auto 0;
+}
+
+.edicion-admin h2 {
+  margin: 0 0 1rem;
+  text-align: center;
+  font-size: 1.4rem;
+}
+
+/* Formularios */
+form {
+  display: grid;
+  gap: 0.75rem;
+  max-width: 32rem;
+  margin: 1.5rem auto;
+  padding: 1.25rem;
+  border: 1px solid #b9d5e6;
+  border-radius: 1rem;
+  background: #deedf7;
+}
+
+.edicion-admin form {
+  margin-top: 0;
+}
+
+.opcion-certificacion {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  line-height: 1.5;
+}
+
+/* Errores */
+.error {
+  margin: 0;
+  color: #982b3d;
+}
+
+p[role='alert'] {
+  padding: 0.85rem;
+  border-radius: 0.65rem;
+  background: #fae9ec;
+  color: #902637;
+}
+
+/* Aviso con cierre manual y desvanecimiento */
+.aviso-admin {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin: 1rem 0 1.5rem;
+  padding: 1rem 1.25rem;
+  border: 1px solid #9dc4dc;
+  border-radius: 0.85rem;
+  background: #e1f0fa;
+  box-shadow: 0 4px 12px rgb(23 63 86 / 8%);
+  animation: disolver-aviso 1s ease-in 2s forwards;
+}
+
+.aviso-admin p {
+  min-width: 0;
+  margin: 0;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+
+.aviso-admin button {
+  flex-shrink: 0;
+  min-width: 44px;
+  padding: 0.3rem;
+  border: 0;
+  background: transparent;
+  font-size: 1.5rem;
+}
+
+.aviso-admin button:hover {
+  background: #c7e2f3;
+}
+
+/* para que el aviso desaparezca de a poco */
+@keyframes disolver-aviso {
+  0% {
+    opacity: 1;
+    filter: blur(0);
+    transform: translateY(0);
+  }
+
+  50% {
+    opacity: 0.6;
+    filter: blur(3px);
+    transform: translateY(-4px);
+  }
+
+  100% {
+    opacity: 0;
+    filter: blur(10px);
+    transform: translateY(-12px);
+  }
+}
+
+/* Pantallas angostas */
+@media (max-width: 750px) {
+  .filtros-admin {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0.6rem;
+  }
+
+  .filtros-admin button {
+    width: 100%;
+    margin-top: 0.5rem;
+  }
+
+  .usuarios-grilla {
+    padding: 0.75rem;
+  }
+}
+
+@media (max-width: 400px) {
+  .usuario-datos p {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0.1rem;
+  }
+
+  .acciones-admin {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .aviso-admin {
+    animation: none;
+  }
+}

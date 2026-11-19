@@ -17,8 +17,18 @@
               Inicio
             </a>
           </li>
+          
           @if (authService.estaAutenticado()) {
-            @if (perfilRoute === '/perfil/cliente' || perfilRoute === '/perfil/trabajador') {
+            <li>
+            <a
+              routerLink="/notificaciones"
+              routerLinkActive="activo"
+              [routerLinkActiveOptions]="{ exact: true }"
+              (click)="menu.open = false">
+              notificaciones
+            </a>
+          </li>
+          @if (perfilRoute === '/perfil/cliente' || perfilRoute === '/perfil/trabajador') {
               <li>
                 <a [routerLink]="perfilRoute" routerLinkActive="activo" (click)="menu.open = false">
                   Mi perfil

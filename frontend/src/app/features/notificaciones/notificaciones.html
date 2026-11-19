@@ -1,11 +1,25 @@
-
+<select
+  [value]="tipoNotificacion()"
+  (change)="tipoNotificacion.set($any($event.target).value)"
+>
+  <option value="">Todas</option>
+  <option value="RESERVA">Reservas</option>
+  <option value="RESENIA">Reseñas</option>
+  <option value="VALIDACION">Validaciones</option>
+  <option value="SISTEMA">Sistema</option>
+  <option value="RECORDATORIO">Recordatorios</option>
+</select>
 @if(cargando()){
 <p>Cargando notificaciones...</p>
 }
-@else if(notificaciones()){
-@for(n of notificaciones();track n.id){
-    <p>{{n.titulo}}</p>
-    <p>{{n.mensaje}}</p>
+@else if(notificacionesFiltradas()){
+@for(n of notificacionesFiltradas();track n.id){
+    <p>Titulo: {{n.titulo}}</p>
+    <p>Mensaje: {{n.mensaje}}</p>
+    <p>Tipo de notificacion: {{n.tipoNotificacion}}</p>
+   <time [attr.datetime]="n.fechaCreacion">
+                        {{ n.fechaCreacion | date: 'dd/MM/yyyy' }}
+                        </time>
 
 }@empty {
     <p>No tenes notificaciones</p>

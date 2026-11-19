@@ -1,9 +1,10 @@
-import { Component, inject, OnInit, signal } from '@angular/core';
+import { Component, inject, OnInit, signal,computed } from '@angular/core';
 import { NotificacionClient } from './clients/notificacion-client';
 import { Notificacion } from './models/notificacion.models';
-
+import { DatePipe } from '@angular/common';
+import { TipoNotificacion } from './models/notificacion.models';
 @Component({
-  imports: [],
+  imports: [DatePipe],
   selector: 'app-notificaciones',
   styleUrl: './notificaciones.css',
   templateUrl: './notificaciones.html',
@@ -14,6 +15,7 @@ export class Notificaciones implements OnInit{
   notificaciones=signal<Notificacion[]>([]);
   cargando= signal<boolean>(false);
   error=signal<string|null>(null);
+  tipoNotificacion=signal<TipoNotificacion|''>('');
   ngOnInit(){
     this.cargarNotificaciones();
   }
@@ -33,5 +35,16 @@ export class Notificaciones implements OnInit{
       }
     });
   }
+  notificacionesFiltradas = computed(() => {
+  const tipo = this.tipoNotificacion();
+
+  if (!tipo) {
+    return this.notificaciones();
+  }
+
+  return this.notificaciones().filter(
+    notificacion => notificacion.tipoNotificacion === tipo
+  );
+});
 
 }

@@ -1,0 +1,192 @@
+:host {
+  display: block;
+}
+
+.filtros-admin {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto 160px auto;
+  align-items: center;
+  gap: 14px;
+  margin: 24px 0;
+  padding: 20px;
+  border: 1px solid #d4e3f2;
+  border-radius: 14px;
+  background-color: #eaf3fc;
+}
+
+.admin-lista {
+  display: grid;
+  gap: 14px;
+}
+
+.admin-fila {
+  display: grid;
+  grid-template-columns: 48px minmax(0, 1fr) auto auto;
+  align-items: start;
+  gap: 16px;
+  padding: 20px;
+  border: 1px solid #d4e3f2;
+  border-radius: 14px;
+  background-color: #ffffff;
+}
+
+.admin-fila .avatar-persona {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background-color: #dcecff;
+  color: #174f80;
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.admin-persona {
+  min-width: 0;
+}
+
+.admin-persona h2 {
+  margin: 0 0 5px;
+  font-size: 18px;
+}
+
+.admin-persona > p {
+  margin: 0;
+  color: #62768c;
+  overflow-wrap: anywhere;
+}
+
+.rol-admin {
+  padding-top: 7px;
+  color: #62768c;
+  font-size: 13px;
+}
+
+.estado-usuario {
+  padding: 5px 10px;
+  border-radius: 20px;
+  background-color: #d6eee2;
+  color: #205d40;
+  font-size: 13px;
+  white-space: nowrap;
+}
+
+.estado-usuario.inactivo {
+  background-color: #e6e9ed;
+  color: #445563;
+}
+
+.datos-admin {
+  margin-top: 14px;
+}
+
+.datos-admin summary {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 38px;
+  padding: 8px 12px;
+  border: 1px solid #cbdff0;
+  border-radius: 8px;
+  background-color: #f1f7ff;
+  color: #174f80;
+  font-size: 14px;
+  font-weight: 600;
+  list-style: none;
+  cursor: pointer;
+}
+
+.datos-admin summary::-webkit-details-marker {
+  display: none;
+}
+
+.datos-admin summary::after {
+  content: '+';
+  font-size: 20px;
+}
+
+.datos-admin[open] summary::after {
+  content: '−';
+}
+
+.datos-admin .usuario-datos {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px 24px;
+  margin-top: 14px;
+  padding: 18px;
+  border: 1px solid #dbe7f3;
+  border-radius: 12px;
+  background-color: #f6faff;
+}
+
+.datos-admin .usuario-datos p {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+  margin: 0;
+  font-size: 14px;
+  overflow-wrap: anywhere;
+}
+
+.datos-admin .usuario-datos strong {
+  color: #647b91;
+  font-size: 12px;
+}
+
+.datos-admin .usuario-datos p:last-child {
+  grid-column: 1 / -1;
+}
+
+form {
+  display: grid;
+  gap: 14px;
+  max-width: 580px;
+  margin: 24px auto;
+  padding: 24px;
+  border: 1px solid #d4e3f2;
+  border-radius: 14px;
+  background-color: #ffffff;
+}
+
+.opcion-certificacion {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.acciones-admin {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.error {
+  margin: 0;
+  color: #ac2942;
+  font-size: 14px;
+}
+
+@media (max-width: 900px) {
+  .filtros-admin {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .admin-fila {
+    grid-template-columns: 48px minmax(0, 1fr);
+  }
+
+  .rol-admin,
+  .estado-usuario {
+    grid-column: 2;
+    justify-self: start;
+  }
+
+  .datos-admin .usuario-datos {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

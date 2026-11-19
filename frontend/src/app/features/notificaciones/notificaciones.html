@@ -1,0 +1,38 @@
+<h1>Mis notificaciones</h1>
+
+<div class="filtros">
+  <label for="tipo-notificacion">Tipo</label>
+  <select
+    id="tipo-notificacion"
+    [value]="tipoNotificacion()"
+    (change)="tipoNotificacion.set($any($event.target).value)"
+  >
+    <option value="">Todas</option>
+    <option value="RESERVA">Reservas</option>
+    <option value="RESENIA">Reseñas</option>
+    <option value="VALIDACION">Validaciones</option>
+    <option value="SISTEMA">Sistema</option>
+    <option value="RECORDATORIO">Recordatorios</option>
+  </select>
+</div>
+
+@if (cargando()) {
+  <p role="status">Cargando notificaciones…</p>
+} @else if (error()) {
+  <p role="alert">{{ error() }}</p>
+} @else {
+  <div class="reservas-grilla">
+    @for (n of notificacionesFiltradas(); track n.id) {
+      <article>
+        <span class="estado">{{ n.tipoNotificacion }}</span>
+        <h2>{{ n.titulo }}</h2>
+        <p>{{ n.mensaje }}</p>
+        <time [attr.datetime]="n.fechaCreacion">
+          {{ n.fechaCreacion | date: 'dd/MM/yyyy' }}
+        </time>
+      </article>
+    } @empty {
+      <p class="aviso">No hay notificaciones con este filtro.</p>
+    }
+  </div>
+}

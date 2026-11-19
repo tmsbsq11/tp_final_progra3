@@ -34,13 +34,19 @@ export class ReservasRecibidas implements OnInit,OnDestroy {
     FINALIZADO: 'Finalizada',
   };
 
-  // Filtra por estado y ordena de la más próxima a la más lejana
+  // filtra por estado y categoria y ordena por fecha de inicio.
   visibles = computed(() => {
-    const filtro = this.filtro();
-    const lista = this.reservas().filter(
-      (r) => filtro === 'TODAS' || r.estadoReserva === filtro
+    const estado = this.filtro();
+    const categoria = this.categoriaFiltro();
+
+    const lista = this.reservas().filter(reserva =>
+      (estado === 'TODAS' || reserva.estadoReserva === estado) &&
+      (categoria === '' || String(reserva.servicio.categoria?.id) === categoria)
     );
-    return [...lista].sort((a, b) => a.inicio.localeCompare(b.inicio));
+
+    return lista.sort(
+      (a, b) => new Date(a.inicio).getTime() - new Date(b.inicio).getTime()
+    );
   });
 
   ngOnInit(): void {
@@ -160,4 +166,23 @@ private rechazarPendienteVencida(): void {
         this.aviso.set(error?.message ?? 'No se pudo actualizar la reserva.'),
     });
   }
+
+  categoriaFiltro = signal('');
+
+  // agarra las categorias de las reservas sin repetirlas
+  categorias = computed(() => {
+    const categorias = new Map<number, string>();
+
+    for (const reserva of this.reservas()) {
+      const categoria = reserva.servicio.categoria;
+
+      if (categoria) {
+        categorias.set(categoria.id, categoria.nombre);
+      }
+    }
+
+    return Array.from(categorias, ([id, nombre]) => ({ id, nombre }))
+      .sort((a, b) => a.nombre.localeCompare(b.nombre));
+  });
+
 }

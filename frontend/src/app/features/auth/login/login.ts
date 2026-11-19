@@ -1,62 +1,68 @@
-import { Component, OnInit, signal } from '@angular/core';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { finalize } from 'rxjs';
-import { AuthService } from '../../../core/services/auth.service';
-import { Router,RouterLink,RouterLinkActive } from '@angular/router'
+import { Component, OnInit, signal } from "@angular/core";
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from "@angular/forms";
+import { finalize } from "rxjs";
+import { AuthService } from "../../../core/services/auth.service";
+import { Router, RouterLink } from "@angular/router";
+
 @Component({
-  selector: 'app-login',
-  imports: [ReactiveFormsModule,RouterLink,RouterLinkActive],
-  templateUrl: './login.html',
+  selector: "app-login",
+  imports: [ReactiveFormsModule, RouterLink],
+  templateUrl: "./login.html",
+  styleUrl: "./login.css",
 })
 export class Login implements OnInit {
 
   formulario!: FormGroup;
-  mensaje = signal('');
+  mensaje = signal("");
   enviando = signal(false);
 
   constructor(
     private fb: FormBuilder,
     public authService: AuthService,
-    private router: Router
+    private router: Router,
   ) {}
 
   ngOnInit(): void {
     this.formulario = this.fb.group({
-      correo: ['', [Validators.required, Validators.email]],
-      password: ['', [Validators.required]],
+      correo: ["", [Validators.required, Validators.email]],
+      password: ["", [Validators.required]],
     });
   }
 
   ingresar(): void {
-    
     if (this.formulario.invalid || this.enviando()) {
       return;
     }
 
     const { correo, password } = this.formulario.getRawValue();
 
-    this.mensaje.set('');
+    this.mensaje.set("");
     this.enviando.set(true);
+    this.authService
+      .login(correo, password)
 
-    this.authService.login(correo, password)
       .pipe(finalize(() => this.enviando.set(false)))
+
       .subscribe({
         next: (token) => {
-          this.authService.guardarSesion(token); //cambie la linea pq el método guarda el token y actualiza la señal que lee el menú para mostrar Cerrar sesión
-
-  console.log('Token:', token);
-  console.log('ID usuario:', this.authService.getUserId());
-  console.log('Rol usuario:', this.authService.getUserRole());
-          this.mensaje.set('Sesión iniciada.');
-          this.router.navigate(['home']);// redireccion a pag principal
+          this.authService.guardarSesion(token); //cambie la linea pq el metodo guarda el token y actualiza la señal que lee el menu para mostrar cerrar sesion
+          console.log("Token:", token);
+          console.log("ID usuario:", this.authService.getUserId());
+          console.log("Rol usuario:", this.authService.getUserRole());
+          this.mensaje.set("Sesión iniciada.");
+          this.router.navigate(["/"]);
         },
         error: ({ status }) => {
           if (status === 401) {
-            this.mensaje.set('Revisá tu correo y contraseña.');
-          }else if(status === 403){ 
-            this.mensaje.set('No tenés permisos para acceder a esta aplicación.');//lo usamos para probar el login, juntar despues
-          }else {
-            this.mensaje.set('No se pudo iniciar sesión. Revisá si Spring está corriendo.');
+            this.mensaje.set("Revisá tu correo y contraseña.");
+          } else if (status === 403) {
+            this.mensaje.set(
+              "No tenés permisos para acceder a esta aplicación.",
+            ); //lo usamos para probar el login, juntar despues
+          } else {
+            this.mensaje.set(
+              "No se pudo iniciar sesión. Revisá si Spring está corriendo.",
+            );
           }
         },
       });

@@ -1,3 +1,4 @@
+/* acomoda el contenido de la pagina */
 :host {
   display: block;
   box-sizing: border-box;
@@ -7,12 +8,14 @@
   color: #173f56;
 }
 
+/* centra el titulo */
 h1 {
   margin: 0 0 1.5rem;
   text-align: center;
   font-size: clamp(1.75rem, 4vw, 2.5rem);
 }
 
+/* separa el boton de volver y agrega la flecha */
 :host > a {
   margin-bottom: 1rem;
 }
@@ -22,7 +25,7 @@ h1 {
   margin-inline-end: 0.5rem;
 }
 
-/* Ficha, servicios y reseñas */
+/* fondo y bordes de las tarjetas */
 .perfil,
 .publicaciones > article,
 .resenias,
@@ -36,6 +39,11 @@ h1 {
   overflow-wrap: anywhere;
 }
 
+/* acomoda los datos del perfil */
+.perfil {
+  text-align: center;
+}
+
 .perfil h2 {
   margin: 0 0 0.75rem;
 }
@@ -45,6 +53,7 @@ h1 {
   line-height: 1.5;
 }
 
+/* acomoda los servicios en columnas */
 .publicaciones {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(min(100%, 18rem), 1fr));
@@ -57,6 +66,7 @@ h1 {
   margin: 0;
 }
 
+/* separa los datos dentro de cada tarjeta */
 .publicaciones > article,
 .resenia {
   display: flex;
@@ -81,6 +91,7 @@ article p {
   padding-bottom: 0.25rem;
 }
 
+/* estilo de los enlaces */
 a {
   display: inline-flex;
   align-items: center;
@@ -106,13 +117,7 @@ a:focus-visible {
   outline-offset: 3px;
 }
 
-
-
-/* Valoración del trabajador */
-.perfil {
-  text-align: center;
-}
-
+/* centra las estrellas y el porcentaje */
 .valoracion {
   display: flex;
   flex-wrap: wrap;
@@ -121,6 +126,7 @@ a:focus-visible {
   gap: 0.4rem 0.75rem;
 }
 
+/* pinta las estrellas segun el puntaje */
 .estrellas {
   --puntaje: 0%;
   display: inline-block;
@@ -136,6 +142,7 @@ a:focus-visible {
   white-space: nowrap;
 }
 
+/* permite ver las estrellas en alto contraste */
 @media (forced-colors: active) {
   .estrellas {
     background: none;
@@ -143,7 +150,7 @@ a:focus-visible {
   }
 }
 
-/* Tarjeta principal de reseñas y tarjetas individuales */
+/* separa la seccion de reseñas */
 .resenias {
   margin-top: 2rem;
 }
@@ -158,16 +165,23 @@ a:focus-visible {
   line-height: 1.5;
 }
 
+/* acomoda las reseñas y permite bajar dentro de la lista */
 .resenias-grilla {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(min(100%, 16rem), 1fr));
   gap: 0.85rem;
+  max-height: min(24rem, 55vh);
+  overflow-y: auto;
+  overscroll-behavior-y: contain;
+  scrollbar-gutter: stable;
+  padding: 0.15rem 0.5rem 0.15rem 0.15rem;
 }
 
 .resenias-grilla > p {
   grid-column: 1 / -1;
 }
 
+/* estilo de cada reseña */
 .resenia {
   padding: 1rem;
   background: #f5faff;
@@ -179,8 +193,7 @@ a:focus-visible {
   font-size: 0.875rem;
 }
 
-
-/* Títulos y desplazamiento interior de las reseñas */
+/* centra los titulos de las secciones */
 :is(.perfil, .publicaciones, .resenias) > :is(h2, h3),
 .publicaciones article h4 {
   text-align: center;
@@ -190,10 +203,104 @@ a:focus-visible {
   align-self: stretch;
 }
 
-.resenias-grilla {
-  max-height: min(24rem, 55vh);
-  overflow-y: auto;
-  overscroll-behavior-y: contain;
-  scrollbar-gutter: stable;
-  padding: 0.15rem 0.5rem 0.15rem 0.15rem;
+/* boton para guardar o quitar favoritos */
+.boton-favorito {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  min-height: 44px;
+  padding: 0.6rem 0.95rem;
+  border: 1px solid #9dc4dc;
+  border-radius: 0.75rem;
+  background: #e1f0fa;
+  color: #17577c;
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+/* cambia el color cuando ya esta guardado */
+.boton-favorito[aria-pressed='true'] {
+  border-color: #d8bd78;
+  background: #fff2cc;
+  color: #725000;
+}
+
+.boton-favorito:focus-visible {
+  outline: 3px solid #287bb1;
+  outline-offset: 3px;
+}
+
+/* aviso de favoritos con espacio alrededor */
+.aviso-favoritos {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin: 1rem 0 1.5rem;
+  padding: 1rem 1.25rem;
+  border: 1px solid #9dc4dc;
+  border-radius: 0.85rem;
+  background: #e1f0fa;
+  box-shadow: 0 4px 12px rgb(23 63 86 / 8%);
+  animation: disolver-aviso 1s ease-in 2s forwards;
+}
+
+.aviso-favoritos p {
+  min-width: 0;
+  margin: 0;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+
+/* boton para cerrar el aviso */
+.aviso-favoritos button {
+  flex-shrink: 0;
+  min-width: 44px;
+  min-height: 44px;
+  padding: 0.3rem;
+  border: 0;
+  border-radius: 0.5rem;
+  background: transparent;
+  color: #17577c;
+  font: inherit;
+  font-size: 1.5rem;
+  cursor: pointer;
+}
+
+.aviso-favoritos button:hover {
+  background: #c7e2f3;
+}
+
+.aviso-favoritos button:focus-visible {
+  outline: 3px solid #287bb1;
+  outline-offset: 3px;
+}
+
+/* hace que el aviso se vaya disolviendo */
+@keyframes disolver-aviso {
+  0% {
+    opacity: 1;
+    filter: blur(0);
+    transform: translateY(0);
+  }
+
+  50% {
+    opacity: 0.6;
+    filter: blur(3px);
+    transform: translateY(-4px);
+  }
+
+  100% {
+    opacity: 0;
+    filter: blur(10px);
+    transform: translateY(-12px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .aviso-favoritos {
+    animation: none;
+  }
 }

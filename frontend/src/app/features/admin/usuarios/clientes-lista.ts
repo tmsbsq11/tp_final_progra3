@@ -11,6 +11,7 @@ import { UsuariosAdminService } from './usuarios-admin.service';
   selector: 'app-clientes-lista',
   imports: [DatePipe, RouterLink],
   templateUrl: './clientes-lista.html',
+  styleUrl: '../admin.css',
 })
 export class ClientesLista implements OnInit {
   private readonly servicio = inject(UsuariosAdminService);
@@ -20,7 +21,7 @@ export class ClientesLista implements OnInit {
   estado = signal<FiltroEstado>('TODOS');
   cargando = signal(true);
   mensaje = signal(''); // error al cargar la lista
-  aviso = signal<string>(history.state?.aviso ?? ''); // resultado de una operacion (llega del formulario)
+  aviso = signal<string>(history.state?.aviso ?? ''); // resultado de una operación (llega del formulario)
 
   // para que se recalcule con los filtros
   visibles = computed(() => {

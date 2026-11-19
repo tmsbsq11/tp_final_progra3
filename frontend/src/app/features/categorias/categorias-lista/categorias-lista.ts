@@ -1,5 +1,4 @@
-import { Component, OnInit, inject, signal } from '@angular/core';
-import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { Component, OnInit, effect, inject, signal } from '@angular/core';import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { finalize } from 'rxjs';
 import { Categoria } from '../categoria.model';
@@ -9,6 +8,7 @@ import { CategoriasService } from '../categorias.service';
   selector: 'app-categorias-lista',
   imports: [ReactiveFormsModule, RouterLink],
   templateUrl: './categorias-lista.html',
+  styleUrl: '../../admin/admin.css',
 })
 export class CategoriasLista implements OnInit {
   private fb = inject(FormBuilder);
@@ -112,4 +112,18 @@ export class CategoriasLista implements OnInit {
     }
     return (e.error as { message?: string } | null)?.message ?? porDefecto;
   }
+
+  // oculta el aviso despues de 3 segundos y reinicia el tiempo si cambia el mensaje
+  private cierreAviso = effect((limpiar) => {
+    if (!this.mensaje()) {
+      return;
+    }
+
+    const temporizador = setTimeout(() => {
+      this.mensaje.set('');
+    }, 3000);
+
+    limpiar(() => clearTimeout(temporizador));
+  });
+
 }

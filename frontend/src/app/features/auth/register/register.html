@@ -1,23 +1,73 @@
-@if(authService.estaAutenticado()){
-  <button (click)="authService.logout()">Cerrar sesión</button>
-}@else {
-<h1>Registro</h1>
-<form [formGroup]="formulario" (ngSubmit)="registrar()">
-    <label for="nombre">Nombre de Usuario</label>
-    <input type="text" id="nombre" formControlName="nombre" placeholder="Ingrese su nombre de usuario">
+@if (authService.estaAutenticado()) {
+<section class="acceso">
+  <h1>Tu sesión está iniciada</h1>
+  <a class="btn" routerLink="/servicios">Explorar servicios</a>
+  <button type="button" (click)="authService.logout()">Cerrar sesión</button>
+</section>
+} @else if (!rolSeleccionado()) {
+<div class="registro-encabezado">
+  <h1>¡Bienvenido a OficiosYa!</h1>
+  <p>Elegí cómo querés registrarte</p>
+</div>
+<div class="opciones-registro">
+  <button
+    type="button"
+    class="tarjeta-registro"
+    (click)="seleccionarRol('CLIENTE')"
+  >
+    <span class="personaje-registro"
+      ><img src="/images/cliente-sin-fondo.png" alt=""
+    /></span>
+    <h2>Soy cliente</h2>
+    <p>Quiero encontrar profesionales para mis necesidades.</p>
+    <span class="etiqueta-registro">Registrarme como cliente →</span>
+  </button>
+  <button
+    type="button"
+    class="tarjeta-registro"
+    (click)="seleccionarRol('TRABAJADOR')"
+  >
+    <span class="personaje-registro"
+      ><img src="/images/trabajador-sin-fondo.png" alt=""
+    /></span>
+    <h2>Soy trabajador</h2>
+    <p>Quiero ofrecer mis servicios y encontrar clientes.</p>
+    <span class="etiqueta-registro">Registrarme como trabajador →</span>
+  </button>
+</div>
+} @else {
+<section class="acceso">
+  <h1>
+    {{ rolSeleccionado() === 'CLIENTE' ? 'Crear cuenta de cliente' : 'Crear
+    cuenta de trabajador' }}
+  </h1>
+  <form [formGroup]="formulario" (ngSubmit)="registrar()">
+    <label for="nombre">Nombre de usuario</label>
+    <input id="nombre" formControlName="nombre" autocomplete="username" />
     <label for="correo">Correo</label>
-    <input id="correo" type="email" formControlName="correo" placeholder="Ingrese su email">
+    <input
+      id="correo"
+      type="email"
+      formControlName="correo"
+      autocomplete="email"
+    />
     <label for="password">Contraseña</label>
-    <input id="password" type="password" formControlName="password" placeholder="Ingrese su contraseña">
-    <label for="role">Rol</label>
-    <select id="rol" formControlName="rol">
-        <option value="">Elija su rol</option>
-        <option value="CLIENTE">Cliente</option>
-        <option value="TRABAJADOR">Trabajador</option>
-    </select>
-    <button type="submit" [disabled]="formulario.invalid|| enviando()">
-        {{ enviando() ? 'Registrando…' : 'Registrarse' }}
+    <input
+      id="password"
+      type="password"
+      formControlName="password"
+      autocomplete="new-password"
+    />
+    <button type="submit" [disabled]="formulario.invalid || enviando()">
+      {{ enviando() ? 'Creando cuenta…' : 'Crear cuenta' }}
     </button>
-    <a routerLink="/login" routerLinkActive="active">Tiene una cuenta? Inicie sesion</a>
-</form>
+    <button type="button" (click)="cambiarTipo()" [disabled]="enviando()">
+      Cambiar tipo de cuenta
+    </button>
+    @if (mensaje()) {
+    <p role="alert">{{ mensaje() }}</p>
+    }
+  </form>
+  <a routerLink="/login">Ya tengo cuenta</a>
+</section>
 }

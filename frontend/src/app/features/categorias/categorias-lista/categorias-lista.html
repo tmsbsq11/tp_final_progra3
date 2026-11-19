@@ -1,53 +1,101 @@
 <h1>Categorías</h1>
-<p><a routerLink="/admin/categorias">Nueva categoría</a></p>
+
+@if (mensaje()) {
+  <div class="aviso-admin">
+    <p role="status">{{ mensaje() }}</p>
+
+    <button
+      type="button"
+      aria-label="Cerrar aviso"
+      (click)="mensaje.set('')"
+    >
+      ×
+    </button>
+  </div>
+}
+
+<div class="cabecera-categorias">
+  <a routerLink="/admin/categorias">Nueva categoría</a>
+</div>
 
 @if (cargando()) {
-  <p>Cargando…</p>
+  <p role="status">Cargando categorías…</p>
 } @else {
-  <table>
-    <thead>
-      <tr>
-        <th>Nombre</th>
-        <th>Estado</th>
-        <th>Requiere certificación</th>
-        <th>Acciones</th>
-      </tr>
-    </thead>
-    <tbody>
-      @for (c of categorias(); track c.id) {
-        <tr>
-          <td>{{ c.nombre }}</td>
-          <td>{{ c.isActive ? 'Activa' : 'Inactiva' }}</td>
-          <td>{{ c.needsCertification ? 'Sí' : 'No' }}</td>
-          <td>
-            <button type="button" (click)="editar(c)">Editar</button>
-            <button type="button" (click)="cambiarEstado(c)">
-              {{ c.isActive ? 'Desactivar' : 'Reactivar' }}
-            </button>
-          </td>
-        </tr>
-      } @empty {
-        <tr><td colspan="4">No hay categorías todavía.</td></tr>
-      }
-    </tbody>
-  </table>
+  <div class="usuarios-grilla">
+    @for (c of categorias(); track c.id) {
+      <article class="usuario-tarjeta">
+        <span class="estado-usuario" [class.inactivo]="!c.isActive">
+          {{ c.isActive ? 'Activa' : 'Inactiva' }}
+        </span>
+
+        <h2>{{ c.nombre }}</h2>
+
+        <p>
+          <strong>Requiere certificación</strong>
+          {{ c.needsCertification ? 'Sí' : 'No' }}
+        </p>
+
+        <div class="acciones-admin">
+          <button
+            type="button"
+            (click)="editar(c)"
+            [disabled]="guardando()"
+          >
+            Modificar
+          </button>
+
+          <button
+            type="button"
+            [class.boton-baja]="c.isActive"
+            (click)="cambiarEstado(c)"
+            [disabled]="guardando()"
+          >
+            {{ c.isActive ? 'Dar de baja' : 'Reactivar' }}
+          </button>
+        </div>
+      </article>
+    } @empty {
+      <p>Todavía no hay categorías.</p>
+    }
+  </div>
 }
 
 @if (editando(); as actual) {
-  <h2>Editar "{{ actual.nombre }}"</h2>
-  <form [formGroup]="formulario" (ngSubmit)="guardar()">
-    <label for="nombre">Nombre</label>
-    <input id="nombre" type="text" formControlName="nombre" />
+  <section class="edicion-admin">
+    <h2>Modificar {{ actual.nombre }}</h2>
 
-    <label>
-      <input type="checkbox" formControlName="needsCertification" /> Requiere certificación
-    </label>
+    <form [formGroup]="formulario" (ngSubmit)="guardar()">
+      <label for="nombre">Nombre</label>
+      <input id="nombre" type="text" formControlName="nombre" />
 
-    <button type="submit" [disabled]="formulario.invalid || guardando()">
-      {{ guardando() ? 'Guardando…' : 'Guardar' }}
-    </button>
-    <button type="button" (click)="cancelar()">Cancelar</button>
-  </form>
+      @if (
+        formulario.get('nombre')?.touched &&
+        formulario.get('nombre')?.hasError('required')
+      ) {
+        <p class="error">El nombre es obligatorio.</p>
+      }
+
+      <label class="opcion-certificacion">
+        <input type="checkbox" formControlName="needsCertification" />
+        Requiere certificación
+      </label>
+
+      <div class="acciones-admin">
+        <button
+          type="submit"
+          [disabled]="formulario.invalid || guardando()"
+        >
+          {{ guardando() ? 'Guardando…' : 'Guardar cambios' }}
+        </button>
+
+        <button
+          type="button"
+          (click)="cancelar()"
+          [disabled]="guardando()"
+        >
+          Cancelar
+        </button>
+      </div>
+    </form>
+  </section>
 }
-
-<p aria-live="polite">{{ mensaje() }}</p>

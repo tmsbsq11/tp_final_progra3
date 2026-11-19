@@ -4,9 +4,11 @@ import com.grupo3.oficio.model.Categoria;
 import com.grupo3.oficio.model.CrearNotificacionDTO;
 import com.grupo3.oficio.model.trabajos.Servicio;
 import com.grupo3.oficio.model.trabajos.ServicioDTO;
+import com.grupo3.oficio.model.users.Admin;
 import com.grupo3.oficio.model.users.Trabajador;
 import com.grupo3.oficio.repository.servicio.ServicioRepository;
 import com.grupo3.oficio.repository.servicio.ServicioSpecifications;
+import com.grupo3.oficio.repository.users.AdminRepository;
 import com.grupo3.oficio.service.CategoriaService;
 import com.grupo3.oficio.service.NotificacionService;
 import com.grupo3.oficio.service.users.TrabajadorService;
@@ -25,12 +27,13 @@ public class ServicioService {
     private final TrabajadorService trabajadorService;
     private final ServicioRepository servicioRepository;
     private final NotificacionService notificacionService;
-
-    public ServicioService(ServicioRepository servicioRepository, CategoriaService categoriaService, TrabajadorService trabajadorService, NotificacionService notificacionService) {
+    private final AdminRepository adminRepository;
+    public ServicioService(ServicioRepository servicioRepository, CategoriaService categoriaService, TrabajadorService trabajadorService, NotificacionService notificacionService, AdminRepository adminRepository) {
         this.servicioRepository = servicioRepository;
         this.categoriaService = categoriaService;
         this.trabajadorService = trabajadorService;
         this.notificacionService = notificacionService;
+        this.adminRepository = adminRepository;
     }
 
     public List<Servicio> listarTodos() {
@@ -77,6 +80,19 @@ public class ServicioService {
         servicio.setIsActive(true);
         servicio.setIsApproved(!Boolean.TRUE.equals(categoria.getNeedsCertification()));
 
+        if(categoria.getNeedsCertification()){
+            for(Admin admin:adminRepository.findAll()){
+                notificacionService.crearNotificacion(new CrearNotificacionDTO(
+                        "SOLICITUD DE APROBACIÓN DE SERVICIO",
+                        "El trabajador " + trabajador.getNombre()
+                                + " ha registrado el servicio '" + servicio.getTitulo()
+                                + "' y requiere aprobación.",
+                        TipoNotificacion.VALIDACION,
+                        admin.getId(),
+                        Rol.ADMIN
+                ));
+            }
+        }
         return servicioRepository.save(servicio);
     }
 

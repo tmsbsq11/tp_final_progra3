@@ -1,57 +1,73 @@
-import { Component, inject, OnInit } from '@angular/core';
-import { FormGroup,FormBuilder,Validators ,ReactiveFormsModule} from '@angular/forms';
-import { signal } from '@angular/core';
-import { AuthService } from '../../../core/services/auth.service';
-import { finalize } from 'rxjs';
-import { Router, RouterLink, RouterLinkActive } from '@angular/router';
+import { Component, OnInit, signal } from "@angular/core";
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from "@angular/forms";
+import { Router, RouterLink } from "@angular/router";
+import { finalize } from "rxjs";
+import { AuthService } from "../../../core/services/auth.service";
+
+type RolRegistro = "CLIENTE" | "TRABAJADOR";
+
 @Component({
-  imports: [ReactiveFormsModule, RouterLinkActive,RouterLink],
-  selector: 'app-register',
-  styleUrl: './register.css',
-  templateUrl: './register.html',
+  imports: [ReactiveFormsModule, RouterLink],
+  selector: "app-register",
+  styleUrl: "./register.css",
+  templateUrl: "./register.html",
 })
 export class Register implements OnInit {
   formulario!: FormGroup;
-
-  mensaje = signal('');
+  rolSeleccionado = signal<RolRegistro | null>(null);
+  mensaje = signal("");
   enviando = signal(false);
-  private router=inject(Router)
 
-  constructor(private fb: FormBuilder,private authService: AuthService) {
-   }
+  constructor(
+    private fb: FormBuilder,
+    public authService: AuthService,
+    private router: Router,
+  ) {}
+
   ngOnInit(): void {
-  this.formulario = this.fb.group({
-    nombre:['',[Validators.required]],
-    correo:['',[Validators.required,Validators.email]],
-    password:['',[Validators.required]],
-    rol:['CLIENTE',Validators.required],
-  })
+    this.formulario = this.fb.group({
+      nombre: ["", Validators.required],
+      correo: ["", [Validators.required, Validators.email]],
+      password: ["", Validators.required],
+      rol: ["", Validators.required],
+    });
   }
- registrar():void{
-  if(this.formulario.invalid || this.enviando()){
-    this.formulario.markAllAsTouched();
-    return;
+
+  seleccionarRol(rol: RolRegistro): void {
+    this.mensaje.set("");
+    this.formulario.patchValue({ rol });
+    this.rolSeleccionado.set(rol);
   }
-  const {correo,password,rol,nombre}=this.formulario.getRawValue();
 
-  this.mensaje.set('');
-  this.enviando.set(true);
+  cambiarTipo(): void {
+    if (this.enviando()) return;
+    this.formulario.reset({ nombre: "", correo: "", password: "", rol: "" });
+    this.mensaje.set("");
+    this.rolSeleccionado.set(null);
+  }
 
-  this.authService.register(correo,password,rol,nombre).pipe(finalize(()=>this.enviando.set(false))).subscribe({
-    next: ()=>{
-      this.enviando.set(false);
-      this.router.navigate(['/login']);
-    },
-    error:({status})=>{
-      if(status===409){
-        this.mensaje.set('El correo ya está registrado. Inicie sesión.');
-      }else if(status===400){
-        this.mensaje.set('Los datos proporcionados no son válidos.');
-      }else
-      {
-        this.mensaje.set('No se pudo registrar el usuario. Revisá si Spring está corriendo.');
-      }
-    },
-  });
- }
+  registrar(): void {
+    if (this.formulario.invalid || this.enviando()) {
+      this.formulario.markAllAsTouched();
+      return;
+    }
+    const { correo, password, rol, nombre } = this.formulario.getRawValue();
+    this.mensaje.set("");
+    this.enviando.set(true);
+    this.authService
+      .register(correo, password, rol, nombre)
+      .pipe(finalize(() => this.enviando.set(false)))
+      .subscribe({
+        next: () => {
+          this.router.navigate(["/login"]);
+        },
+        error: ({ status }) => {
+          this.mensaje.set(
+            status === 409
+              ? "El correo ya está registrado. Iniciá sesión."
+              : "No se pudo crear la cuenta. Revisá los datos e intentá nuevamente.",
+          );
+        },
+      });
+  }
 }

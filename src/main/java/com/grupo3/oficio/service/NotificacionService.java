@@ -34,12 +34,30 @@ public class NotificacionService {
 
     //CRUD
     //read
-    public List<Notificacion> mostrarNotificaciones() {
-        return notificacionRepo.findAll();
+    public List<Notificacion> mostrarNotificaciones(Integer idDestino, Rol rol) {
+        return notificacionRepo.findByIdDestinoAndRol(idDestino, rol);
     }
 
     public Notificacion mostrarNotificacionPorId(Integer id) {
         return notificacionRepo.findById(id).orElseThrow(() -> new NoSuchElementException("El id de la notificacion que se quiso buscar no existe"));
+    }
+
+    public List<Notificacion> mostrarNotificacionesNoLeidas(Integer idDestino, Rol rol) {
+        return notificacionRepo.findByIdDestinoAndRolAndLeida(
+                idDestino, rol, false
+        );
+    }
+
+    public Notificacion mostrarNotificacionPorId(
+            Integer id,
+            Integer idDestino,
+            Rol rol
+    ) {
+        return notificacionRepo.findById(id)
+                .filter(n -> n.getIdDestino().equals(idDestino) && n.getRol() == rol)
+                .orElseThrow(() -> new NoSuchElementException(
+                        "No se encontró la notificación"
+                ));
     }
 
     //create
@@ -112,6 +130,16 @@ public class NotificacionService {
         notificacion.setMensaje(actualizarNotificacionDTO.getMensaje());
         notificacion.setRol(notificacion.getRol());
         notificacion.setLeida(false);//actualiza el estado?
+        return notificacionRepo.save(notificacion);
+    }
+
+    public Notificacion marcarComoLeida(
+            Integer id,
+            Integer idDestino,
+            Rol rol
+    ) {
+        Notificacion notificacion = mostrarNotificacionPorId(id, idDestino, rol);
+        notificacion.setLeida(true);
         return notificacionRepo.save(notificacion);
     }
 

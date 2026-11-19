@@ -3,111 +3,283 @@
 }
 
 .encabezado {
-  background-color: #fbfdff;
-  border-bottom: 1px solid #cddfea;
-  color: #173f56;
+  position: relative;
+  z-index: 50;
+  background-color: #ffffff;
+  border-bottom: 1px solid #d4e3f2;
 }
 
 .encabezado-interior {
-  display: grid;
-  grid-template-columns: minmax(44px, 1fr) auto minmax(44px, 1fr);
+  display: flex;
   align-items: center;
-  gap: 0.75rem;
-  padding: 0.6rem 1rem;
+  justify-content: space-between;
+  gap: 24px;
+  max-width: 1600px;
+  min-height: 88px;
+  margin: 0 auto;
+  padding: 16px 32px;
 }
 
 .marca {
-  grid-column: 2;
-  grid-row: 1;
-  justify-self: center;
-  color: inherit;
-  font-size: clamp(1.4rem, 2.5vw, 1.85rem);
-  font-weight: 700;
-  line-height: 1.2;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: #123456;
+  font-size: 34px;
+  font-weight: 800;
+  letter-spacing: -1px;
   text-decoration: none;
+  white-space: nowrap;
 }
 
-.marca span {
-  font-size: 0.75em;
+.marca-ya {
+  color: #3288dd;
 }
 
-.menu-desplegable {
+.logo-casa {
+  width: 36px;
+  height: 36px;
+  fill: none;
+  stroke: #174f80;
+  stroke-width: 2.4;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.navegacion-principal {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
+
+.navegacion-principal > a {
+  color: #123456;
+  font-size: 15px;
+  font-weight: 600;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.navegacion-principal > a.activo {
+  color: #287dcb;
+}
+
+.navegacion-principal > a.primario {
+  color: #ffffff;
+}
+
+.menu-desplegable,
+.notificaciones-menu {
   position: relative;
-  grid-column: 3;
-  grid-row: 1;
-  justify-self: end;
 }
 
 .menu-toggle {
-  display: grid;
-  place-items: center;
-  box-sizing: border-box;
-  width: 44px;
-  height: 44px;
-  border: 1px solid #b6d5e8;
-  border-radius: 10px;
-  background-color: #e1f0fa;
-  color: #17577c;
-  font-size: 1.4rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  min-height: 46px;
+  padding: 6px 12px;
+  border: 1px solid #d4e3f2;
+  border-radius: 12px;
+  background-color: #f5f9ff;
+  color: #123456;
+  font: inherit;
+  font-weight: 600;
   line-height: 1;
-  list-style: none;
+  white-space: nowrap;
   cursor: pointer;
-  transition: background-color 150ms ease;
 }
 
-.menu-toggle::-webkit-details-marker {
-  display: none;
+.avatar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background-color: #dcecff;
+  color: #174f80;
+  text-transform: uppercase;
+}
+
+.flecha-cuenta {
+  width: 7px;
+  height: 7px;
+  margin: -4px 2px 0 4px;
+  border-right: 2px solid currentColor;
+  border-bottom: 2px solid currentColor;
+  transform: rotate(45deg);
+}
+
+.campana-boton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 46px;
+  padding: 9px;
+  border: 1px solid #d4e3f2;
+  border-radius: 12px;
+  background-color: #f5f9ff;
+  color: #174f80;
+  cursor: pointer;
+}
+
+.campana-boton svg {
+  width: 24px;
+  height: 24px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
 }
 
 .menu-toggle:hover,
-.menu-desplegable[open] .menu-toggle {
-  background-color: #c7e2f3;
+.campana-boton:hover {
+  background-color: #e8f2ff;
+}
+
+.menu-panel,
+.notificaciones-panel {
+  position: absolute;
+  top: calc(100% + 12px);
+  right: 0;
+  border: 1px solid #d4e3f2;
+  border-radius: 14px;
+  background-color: #ffffff;
+  box-shadow: 0 12px 30px rgba(24, 70, 110, 0.15);
 }
 
 .menu-panel {
-  position: absolute;
-  inset-block-start: calc(100% + 0.5rem);
-  inset-inline-end: 0;
-  z-index: 10;
-  box-sizing: border-box;
-  width: min(14rem, calc(100vw - 1.5rem));
-  padding-block: 0.35rem;
-  border: 1px solid #cddfea;
-  border-radius: 12px;
-  background-color: #fff;
-  box-shadow: 0 6px 18px rgb(23 63 86 / 15%);
+  display: grid;
+  width: 250px;
+  max-width: calc(100vw - 32px);
+  padding: 8px;
 }
 
-.menu {
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-.menu :is(a, button) {
+.menu-panel a,
+.menu-panel button {
   display: flex;
   align-items: center;
-  box-sizing: border-box;
+  justify-content: flex-start;
   width: 100%;
   min-height: 44px;
-  padding: 0.65rem 1rem;
+  padding: 12px;
   border: 0;
+  border-radius: 8px;
   background-color: transparent;
-  color: #17577c;
+  color: #123456;
   font: inherit;
-  font-weight: 400;
-  text-align: start;
+  text-align: left;
   text-decoration: none;
   cursor: pointer;
-  transition: background-color 150ms ease;
 }
 
-.menu :is(a, button):hover,
-.menu a.activo {
-  background-color: #edf6fd;
+.menu-panel a:hover,
+.menu-panel button:hover {
+  background-color: #edf5ff;
 }
 
-.encabezado :is(a, button, summary):focus-visible {
-  outline: 2px solid #287bb1;
-  outline-offset: 2px;
+.notificaciones-panel {
+  width: 370px;
+  max-width: calc(100vw - 32px);
+  overflow: hidden;
+}
+
+.notificaciones-panel h2 {
+  margin: 0;
+  padding: 16px;
+  border-bottom: 1px solid #e1eaf4;
+  color: #123456;
+  font-size: 17px;
+}
+
+.notificaciones-scroll {
+  max-height: 320px;
+  overflow-y: auto;
+}
+
+.notificaciones-scroll > p {
+  margin: 0;
+  padding: 16px;
+}
+
+.notificacion-item {
+  display: grid;
+  gap: 6px;
+  padding: 14px 16px;
+  border-bottom: 1px solid #e8eff7;
+  color: #123456;
+  text-decoration: none;
+}
+
+.notificacion-item:hover {
+  background-color: #f2f7ff;
+}
+
+.notificacion-item span {
+  color: #5b7086;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.notificacion-item time {
+  color: #6d8094;
+  font-size: 12px;
+}
+
+.notificaciones-panel footer {
+  margin: 0;
+  padding: 0;
+}
+
+.notificaciones-pie {
+  display: block;
+  padding: 16px;
+  border-top: 1px solid #d4e3f2;
+  background-color: #f5f9ff;
+  color: #174f80;
+  font-weight: 600;
+  text-align: center;
+  text-decoration: none;
+}
+
+.notificaciones-pie:hover {
+  background-color: #e8f2ff;
+}
+
+a:focus-visible,
+button:focus-visible {
+  outline: 3px solid #438acb;
+  outline-offset: 3px;
+}
+
+@media (max-width: 850px) {
+  .encabezado-interior {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 16px;
+    padding: 16px;
+  }
+
+  .navegacion-principal {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 14px;
+  }
+
+  .notificaciones-panel {
+    position: fixed;
+    top: 145px;
+    left: 16px;
+    right: 16px;
+    width: auto;
+    max-width: none;
+  }
+
+  .notificaciones-scroll {
+    max-height: 45vh;
+  }
 }

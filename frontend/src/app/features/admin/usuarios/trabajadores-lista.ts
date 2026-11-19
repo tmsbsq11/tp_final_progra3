@@ -1,18 +1,17 @@
 import { DatePipe } from '@angular/common';
 import { Component, OnInit, computed, inject, signal } from '@angular/core';
+import { RouterLink } from '@angular/router';
 import { finalize } from 'rxjs';
+import { mensajeDeError } from './errores';
 import { FiltroEstado, compararPorNombre, normalizar, pasaFiltroEstado } from './filtros';
 import { TrabajadorAdmin } from './usuario.model';
 import { UsuariosAdminService } from './usuarios-admin.service';
-import { RouterLink } from '@angular/router';
-import { mensajeDeError } from './errores';
-
-
 
 @Component({
   selector: 'app-trabajadores-lista',
   imports: [DatePipe, RouterLink],
   templateUrl: './trabajadores-lista.html',
+  styleUrl: '../admin.css',
 })
 export class TrabajadoresLista implements OnInit {
   private readonly servicio = inject(UsuariosAdminService);

@@ -1,19 +1,32 @@
-@if(authService.estaAutenticado()){
-  <button (click)="authService.logout()">Cerrar sesión</button>
-}@else {
+<section class="acceso">
+  @if (authService.estaAutenticado()) {
+  <h1>Tu sesión está iniciada</h1>
+  <a class="btn" routerLink="/servicios">Explorar servicios</a>
+  <button type="button" (click)="authService.logout()">Cerrar sesión</button>
+  } @else {
   <h1>Iniciar sesión</h1>
-
-<form [formGroup]="formulario" (ngSubmit)="ingresar()">
-  <label for="correo">Correo</label>
-  <input id="correo" type="email" formControlName="correo" autocomplete="username" />
-
-  <label for="password">Contraseña</label>
-  <input id="password" type="password" formControlName="password" autocomplete="current-password" />
-
-  <button type="submit" [disabled]="formulario.invalid || enviando()">
-    {{ enviando() ? 'Ingresando…' : 'Ingresar' }}
-  </button>
-</form>
-<a routerLink="/register" routerLinkActive="active">No tiene cuenta? Registrarse</a>
-<p aria-live="polite">{{ mensaje() }}</p>
-}
+  <form [formGroup]="formulario" (ngSubmit)="ingresar()">
+    <label for="correo">Correo</label>
+    <input
+      id="correo"
+      type="email"
+      formControlName="correo"
+      autocomplete="username"
+    />
+    <label for="password">Contraseña</label>
+    <input
+      id="password"
+      type="password"
+      formControlName="password"
+      autocomplete="current-password"
+    />
+    <button type="submit" [disabled]="formulario.invalid || enviando()">
+      {{ enviando() ? 'Ingresando…' : 'Ingresar' }}
+    </button>
+    @if (mensaje()) {
+    <p role="status">{{ mensaje() }}</p>
+    }
+  </form>
+  <a routerLink="/register">Crear una cuenta</a>
+  }
+</section>

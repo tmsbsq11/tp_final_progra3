@@ -1,1 +1,108 @@
-<p>home works!</p>
+<section class="inicio-hero">
+  <div class="inicio-texto">
+    <h1>
+      Conectamos<br />
+      personas con<br />
+      profesionales<br />
+      de confianza
+    </h1>
+
+    @if (authService.getUserRole()?.toLowerCase() === 'trabajador') {
+      <p>
+        Ofrecé tus servicios, administrá tus postulaciones
+        y respondé las solicitudes de tus clientes.
+      </p>
+
+      <div class="acciones-inicio">
+        <a class="btn primario" routerLink="/reservas-recibidas">
+          Solicitudes recibidas
+        </a>
+
+        <a class="btn" routerLink="/mis-postulaciones">
+          Mis postulaciones
+        </a>
+      </div>
+    } @else {
+      @if (authService.getUserRole()?.toLowerCase() === 'admin') {
+        <p>
+          Consultá los servicios y administrá las categorías
+          y las cuentas de OficiosYa.
+        </p>
+      } @else {
+        <p>
+          Encontrá trabajadores de distintos oficios, revisá sus perfiles
+          y reservá tu servicio de forma simple.
+        </p>
+      }
+
+      <div class="buscador-inicio">
+        <input
+          type="search"
+          #busqueda
+          aria-label="Buscar un servicio"
+          placeholder="Buscar un servicio (ej. plomería, electricidad...)"
+        />
+
+        <a
+          class="btn primario"
+          routerLink="/servicios"
+          [queryParams]="{ busqueda: busqueda.value || null }"
+          aria-label="Buscar"
+        >
+          ⌕
+        </a>
+      </div>
+    }
+  </div>
+
+  <div class="personajes-inicio" aria-hidden="true">
+    <img src="/images/cliente-sin-fondo.png" alt="" />
+    <img src="/images/trabajador-sin-fondo.png" alt="" />
+  </div>
+</section>
+
+@if (authService.getUserRole()?.toLowerCase() !== 'trabajador') {
+  <section class="destacadas">
+    <h2>Categorías destacadas</h2>
+
+    <div class="accesos-inicio">
+      @for (oficio of oficios; track oficio) {
+        <a
+          routerLink="/servicios"
+          [queryParams]="{ busqueda: oficio }"
+        >
+          <span aria-hidden="true">{{ iconoCategoria(oficio) }}</span>
+          {{ oficio }}
+        </a>
+      }
+
+      <a routerLink="/servicios">
+        <span aria-hidden="true">⊞</span>
+        Más
+      </a>
+    </div>
+  </section>
+}
+
+<section class="sobre-proyecto">
+  <h2>Sobre OficiosYa</h2>
+
+  <p>
+    Somos estudiantes de la UTN Mar del Plata.
+    Desarrollamos este proyecto para facilitar el encuentro
+    entre clientes y trabajadores.
+  </p>
+
+  <h3>Nuestro equipo</h3>
+
+  <ul class="integrantes">
+    <li>Irina Benvenutto</li>
+    <li>Julián Anchoverri</li>
+    <li>Pedro Gabriel Fernández Raya</li>
+    <li>Tomás Corrado Busquet</li>
+  </ul>
+
+  <p>
+    Programación IV · Profesor Nicanor Dondero · UTN Mar del Plata
+  </p>
+</section>

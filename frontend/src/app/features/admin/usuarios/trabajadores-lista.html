@@ -1,7 +1,8 @@
 <h1>Trabajadores</h1>
 <p><a routerLink="/admin/trabajadores/nuevo">Nuevo trabajador</a></p>
 <p role="status">{{ aviso() }}</p>
-<div>
+
+<div class="filtros-admin">
   <label for="busqueda">Buscar</label>
   <input
     id="busqueda"
@@ -18,70 +19,61 @@
     <option value="INACTIVOS">Inactivos</option>
   </select>
 
-  <button type="button" (click)="limpiarFiltros()">Limpiar filtros</button>
+  <button type="button" (click)="limpiarFiltros()">
+    Limpiar filtros
+  </button>
 </div>
 
 @if (cargando()) {
-<p>Cargando…</p>
+<p role="status">Cargando trabajadores…</p>
 } @else if (mensaje()) {
 <p role="alert">{{ mensaje() }}</p>
 <button type="button" (click)="cargar()">Reintentar</button>
 } @else {
-<p>Mostrando {{ visibles().length }} de {{ trabajadores().length }}</p>
+<div class="admin-lista">
+  @for (t of visibles(); track t.id) {
+  <article class="admin-fila">
+        <span class="avatar-persona" aria-hidden="true">
+          {{ (t.nombre || t.username || '?').slice(0, 1) }}
+        </span>
 
-<div style="overflow-x: auto">
-  <table>
-    <thead>
-    <tr>
-      <th>ID</th>
-      <th>Nombre</th>
-      <th>Apellido</th>
-      <th>Correo</th>
-      <th>DNI</th>
-      <th>Rol</th>
-      <th>Estado</th>
-      <th>Puntaje</th>
-      <th>Descripción</th>
-      <th>Mín. entre reservas (min)</th>
-      <th>Latitud</th>
-      <th>Longitud</th>
-      <th>Foto</th>
-      <th>Alta</th>
-      <th>Acciones</th>
-    </tr>
-    </thead>
-    <tbody>
-    @for (t of visibles(); track t.id) {
-    <tr>
-      <td>{{ t.id }}</td>
-      <td>{{ t.nombre ?? '—' }}</td>
-      <td>{{ t.apellido ?? '—' }}</td>
-      <td>{{ t.correo }}</td>
-      <td>{{ t.dni ?? '—' }}</td>
-      <td>{{ t.rol ?? '—' }}</td>
-      <td>{{ t.isActive ? 'Activo' : 'Inactivo' }}</td>
-      <td>{{ t.puntaje ?? '—' }}</td>
-      <td>{{ t.descripcion ?? '—' }}</td>
-      <td>{{ t.minutosMinimoEntreReservas ?? '—' }}</td>
-      <td>{{ t.latitud ?? '—' }}</td>
-      <td>{{ t.longitud ?? '—' }}</td>
-      <td>{{ t.direccionFoto ?? '—' }}</td>
-      <td>{{ t.fechaCreacion ? (t.fechaCreacion | date: 'dd/MM/yyyy HH:mm') : '—' }}</td>
-      <td>
-        <a [routerLink]="['/admin/trabajadores', t.id, 'editar']">Editar</a>
+    <div class="admin-persona">
+      <h2>{{ t.nombre || t.username }} {{ t.apellido ?? '' }}</h2>
+      <p>{{ t.correo }}</p>
+
+      <details class="datos-admin">
+        <summary>Ver datos</summary>
+
+        <div class="usuario-datos">
+          <p><strong>ID</strong>{{ t.id }}</p>
+          <p><strong>Usuario</strong>{{ t.username ?? '—' }}</p>
+          <p><strong>DNI</strong>{{ t.dni ?? '—' }}</p>
+          <p><strong>Puntaje</strong>{{ t.puntaje != null ? t.puntaje.toFixed(1) : '—' }}</p>
+          <p><strong>Foto</strong>{{ t.direccionFoto ?? '—' }}</p>
+          <p><strong>Minutos entre reservas</strong>{{ t.minutosMinimoEntreReservas ?? '—' }}</p>
+          <p><strong>Latitud</strong>{{ t.latitud ?? '—' }}</p>
+          <p><strong>Longitud</strong>{{ t.longitud ?? '—' }}</p>
+          <p><strong>Alta</strong>{{ t.fechaCreacion ? (t.fechaCreacion | date:'dd/MM/yyyy HH:mm') : '—' }}</p>
+          <p><strong>Descripción</strong>{{ t.descripcion || 'Sin descripción.' }}</p>
+        </div>
+      </details>
+
+      <div class="acciones-admin">
+        <a [routerLink]="['/admin/trabajadores', t.id, 'editar']">Modificar</a>
         <button type="button" (click)="cambiarActivo(t)">
           {{ t.isActive ? 'Dar de baja' : 'Reactivar' }}
         </button>
-      </td>
-    </tr>
-    } @empty {
-    <tr>
-      <td colspan="15">
-        {{ trabajadores().length === 0 ? 'Todavía no hay registros.' : 'Ningún resultado coincide con los filtros.' }}
-      </td>
-    </tr>
-    }
-    </tbody>
-  </table>
+      </div>
+    </div>
+
+    <span class="rol-admin">{{ t.rol }}</span>
+
+    <span class="estado-usuario" [class.inactivo]="!t.isActive">
+          {{ t.isActive ? 'Activo' : 'Inactivo' }}
+        </span>
+  </article>
+  } @empty {
+  <p class="aviso">No hay trabajadores con los filtros seleccionados.</p>
+  }
 </div>
 }

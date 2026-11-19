@@ -9,6 +9,8 @@ import { adminGuard } from './core/guards/admin.guard';
 export const routes: Routes = [
   { path: '', component: Home },
   { path: 'admin/clientes', canActivate: [adminGuard], loadComponent: () => import('./features/admin/usuarios/clientes-lista').then(m => m.ClientesLista) },
+  { path: 'admin/clientes/nuevo', canActivate: [adminGuard], loadComponent: () => import('./features/admin/usuarios/cliente-form').then(m => m.ClienteForm) },
+  { path: 'admin/clientes/:id/editar', canActivate: [adminGuard], loadComponent: () => import('./features/admin/usuarios/cliente-form').then(m => m.ClienteForm) },
   { path: 'admin/trabajadores', canActivate: [adminGuard], loadComponent: () => import('./features/admin/usuarios/trabajadores-lista').then(m => m.TrabajadoresLista) },
   { path: 'admin/trabajadores/nuevo', canActivate: [adminGuard], loadComponent: () => import('./features/admin/usuarios/trabajador-form').then(m => m.TrabajadorForm) },
   { path: 'admin/trabajadores/:id/editar', canActivate: [adminGuard], loadComponent: () => import('./features/admin/usuarios/trabajador-form').then(m => m.TrabajadorForm) },

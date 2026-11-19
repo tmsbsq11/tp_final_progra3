@@ -62,6 +62,9 @@ public class AuthController {
         usuario.setIsActive(true);
         usuario.setFechaCreacion(LocalDateTime.now());
 
+        if(usuario instanceof Trabajador trabajador){
+            trabajador.setMinutosMinimoEntreReservas(15);
+        }
         usuarioRepo.save(usuario);
         return ResponseEntity.status(HttpStatus.CREATED).body("Usuario registrado con éxito");
     }

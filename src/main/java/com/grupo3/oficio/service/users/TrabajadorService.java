@@ -8,6 +8,9 @@ import com.grupo3.oficio.utils.geo.GeocodingService;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import com.grupo3.oficio.repository.users.UserRepository;
+import com.grupo3.oficio.utils.enums.Rol;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 
 import java.time.LocalDateTime;
@@ -20,6 +23,11 @@ public class TrabajadorService {
 
     @Autowired
     private GeocodingService geocodingService;
+
+    @Autowired
+    private UserRepository userRepository;
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     public TrabajadorService(TrabajadorRepository trabajadorRepository) { this.trabajadorRepository = trabajadorRepository; }
 
@@ -105,7 +113,7 @@ public class TrabajadorService {
         if (dto.getMinutosMinimoEntreReservas() == null ) {
             throw new IllegalArgumentException("El minimo de tiempo entre reservas es obligatorio");
         }
-        if (trabajadorRepository.existsByCorreo(dto.getCorreo())) {
+        if (userRepository.findByCorreo(dto.getCorreo()).isPresent()) {
             throw new IllegalArgumentException("Ya existe un usuario con ese correo");
         }
         if (trabajadorRepository.existsByUsername(dto.getUsername())) {
@@ -116,6 +124,8 @@ public class TrabajadorService {
         }
 
         Trabajador trabajador= this.convertirATrabajadorEntidad(dto);
+        trabajador.setPassword(passwordEncoder.encode(dto.getPassword()));
+        trabajador.setRol(Rol.TRABAJADOR);
         trabajador.setId(null);
         trabajador.setFechaCreacion(LocalDateTime.now());
         trabajador.setIsActive(true);
@@ -200,6 +210,65 @@ public class TrabajadorService {
         }
 
         return trabajadorRepository.save(trabajadorExistente);
+    }
+
+    public Trabajador actualizarDatos(Integer id, Trabajador datos) {
+        if (datos == null) {
+            throw new IllegalArgumentException("El trabajador no puede ser nulo");
+        }
+        if (datos.getCorreo() == null || !datos.getCorreo().matches("^[A-Za-z0-9+_.-]+@(.+)$")) {
+            throw new IllegalArgumentException("El correo no tiene un formato válido");
+        }
+        if (datos.getNombre() == null || datos.getNombre().isBlank()) {
+            throw new IllegalArgumentException("El nombre es obligatorio");
+        }
+        if (datos.getApellido() == null || datos.getApellido().isBlank()) {
+            throw new IllegalArgumentException("El apellido es obligatorio");
+        }
+        if (datos.getDni() == null || !datos.getDni().matches("\\d{7,8}")) {
+            throw new IllegalArgumentException("El DNI debe tener 7 u 8 dígitos");
+        }
+        if (datos.getMinutosMinimoEntreReservas() == null || datos.getMinutosMinimoEntreReservas() < 0) {
+            throw new IllegalArgumentException("Los minutos entre reservas son obligatorios y no pueden ser negativos");
+        }
+        Trabajador existente = trabajadorRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("El trabajador con ID " + id + " no existe"));
+
+        if (!datos.getCorreo().equals(existente.getCorreo())
+                && userRepository.findByCorreo(datos.getCorreo()).isPresent()) {
+            throw new IllegalArgumentException("Ya existe un usuario con ese correo");
+        }
+        if (!datos.getDni().equals(existente.getDni()) && trabajadorRepository.existsByDni(datos.getDni())) {
+            throw new IllegalArgumentException("Ya existe un usuario con ese DNI");
+        }
+
+        existente.setCorreo(datos.getCorreo());
+        existente.setUsername(datos.getCorreo());
+        existente.setNombre(datos.getNombre());
+        existente.setApellido(datos.getApellido());
+        existente.setDni(datos.getDni());
+        existente.setDescripcion(datos.getDescripcion());
+        existente.setMinutosMinimoEntreReservas(datos.getMinutosMinimoEntreReservas());
+        if (datos.getPassword() != null && !datos.getPassword().isBlank()) {
+            if (datos.getPassword().length() < 8) {
+                throw new IllegalArgumentException("La contraseña debe tener al menos 8 caracteres");
+            }
+            existente.setPassword(passwordEncoder.encode(datos.getPassword()));
+        }
+        return trabajadorRepository.save(existente);
+    }
+
+    //baja
+    public void desactivar(Integer id) {
+        Trabajador trabajador = buscarPorId(id);
+        trabajador.setIsActive(false);
+        trabajadorRepository.save(trabajador);
+    }
+
+    public void reactivar(Integer id) {
+        Trabajador trabajador = buscarPorId(id);
+        trabajador.setIsActive(true);
+        trabajadorRepository.save(trabajador);
     }
 
     //delete

@@ -26,3 +26,18 @@ export interface TrabajadorAdmin extends UsuarioAdmin {
   latitud: number | null;
   longitud: number | null;
 }
+
+// Lo que se envia al crear o editar. username va igual al correo pq el backend todavia lo pide
+export interface ClienteFormulario {
+  nombre: string;
+  apellido: string;
+  correo: string;
+  username: string;
+  dni: string;
+  descripcion: string;
+  password?: string; // cuando editas si falta no se cambia
+}
+
+export interface TrabajadorFormulario extends ClienteFormulario {
+  minutosMinimoEntreReservas: number;
+}

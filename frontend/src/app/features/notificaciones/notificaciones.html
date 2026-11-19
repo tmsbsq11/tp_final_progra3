@@ -1,0 +1,17 @@
+
+@if(cargando()){
+<p>Cargando notificaciones...</p>
+}
+@else if(notificaciones()){
+@for(n of notificaciones();track n.id){
+    <p>{{n.titulo}}</p>
+    <p>{{n.mensaje}}</p>
+
+}@empty {
+    <p>No tenes notificaciones</p>
+}
+
+}@else{
+<p>{{error()}};</p>
+}
+

@@ -1,4 +1,4 @@
-import { Component, OnInit, computed, signal } from '@angular/core';
+import { Component, OnInit, computed, effect, signal } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { finalize } from 'rxjs';
 import { ClienteServicios } from '../../client/cliente-servicios';
@@ -6,6 +6,8 @@ import { Servicio } from '../../model/servicio.model';
 import { ReseniaRecibida } from '../../../resenias/model/resenia.model';
 import { ReseniasService } from '../../../resenias/service/resenias.service';
 import { DatePipe } from '@angular/common';
+import { AuthService } from '../../../../core/services/auth.service';
+import { FavoritosService } from '../../../favoritos/service/favoritos.service';
 
 @Component({
   selector: 'app-trabajador-detail',
@@ -24,6 +26,8 @@ export class TrabajadorDetail implements OnInit {
   mensaje = signal('');
   rutaVolver = '/servicios'; // guarda la ruta a la que se debe volver desde el detalle del trabajador, por defecto es /servicios
   filtrosVolver: Record<string, string> = {}; //guarda los filtros de búsqueda y categoría para volver al listado de servicios con los mismos filtros aplicados
+  idsFavoritos = signal<number[]>([]);
+  mensajeFavoritos = signal('');
 
   porcentajePuntaje = computed(() => {
     const resenias = this.resenias();
@@ -37,7 +41,9 @@ export class TrabajadorDetail implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private clienteServicios: ClienteServicios,
-    private reseniasService: ReseniasService
+    private reseniasService: ReseniasService,
+    public authService: AuthService,
+    private favoritosService: FavoritosService,
   ) {}
 
   ngOnInit(): void {
@@ -54,6 +60,16 @@ export class TrabajadorDetail implements OnInit {
 
       if (busqueda) this.filtrosVolver['busqueda'] = busqueda;
       if (idCategoria) this.filtrosVolver['idCategoria'] = idCategoria;
+
+      if (this.authService.getUserRole()?.toLowerCase() === 'cliente') {
+        try {
+          this.idsFavoritos.set(
+            this.favoritosService.listar().map(favorito => favorito.idServicio)
+          );
+        } catch {
+          this.mensajeFavoritos.set('No se pudieron leer tus favoritos.');
+        }
+      }
     }
 
     const idTrabajador = Number(this.route.snapshot.paramMap.get('id'));
@@ -91,4 +107,48 @@ export class TrabajadorDetail implements OnInit {
         error: () => this.mensaje.set('No se pudo cargar la ficha del trabajador.'),
       });
   }
+
+  esFavorito(servicio: Servicio): boolean {
+  return this.idsFavoritos().includes(Number(servicio.id));
+}
+
+  cambiarFavorito(servicio: Servicio): void {
+    this.mensajeFavoritos.set('');
+
+    try {
+      const id = Number(servicio.id);
+      const estabaGuardado = this.favoritosService.listar().some(favorito => favorito.idServicio === id);
+      
+      if (estabaGuardado) {
+        this.favoritosService.quitar(id);
+      } else {
+        this.favoritosService.agregar(id);
+      }
+
+      this.idsFavoritos.set(
+        this.favoritosService.listar().map(favorito => favorito.idServicio)
+      );
+
+      this.mensajeFavoritos.set(
+        estabaGuardado
+          ? 'Postulación quitada de favoritos.'
+          : 'Postulación guardada en favoritos.'
+      );
+    } catch {
+      this.mensajeFavoritos.set('No se pudieron actualizar los favoritos.');
+    }
+  }
+
+  // borra el mensage despues de 3 segundos
+  private cierreAviso = effect((limpiar) => {
+    if (!this.mensajeFavoritos()) {
+      return;
+    }
+
+    const temporizador = setTimeout(() => {
+      this.mensajeFavoritos.set('');
+    }, 3000);
+
+    limpiar(() => clearTimeout(temporizador));
+  });
 }

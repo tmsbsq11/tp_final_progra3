@@ -4,6 +4,20 @@
 
 <h1>Detalle del trabajador</h1>
 
+@if (mensajeFavoritos()) {
+  <div class="aviso-favoritos">
+    <p role="status">{{ mensajeFavoritos() }}</p>
+
+    <button
+      type="button"
+      aria-label="Cerrar aviso"
+      (click)="mensajeFavoritos.set('')"
+    >
+      ×
+    </button>
+  </div>
+}
+
 @if (cargando()) {
 
   <p>Cargando ficha...</p>
@@ -58,6 +72,12 @@
         <a [routerLink]="['/servicios', servicio.id, 'reservar']">
           Reservar
         </a>
+        @if (authService.getUserRole()?.toLowerCase() === 'cliente') {
+          <button type="button" class="boton-favorito" [attr.aria-pressed]="esFavorito(servicio)" (click)="cambiarFavorito(servicio)">
+            <span aria-hidden="true">{{ esFavorito(servicio) ? '★' : '☆' }}</span>
+            {{ esFavorito(servicio) ? 'Quitar de favoritos' : 'Guardar en favoritos' }}
+          </button>
+        }
       </article>
     }
   </section>

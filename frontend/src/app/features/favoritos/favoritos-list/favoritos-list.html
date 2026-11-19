@@ -1,0 +1,111 @@
+<h1>Mis favoritos</h1>
+
+@if (aviso()) {
+  @for (numero of [numeroAviso()]; track numero) {
+    <div class="aviso-favoritos">
+      <p role="status">{{ aviso() }}</p>
+
+      <button
+        type="button"
+        aria-label="Cerrar aviso"
+        (click)="aviso.set('')"
+      >
+        ×
+      </button>
+    </div>
+  }
+}
+
+@if (cargando()) {
+
+  <p class="aviso" role="status">Cargando favoritos…</p>
+
+} @else if (mensaje()) {
+
+  <p class="aviso" role="alert">{{ mensaje() }}</p>
+  <button type="button" (click)="cargar()">Reintentar</button>
+
+} @else {
+
+  <section class="filtros" aria-label="Filtros de favoritos">
+    <div>
+      <label for="texto-filtro">Buscar</label>
+      <input id="texto-filtro" type="search" #texto [value]="textoFiltro()" (input)="textoFiltro.set(texto.value)" placeholder="Servicio o trabajador" />
+    </div>
+
+    <div>
+      <label for="categoria-filtro">Categoría</label>
+      <select id="categoria-filtro" #categoria [value]="categoriaFiltro()" (change)="categoriaFiltro.set(categoria.value)" >
+        <option value="">Todas</option>
+        @for (opcion of categorias(); track opcion.id) {
+          <option [value]="opcion.id">{{ opcion.nombre }}</option>
+        }
+      </select>
+    </div>
+
+    <div>
+      <label for="disponibilidad-filtro">Disponibilidad</label>
+      <select id="disponibilidad-filtro" #disponibilidad [value]="disponibilidadFiltro()" (change)="disponibilidadFiltro.set(disponibilidad.value)">
+        <option value="">Todas</option>
+        <option value="disponible">Disponibles</option>
+        <option value="no-disponible">No disponibles</option>
+      </select>
+    </div>
+
+    <button type="button" (click)="limpiarFiltros()">
+      Limpiar filtros
+    </button>
+  </section>
+
+  <div class="favoritos-grilla">
+
+    @for (favorito of visibles(); track favorito.idServicio) {
+
+      <article class="favorito-tarjeta">
+        <span class="estado" [class.disponible]="estaDisponible(favorito)">
+          {{ estaDisponible(favorito) ? 'Disponible' : 'No disponible' }}
+        </span>
+
+        @if (favorito.servicio; as servicio) {
+
+          <h2>{{ servicio.titulo }}</h2>
+          <p class="trabajador">
+            {{ servicio.trabajador.nombre }}
+            {{ servicio.trabajador.apellido ?? '' }}
+          </p>
+          <p>{{ servicio.descripcion }}</p>
+          <p><strong>Categoría</strong> {{ servicio.categoria.nombre }}</p>
+
+        } @else {
+
+          <h2>Postulación #{{ favorito.idServicio }}</h2>
+          <p>Esta publicación ya no está disponible.</p>
+
+        }
+
+        <div class="acciones">
+
+          @if (estaDisponible(favorito)) {
+
+            <a [routerLink]="['/trabajadores', favorito.servicio!.trabajador.id]">
+              Ver trabajador
+            </a>
+
+          }
+
+          <button type="button" class="quitar" (click)="quitar(favorito)">
+            Quitar de favoritos
+          </button>
+        </div>
+      </article>
+    } @empty {
+
+      <p class="aviso">
+        {{ favoritos().length
+          ? 'No hay favoritos con esos filtros.'
+          : 'Todavía no guardaste postulaciones en favoritos.' }}
+      </p>
+      
+    }
+  </div>
+}

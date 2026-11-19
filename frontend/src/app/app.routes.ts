@@ -29,6 +29,7 @@ export const routes: Routes = [
   { path: 'resenias/trabajador/:idTrabajador', loadComponent: () => import('./features/resenias/resenias-list/resenias-list').then(m => m.ReseniasList), canActivate: [authGuard],},
   { path: 'resenias/:idResenia', loadComponent: () => import('./features/resenias/resenia-detail/resenia-detail').then(m => m.ReseniaDetail), canActivate: [authGuard],},
   { path: 'clientes/reserva/:idReserva', loadComponent: () => import('./features/perfil/cliente-detail/cliente-detail').then(m => m.ClienteDetail), canActivate: [authGuard],},
-  {path: 'notificaciones', loadComponent: ()=> import('./features/notificaciones/notificaciones').then(m=>m.Notificaciones)},
+  { path: 'notificaciones', loadComponent: ()=> import('./features/notificaciones/notificaciones').then(m=>m.Notificaciones)},
+  { path: 'mis-favoritos', loadComponent: () => import('./features/favoritos/favoritos-list/favoritos-list').then(m => m.FavoritosList), canActivate: [authGuard],},
   { path: '**',redirectTo: '',pathMatch: 'full'},
 ];

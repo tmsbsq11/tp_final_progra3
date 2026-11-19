@@ -165,3 +165,29 @@ article a:hover {
 article :is(h2, h3) {
   text-align: center;
 }
+
+.resultados article > .boton-favorito {
+  grid-column: 1 / -1;
+  min-height: 44px;
+  padding: 0.65rem;
+  border: 1px solid #9dc4dc;
+  border-radius: 0.75rem;
+  background: #e1f0fa;
+  color: #17577c;
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.resultados article > .boton-favorito[aria-pressed='true'] {
+  border-color: #d5a5b4;
+  background: #f8e7ed;
+  color: #84354e;
+}
+
+.aviso-favoritos {
+  padding: 1rem;
+  border: 1px solid #b9d5e6;
+  border-radius: 0.75rem;
+  background: #deedf7;
+}

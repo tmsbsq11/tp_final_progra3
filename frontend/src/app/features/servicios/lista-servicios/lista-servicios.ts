@@ -4,6 +4,8 @@ import { Servicio } from '../model/servicio.model';
 import { finalize } from 'rxjs';
 import { Router, RouterLink } from '@angular/router';
 import { ActivatedRoute } from '@angular/router';
+import { AuthService } from '../../../core/services/auth.service';
+import { FavoritosService } from '../../favoritos/service/favoritos.service';
 
 @Component({
   imports: [RouterLink],
@@ -19,11 +21,15 @@ export class ListaServicios implements OnInit {
   categorias = signal<{id : number; nombre : string}[]>([]); //inicializo la señal vacia
   mensajeCategoria = signal(''); 
   mostrarResultados = signal(false);
+  idsFavoritos = signal<number[]>([]);
+  mensajeFavoritos = signal('');
 
   constructor (
     private clienteServicios: ClienteServicios, //para poder usar los metodos del cliente de servicios
     private route: ActivatedRoute, //para poder leer los parametros de la url
-    private router : Router
+    private router : Router,
+    public authService: AuthService,
+    private favoritosService: FavoritosService,
   ){}
 
   ngOnInit(): void {
@@ -40,6 +46,16 @@ export class ListaServicios implements OnInit {
       this.buscar(texto, idCategoria);
     } else {
       this.cargarServicios();
+    }
+
+    if (this.authService.getUserRole()?.toLowerCase() === 'cliente') {
+      try {
+        this.idsFavoritos.set(
+          this.favoritosService.listar().map(favorito => favorito.idServicio)
+        );
+      } catch {
+        this.mensajeFavoritos.set('No se pudieron leer tus favoritos.');
+      }
     }
   }
 
@@ -99,6 +115,38 @@ limpiarFiltros(): void {
   this.categoriaBuscada.set(undefined);
   this.mostrarResultados.set(false);
   this.mensaje.set('');
+}
+
+esFavorito(servicio: Servicio): boolean {
+  return this.idsFavoritos().includes(Number(servicio.id));
+}
+
+cambiarFavorito(servicio: Servicio): void {
+  this.mensajeFavoritos.set('');
+
+  try {
+    const id = Number(servicio.id);
+    const estabaGuardado = this.favoritosService.listar()
+      .some(favorito => favorito.idServicio === id);
+
+    if (estabaGuardado) {
+      this.favoritosService.quitar(id);
+    } else {
+      this.favoritosService.agregar(id);
+    }
+
+    this.idsFavoritos.set(
+      this.favoritosService.listar().map(favorito => favorito.idServicio)
+    );
+
+    this.mensajeFavoritos.set(
+      estabaGuardado
+        ? 'Postulación quitada de favoritos.'
+        : 'Postulación guardada en favoritos.'
+    );
+  } catch {
+    this.mensajeFavoritos.set('No se pudieron actualizar los favoritos.');
+  }
 }
 
 }

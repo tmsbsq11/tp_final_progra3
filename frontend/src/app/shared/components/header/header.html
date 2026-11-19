@@ -38,12 +38,25 @@
 
             @if (authService.getUserRole()?.toLowerCase() === 'cliente') {
               <li>
-                <a routerLink="/mis-reservas" routerLinkActive="activo" (click)="menu.open = false">
+                <a
+                  routerLink="/mis-reservas"
+                  routerLinkActive="activo"
+                  (click)="menu.open = false"
+                >
                   Mis reservas
                 </a>
               </li>
-            }
 
+              <li>
+                <a
+                  routerLink="/mis-favoritos"
+                  routerLinkActive="activo"
+                  (click)="menu.open = false"
+                >
+                  Mis favoritos
+                </a>
+              </li>
+            }
             <li>
               <a routerLink="/servicios" routerLinkActive="activo" (click)="menu.open = false">
                 Servicios

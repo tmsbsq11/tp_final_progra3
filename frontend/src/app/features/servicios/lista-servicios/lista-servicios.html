@@ -1,5 +1,9 @@
 <h1>Servicios disponibles</h1>
 
+@if (mensajeFavoritos()) {
+  <p class="aviso-favoritos" role="status">{{ mensajeFavoritos() }}</p>
+}
+
 <section class="filtros" aria-label="Filtros de servicios">
   <div class="campos">
     <label for="busqueda">Buscar servicios:</label>
@@ -56,6 +60,13 @@
         <a [routerLink]="['/servicios', servicio.id, 'reservar']">
           Reservar
         </a>
+
+        @if (authService.getUserRole()?.toLowerCase() === 'cliente') {
+          <button type="button" class="boton-favorito" [attr.aria-pressed]="esFavorito(servicio)" (click)="cambiarFavorito(servicio)">
+          <span aria-hidden="true">{{ esFavorito(servicio) ? '★' : '☆' }}</span>
+            {{ esFavorito(servicio) ? 'Quitar de favoritos' : 'Guardar en favoritos' }}
+          </button>
+        }
       </article>
 } @empty {
   <p class="mensaje">No hay servicios disponibles.</p>

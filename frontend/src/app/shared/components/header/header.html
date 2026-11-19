@@ -25,7 +25,7 @@
               routerLinkActive="activo"
               [routerLinkActiveOptions]="{ exact: true }"
               (click)="menu.open = false">
-              notificaciones
+              Notificaciones
             </a>
           </li>
           @if (perfilRoute === '/perfil/cliente' || perfilRoute === '/perfil/trabajador') {
@@ -80,6 +80,11 @@
               <li>
                 <a routerLink="/admin/categorias/lista" routerLinkActive="activo" (click)="menu.open = false">
                   Categorías
+                </a>
+              </li>
+              <li>
+                <a routerLink="/admin/pendientes" routerLinkActive="activo" (click)="menu.open = false">
+                  Servicios Pendientes
                 </a>
               </li>
             }

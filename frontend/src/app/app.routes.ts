@@ -30,5 +30,6 @@ export const routes: Routes = [
   { path: 'resenias/:idResenia', loadComponent: () => import('./features/resenias/resenia-detail/resenia-detail').then(m => m.ReseniaDetail), canActivate: [authGuard],},
   { path: 'clientes/reserva/:idReserva', loadComponent: () => import('./features/perfil/cliente-detail/cliente-detail').then(m => m.ClienteDetail), canActivate: [authGuard],},
   {path: 'notificaciones', loadComponent: ()=> import('./features/notificaciones/notificaciones').then(m=>m.Notificaciones)},
+  {path: 'admin/pendientes',loadComponent: () => import('./features/admin/servicios-pendientes/servicio-pendiente-card/servicio-pendiente-list').then(m=>m.ServicioPendienteList),canActivate: [authGuard]},
   { path: '**',redirectTo: '',pathMatch: 'full'},
 ];

@@ -1,26 +1,88 @@
-<a routerLink="/servicios">Volver a los oficios</a>
-<h1>Servicios disponibles del oficio</h1>
-
-@if (cargando()) {
-    <p>Cargando servicios...</p>
-} @else if (mensaje()) {
+<h1>Trabajadores</h1>
+<p class="subtitulo-pagina">
+  Conocé a los profesionales registrados y sus servicios.
+</p>
+<div class="catalogo-layout">
+  <aside class="panel-filtros filtros-trabajadores">
+    <h2>Filtros</h2>
+    <label for="buscar-trabajador">Buscar profesional</label>
+    <input
+      id="buscar-trabajador"
+      type="search"
+      #busqueda
+      [value]="texto()"
+      (input)="texto.set(busqueda.value)"
+      placeholder="Nombre o descripción"
+    />
+    <label for="categoria-trabajador">Categoría</label>
+    <select
+      id="categoria-trabajador"
+      #categoria
+      [value]="categoriaFiltro()"
+      (change)="categoriaFiltro.set(categoria.value)"
+    >
+      <option value="">Todas</option>
+      @for (opcion of categorias(); track opcion.id) {
+      <option [value]="opcion.id">{{ opcion.nombre }}</option>
+      }
+    </select>
+    <label for="puntaje-trabajador">Calificación mínima</label>
+    <select
+      id="puntaje-trabajador"
+      #puntaje
+      [value]="puntajeMinimo()"
+      (change)="puntajeMinimo.set(+puntaje.value)"
+    >
+      <option value="0">Todas</option>
+      <option value="3">3 estrellas</option>
+      <option value="4">4 estrellas</option>
+      <option value="5">5 estrellas</option>
+    </select>
+    <button type="button" class="btn limpiar" (click)="limpiarFiltros()">
+      Limpiar filtros
+    </button>
+  </aside>
+  <div class="trabajadores-lista">
+    @if (cargando()) {
+    <p role="status">Cargando trabajadores…</p>
+    } @else if (mensaje()) {
     <p role="alert">{{ mensaje() }}</p>
-} @else {
-    @for (servicio of servicios(); track servicio.id) {
-        <article>
-        <h2>{{ servicio.titulo }}</h2>
-        <p><strong>Trabajador:</strong> {{ servicio.trabajador.nombre }}</p>
-        <p>{{ servicio.descripcion }}</p>
-        <p><strong>Categoría:</strong> {{ servicio.categoria.nombre }}</p>
-
-        <a [routerLink]="['/servicios', servicio.id, 'reservar']">
-            Reservar
-        </a>
-        <a [routerLink]="['/trabajadores', servicio.trabajador.id]" [queryParams]="{ volverCategoria: servicio.categoria.id }">
-        Ver detalle
-        </a>
-        </article>
+    } @else { @for (grupo of trabajadores(); track grupo.trabajador.id) {
+    <article class="trabajador-fila">
+      <span class="avatar-persona" aria-hidden="true"
+        >{{ grupo.trabajador.nombre.slice(0, 1) }}</span
+      >
+      <div class="trabajador-informacion">
+        <h2>
+          {{ grupo.trabajador.nombre }} {{ grupo.trabajador.apellido ?? '' }}
+        </h2>
+        <p>{{ grupo.publicaciones[0].categoria.nombre }}</p>
+        <p class="puntaje-persona">
+          <span aria-hidden="true">★</span> {{ (grupo.trabajador.puntaje ??
+          0).toFixed(1) }} / 5
+        </p>
+        <div class="servicios-trabajador">
+          @for (servicio of grupo.publicaciones; track servicio.id) {
+          <div class="servicio-resumen">
+            <span>{{ servicio.titulo }}</span
+            ><a
+              class="btn boton-reservar"
+              [routerLink]="['/servicios', servicio.id, 'reservar']"
+              >Reservar</a
+            >
+          </div>
+          }
+        </div>
+      </div>
+      <a
+        class="btn ver-perfil"
+        [routerLink]="['/trabajadores', grupo.trabajador.id]"
+        [queryParams]="{ volverCategoria: categoriaFiltro() || null }"
+        >Ver perfil</a
+      >
+    </article>
     } @empty {
-    <p>No hay servicios disponibles en este oficio.</p>
-    }
-}
+    <p class="aviso">No hay profesionales con esos filtros.</p>
+    } }
+  </div>
+</div>

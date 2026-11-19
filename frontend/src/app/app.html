@@ -1,15 +1,96 @@
 <div class="padre">
+  <app-header></app-header>
 
-  <div class="header">
-    <app-header></app-header>
+  <div class="zona-aplicacion" [class.con-menu]="mostrarPanel">
+    @if (mostrarPanel) {
+      <aside class="cuenta-nav">
+        <nav aria-label="Secciones de mi cuenta">
+          @if (rol === 'cliente') {
+            <a routerLink="/perfil/cliente" routerLinkActive="activo">
+              <svg class="icono-nav" viewBox="0 0 24 24" aria-hidden="true">
+                <circle cx="12" cy="8" r="4" />
+                <path d="M4 21v-2a8 8 0 0 1 16 0v2" />
+              </svg>
+              Mi perfil
+            </a>
+
+            <a routerLink="/mis-reservas" routerLinkActive="activo">
+              <svg class="icono-nav" viewBox="0 0 24 24" aria-hidden="true">
+                <rect x="3" y="5" width="18" height="16" rx="2" />
+                <path d="M7 3v4m10-4v4M3 11h18m-13 5h2m4 0h2" />
+              </svg>
+              Mis reservas
+            </a>
+
+            <a routerLink="/mis-favoritos" routerLinkActive="activo">
+              <svg class="icono-nav" viewBox="0 0 24 24" aria-hidden="true">
+                <path
+                  d="m12 3 2.8 5.7 6.2.9-4.5 4.4 1.1 6.2-5.6-3-5.6 3 1.1-6.2L3 9.6l6.2-.9Z"
+                />
+              </svg>
+              Favoritos
+            </a>
+          }
+
+          @if (rol === 'trabajador') {
+            <a routerLink="/perfil/trabajador" routerLinkActive="activo">
+              <svg class="icono-nav" viewBox="0 0 24 24" aria-hidden="true">
+                <circle cx="12" cy="8" r="4" />
+                <path d="M4 21v-2a8 8 0 0 1 16 0v2" />
+              </svg>
+              Mi perfil
+            </a>
+
+            <a routerLink="/reservas-recibidas" routerLinkActive="activo">
+              <svg class="icono-nav" viewBox="0 0 24 24" aria-hidden="true">
+                <rect x="3" y="5" width="18" height="16" rx="2" />
+                <path d="M7 3v4m10-4v4M3 11h18m-13 5h2m4 0h2" />
+              </svg>
+              Solicitudes recibidas
+            </a>
+
+            <a routerLink="/mis-postulaciones" routerLinkActive="activo">
+              <svg class="icono-nav" viewBox="0 0 24 24" aria-hidden="true">
+                <path d="m15 4 5 5M4 20l5-1L21 7l-5-5L4 14Z" />
+              </svg>
+              Mis postulaciones
+            </a>
+          }
+
+          @if (rol === 'admin') {
+            <a routerLink="/admin/clientes" routerLinkActive="activo">
+              Clientes
+            </a>
+
+            <a routerLink="/admin/trabajadores" routerLinkActive="activo">
+              Trabajadores
+            </a>
+
+            <a routerLink="/admin/categorias/lista" routerLinkActive="activo">
+              Categorías
+            </a>
+
+            <a routerLink="/admin/pendientes" routerLinkActive="activo">
+              Postulaciones pendientes
+            </a>
+          }
+
+          <a routerLink="/notificaciones" routerLinkActive="activo">
+            <svg class="icono-nav" viewBox="0 0 24 24" aria-hidden="true">
+              <path
+                d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 21h4"
+              />
+            </svg>
+            Notificaciones
+          </a>
+        </nav>
+      </aside>
+    }
+
+    <main>
+      <router-outlet></router-outlet>
+    </main>
   </div>
 
-  <main>
-    <router-outlet></router-outlet>
-  </main>
-
-  <div class="footer">
-    <app-footer></app-footer>
-  </div>
-  
+  <app-footer></app-footer>
 </div>

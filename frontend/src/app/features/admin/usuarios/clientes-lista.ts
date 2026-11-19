@@ -1,27 +1,29 @@
-import { DatePipe } from '@angular/common';
-import { Component, OnInit, computed, inject, signal } from '@angular/core';
-import { finalize } from 'rxjs';
-import { FiltroEstado, compararPorNombre, normalizar, pasaFiltroEstado } from './filtros';
-import { ClienteAdmin } from './usuario.model';
-import { UsuariosAdminService } from './usuarios-admin.service';
+import { DatePipe } from "@angular/common";
+import { RouterLink } from "@angular/router";
+import { Component, OnInit, computed, inject, signal } from "@angular/core";
+import { finalize } from "rxjs";
+import { compararPorNombre, FiltroEstado, normalizar, pasaFiltroEstado } from "./filtros";
+import { ClienteAdmin } from "./usuario.model";
+import { UsuariosAdminService } from "./usuarios-admin.service";
 
 @Component({
-  selector: 'app-clientes-lista',
-  imports: [DatePipe],
-  templateUrl: './clientes-lista.html',
-  styleUrl: '../admin.css',
+  selector: "app-clientes-lista",
+  imports: [DatePipe, RouterLink],
+  templateUrl: "./clientes-lista.html",
+  styleUrl: "../admin.css",
 })
 export class ClientesLista implements OnInit {
   private readonly servicio = inject(UsuariosAdminService);
 
   clientes = signal<ClienteAdmin[]>([]);
-  texto = signal('');
-  estado = signal<FiltroEstado>('TODOS');
+  texto = signal("");
+  estado = signal<FiltroEstado>("TODOS");
   cargando = signal(true);
-  mensaje = signal('');
+  mensaje = signal("");
 
   // para que se recalcule con los filtros
   visibles = computed(() => {
+
     const busqueda = normalizar(this.texto());
     const estado = this.estado();
 
@@ -29,7 +31,7 @@ export class ClientesLista implements OnInit {
       .filter((c) => {
         if (!pasaFiltroEstado(c.isActive, estado)) return false;
         if (!busqueda) return true;
-        const datos = `${c.nombre ?? ''} ${c.apellido ?? ''} ${c.correo ?? ''} ${c.dni ?? ''}`;
+        const datos = `${c.nombre ?? ""} ${c.apellido ?? ""} ${c.correo ?? ""} ${c.dni ?? ""}`;
         return normalizar(datos).includes(busqueda);
       })
       .sort(compararPorNombre);
@@ -41,7 +43,7 @@ export class ClientesLista implements OnInit {
 
   cargar(): void {
     this.cargando.set(true);
-    this.mensaje.set('');
+    this.mensaje.set("");
     this.servicio
       .listarClientes()
       .pipe(finalize(() => this.cargando.set(false)))
@@ -60,13 +62,14 @@ export class ClientesLista implements OnInit {
   }
 
   limpiarFiltros(): void {
-    this.texto.set('');
-    this.estado.set('TODOS');
+    this.texto.set("");
+    this.estado.set("TODOS");
   }
 
   private textoError(e: { status: number }): string {
-    if (e.status === 401 || e.status === 403) return 'Necesitás una sesión de administrador.';
-    if (e.status === 0) return 'No se pudo conectar con el servidor.';
-    return 'No se pudo cargar el listado de clientes.';
+    if (e.status === 401 || e.status === 403)
+      return "Necesitás una sesión de administrador.";
+    if (e.status === 0) return "No se pudo conectar con el servidor.";
+    return "No se pudo cargar el listado de clientes.";
   }
 }

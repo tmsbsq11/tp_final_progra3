@@ -28,64 +28,43 @@
   <p role="alert">{{ mensaje() }}</p>
   <button type="button" (click)="cargar()">Reintentar</button>
 } @else {
-  <div class="usuarios-grilla">
+  <div class="admin-lista">
     @for (t of visibles(); track t.id) {
-      <article class="usuario-tarjeta">
+      <article class="admin-fila">
+        <span class="avatar-persona" aria-hidden="true">
+          {{ (t.nombre || t.username || '?').slice(0, 1) }}
+        </span>
+
+        <div class="admin-persona">
+          <h2>{{ t.nombre || t.username }} {{ t.apellido ?? '' }}</h2>
+          <p>{{ t.correo }}</p>
+
+          <details class="datos-admin">
+            <summary>Ver datos</summary>
+
+            <div class="usuario-datos">
+              <p><strong>ID</strong>{{ t.id }}</p>
+              <p><strong>Usuario</strong>{{ t.username ?? '—' }}</p>
+              <p><strong>DNI</strong>{{ t.dni ?? '—' }}</p>
+              <p><strong>Puntaje</strong>{{ t.puntaje != null ? t.puntaje.toFixed(1) : '—' }}</p>
+              <p><strong>Foto</strong>{{ t.direccionFoto ?? '—' }}</p>
+              <p><strong>Minutos entre reservas</strong>{{ t.minutosMinimoEntreReservas ?? '—' }}</p>
+              <p><strong>Latitud</strong>{{ t.latitud ?? '—' }}</p>
+              <p><strong>Longitud</strong>{{ t.longitud ?? '—' }}</p>
+              <p><strong>Alta</strong>{{ t.fechaCreacion ? (t.fechaCreacion | date:'dd/MM/yyyy HH:mm') : '—' }}</p>
+              <p><strong>Descripción</strong>{{ t.descripcion || 'Sin descripción.' }}</p>
+            </div>
+          </details>
+        </div>
+
+        <span class="rol-admin">{{ t.rol }}</span>
+
         <span class="estado-usuario" [class.inactivo]="!t.isActive">
           {{ t.isActive ? 'Activo' : 'Inactivo' }}
         </span>
-
-        <h2>{{ t.nombre || t.username }} {{ t.apellido ?? '' }}</h2>
-
-        <div class="usuario-datos">
-          <p><strong>ID</strong> {{ t.id }}</p>
-          <p><strong>Correo</strong> {{ t.correo }}</p>
-          <p><strong>Usuario</strong> {{ t.username ?? '—' }}</p>
-          <p><strong>DNI</strong> {{ t.dni ?? '—' }}</p>
-          <p><strong>Rol</strong> {{ t.rol }}</p>
-          <p><strong>Puntaje</strong> {{ t.puntaje ?? '—' }}</p>
-
-          <p>
-            <strong>Entre reservas</strong>
-            {{ t.minutosMinimoEntreReservas ?? '—' }} min
-          </p>
-
-          <p><strong>Latitud</strong> {{ t.latitud ?? '—' }}</p>
-          <p><strong>Longitud</strong> {{ t.longitud ?? '—' }}</p>
-          <p><strong>Foto</strong> {{ t.direccionFoto ?? '—' }}</p>
-
-          <p>
-            <strong>Alta</strong>
-            {{ t.fechaCreacion
-              ? (t.fechaCreacion | date: 'dd/MM/yyyy HH:mm')
-              : '—' }}
-          </p>
-        </div>
-
-        <p class="usuario-descripcion">
-          <strong>Descripción</strong>
-          {{ t.descripcion || 'Sin descripción.' }}
-        </p>
-
-        <!-- botones de modificar y dar de baja faltan sus funciones -->
-        <div class="acciones-admin">
-          <button type="button">Modificar</button>
-
-          <button
-            type="button"
-            class="boton-baja"
-            [disabled]="!t.isActive"
-          >
-            Dar de baja
-          </button>
-        </div>
       </article>
     } @empty {
-      <p>
-        {{ trabajadores().length === 0
-          ? 'Todavía no hay trabajadores registrados.'
-          : 'Ningún resultado coincide con los filtros.' }}
-      </p>
+      <p class="aviso">No hay trabajadores con los filtros seleccionados.</p>
     }
   </div>
 }

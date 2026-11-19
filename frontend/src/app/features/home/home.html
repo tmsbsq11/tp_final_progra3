@@ -1,48 +1,108 @@
-<section class="presentacion" aria-labelledby="titulo-proyecto">
-  <h1 id="titulo-proyecto">Sobre OficiosYa</h1>
+<section class="inicio-hero">
+  <div class="inicio-texto">
+    <h1>
+      Conectamos<br />
+      personas con<br />
+      profesionales<br />
+      de confianza
+    </h1>
 
-  <p class="introduccion">
-    Desarrollamos OficiosYa para conectar a personas que necesitan
-    un servicio con trabajadores que ofrecen sus oficios.
-  </p>
+    @if (authService.getUserRole()?.toLowerCase() === 'trabajador') {
+      <p>
+        Ofrecé tus servicios, administrá tus postulaciones
+        y respondé las solicitudes de tus clientes.
+      </p>
 
-  <section aria-labelledby="titulo-idea">
-    <h2 id="titulo-idea">La idea del proyecto</h2>
-    <p>
-      Queremos facilitar la búsqueda de servicios y la coordinación
-      entre clientes y trabajadores. Desde la aplicación se pueden
-      consultar las publicaciones, conocer las valoraciones de otros
-      usuarios y gestionar reservas.
-    </p>
-    <p>
-      Los trabajadores pueden publicar sus servicios y organizar
-      las solicitudes que reciben. El administrador cuenta con
-      herramientas para gestionar la información del sistema.
-    </p>
-  </section>
+      <div class="acciones-inicio">
+        <a class="btn primario" routerLink="/reservas-recibidas">
+          Solicitudes recibidas
+        </a>
 
-  <section aria-labelledby="titulo-equipo">
-    <h2 id="titulo-equipo">Nuestro equipo</h2>
-    <p>
-      Somos estudiantes de la UTN Mar del Plata y desarrollamos
-      este proyecto como parte de nuestra formación en programación.
-    </p>
+        <a class="btn" routerLink="/mis-postulaciones">
+          Mis postulaciones
+        </a>
+      </div>
+    } @else {
+      @if (authService.getUserRole()?.toLowerCase() === 'admin') {
+        <p>
+          Consultá los servicios y administrá las categorías
+          y las cuentas de OficiosYa.
+        </p>
+      } @else {
+        <p>
+          Encontrá trabajadores de distintos oficios, revisá sus perfiles
+          y reservá tu servicio de forma simple.
+        </p>
+      }
 
-    <ul class="integrantes">
-      <li>Irina Benvenutto</li>
-      <li>Julián Anchoverri</li>
-      <li>Pedro Gabriel Fernández Raya</li>
-      <li>Tomás Corrado Busquet</li>
-    </ul>
-  </section>
+      <div class="buscador-inicio">
+        <input
+          type="search"
+          #busqueda
+          aria-label="Buscar un servicio"
+          placeholder="Buscar un servicio (ej. plomería, electricidad...)"
+        />
 
-  <section class="cursada" aria-labelledby="titulo-cursada">
+        <a
+          class="btn primario"
+          routerLink="/servicios"
+          [queryParams]="{ busqueda: busqueda.value || null }"
+          aria-label="Buscar"
+        >
+          ⌕
+        </a>
+      </div>
+    }
+  </div>
 
-    <div class="datos-cursada">
-        <p><strong>Institución</strong> UTN Mar del Plata</p>
-        <p><strong>Materia</strong> Programación III</p>
-        <p><strong>Profesor</strong> Nicanor Dondero</p>
-        <p><strong>Año</strong> [Año de cursada]</p>
+  <div class="personajes-inicio" aria-hidden="true">
+    <img src="/images/cliente-sin-fondo.png" alt="" />
+    <img src="/images/trabajador-sin-fondo.png" alt="" />
+  </div>
+</section>
+
+@if (authService.getUserRole()?.toLowerCase() !== 'trabajador') {
+  <section class="destacadas">
+    <h2>Categorías destacadas</h2>
+
+    <div class="accesos-inicio">
+      @for (oficio of oficios; track oficio) {
+        <a
+          routerLink="/servicios"
+          [queryParams]="{ busqueda: oficio }"
+        >
+          <span aria-hidden="true">{{ iconoCategoria(oficio) }}</span>
+          {{ oficio }}
+        </a>
+      }
+
+      <a routerLink="/servicios">
+        <span aria-hidden="true">⊞</span>
+        Más
+      </a>
     </div>
   </section>
+}
+
+<section class="sobre-proyecto">
+  <h2>Sobre OficiosYa</h2>
+
+  <p>
+    Somos estudiantes de la UTN Mar del Plata.
+    Desarrollamos este proyecto para facilitar el encuentro
+    entre clientes y trabajadores.
+  </p>
+
+  <h3>Nuestro equipo</h3>
+
+  <ul class="integrantes">
+    <li>Irina Benvenutto</li>
+    <li>Julián Anchoverri</li>
+    <li>Pedro Gabriel Fernández Raya</li>
+    <li>Tomás Corrado Busquet</li>
+  </ul>
+
+  <p>
+    Programación IV · Profesor Nicanor Dondero · UTN Mar del Plata
+  </p>
 </section>

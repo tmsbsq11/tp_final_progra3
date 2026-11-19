@@ -1,99 +1,111 @@
-<section class="mis-reservas" aria-labelledby="titulo-reservas-recibidas">
-  <h1 id="titulo-reservas-recibidas">Reservas recibidas</h1>
-
-  @if (cargando()) {
-    <p class="aviso" role="status">Cargando reservas…</p>
-  } @else if (mensaje()) {
-    <p class="aviso aviso-error" role="alert">{{ mensaje() }}</p>
-  } @else {
-    <div class="filtros">
-      <label for="filtro">Filtrar por estado</label>
-      <select id="filtro" [value]="filtro()" (change)="cambiarFiltro($event)">
-        <option value="TODAS">Todas</option>
-        <option value="PENDIENTE">Pendientes</option>
-        <option value="APROBADO">Aprobadas</option>
-        <option value="RECHAZADO">Rechazadas o canceladas</option>
-        <option value="FINALIZADO">Finalizadas</option>
-      </select>
-
-      <label for="categoria-filtro">Categoría</label>
-      <select id="categoria-filtro" #categoria [value]="categoriaFiltro()" (change)="categoriaFiltro.set(categoria.value)">
-        <option value="">Todas las categorías</option>
-
-        @for (opcion of categorias(); track opcion.id) {
-          <option [value]="opcion.id">{{ opcion.nombre }}</option>
-        }
-      </select>
-    </div>
-
-    @if (aviso()) {
-      <p class="aviso" role="status">{{ aviso() }}</p>
+<h1>Solicitudes recibidas</h1>
+@if (cargando()) {
+<p role="status">Cargando reservas…</p>
+} @else if (mensaje()) {
+<p role="alert">{{ mensaje() }}</p>
+} @else {
+<div class="tabs" aria-label="Filtrar por estado">
+  <button
+    type="button"
+    [class.seleccionado]="filtro() === 'TODAS'"
+    (click)="filtro.set('TODAS')"
+  >
+    Todas
+  </button>
+  <button
+    type="button"
+    [class.seleccionado]="filtro() === 'PENDIENTE'"
+    (click)="filtro.set('PENDIENTE')"
+  >
+    Pendientes
+  </button>
+  <button
+    type="button"
+    [class.seleccionado]="filtro() === 'APROBADO'"
+    (click)="filtro.set('APROBADO')"
+  >
+    Aceptadas
+  </button>
+  <button
+    type="button"
+    [class.seleccionado]="filtro() === 'RECHAZADO'"
+    (click)="filtro.set('RECHAZADO')"
+  >
+    Rechazadas o canceladas
+  </button>
+  <button
+    type="button"
+    [class.seleccionado]="filtro() === 'FINALIZADO'"
+    (click)="filtro.set('FINALIZADO')"
+  >
+    Finalizadas
+  </button>
+</div>
+<div class="filtro-categoria-reservas">
+  <label for="categoria-reservas">Categoría</label>
+  <select
+    id="categoria-reservas"
+    #categoria
+    [value]="categoriaFiltro()"
+    (change)="categoriaFiltro.set(categoria.value)"
+  >
+    <option value="">Todas las categorías</option>
+    @for (opcion of categorias(); track opcion.id) {
+    <option [value]="opcion.id">{{ opcion.nombre }}</option>
     }
-
-    <div class="reservas-grilla">
-      @for (r of visibles(); track r.id) {
-        <article class="reserva-tarjeta">
-          <span class="estado" [attr.data-estado]="r.estadoReserva">
-            {{ etiquetas[r.estadoReserva] }}
-          </span>
-
-          <h2>{{ r.servicio.titulo }}</h2>
-
-          <dl class="reserva-datos">
-            <div>
-              <dt>Cliente</dt>
-              <dd>{{ r.cliente.nombre }}</dd>
-            </div>
-            <div>
-              <dt>Fecha y horario</dt>
-              <dd>
-                {{ r.inicio | date: 'dd/MM/yyyy' }} ·
-                {{ r.inicio | date: 'HH:mm' }} a {{ r.fin | date: 'HH:mm' }}
-              </dd>
-            </div>
-          </dl>
-
-          <div class="reserva-acciones">
-            <a class="accion" [routerLink]="['/clientes', 'reserva', r.id]">
-              Ver perfil del cliente
-            </a>
-
-            @if (r.estadoReserva === 'PENDIENTE') {
-              <button
-                type="button"
-                class="accion"
-                (click)="aceptar(r)"
-                [disabled]="procesando() !== null"
-              >
-                Aceptar
-              </button>
-              <button
-                type="button"
-                class="accion accion-cancelar"
-                (click)="rechazar(r)"
-                [disabled]="procesando() !== null"
-              >
-                Rechazar
-              </button>
-            }
-
-            <!-- permite reseñar al cliente si la reserva esta finalizada y todavia no se reseño en esta sesion -->
-            @if (r.estadoReserva === 'FINALIZADO') {
-              @if (yaResenada(r.id)) {
-                <span class="resenia-enviada">✓ Reseña enviada</span>
-              } @else {
-                <a class="accion" [routerLink]="['/resenias', 'nueva', r.id]">
-                  Reseñar al cliente
-                </a>
-              }
-            }
-          </div>
-        </article>
-      } @empty {
-        <p class="aviso">
-          {{ reservas().length ? 'No hay reservas con los filtros seleccionados.' : 'Todavía no recibiste reservas.' }}
-        </p>
-      }
+  </select>
+</div>
+@if (aviso()) {
+<p class="aviso" role="status">{{ aviso() }}</p>
+}
+<div class="solicitudes-lista">
+  @for (r of visibles(); track r.id) {
+  <article class="solicitud-fila">
+    <span class="avatar-persona" aria-hidden="true"
+      >{{ r.cliente.nombre.slice(0, 1) }}</span
+    >
+    <div class="solicitud-datos">
+      <h2>{{ r.cliente.nombre }}</h2>
+      <p>{{ r.servicio.titulo }}</p>
+      <p>
+        {{ r.inicio | date: 'dd/MM/yyyy' }} · {{ r.inicio | date: 'HH:mm' }} a
+        {{ r.fin | date: 'HH:mm' }}
+      </p>
     </div>
+    <span class="estado" [attr.data-estado]="r.estadoReserva"
+      >{{ etiquetas[r.estadoReserva] }}</span
+    >
+    <div class="acciones">
+      <a class="btn" [routerLink]="['/clientes', 'reserva', r.id]"
+        >Ver perfil</a
+      >
+      @if (r.estadoReserva === 'PENDIENTE') {
+      <button
+        type="button"
+        class="aceptar"
+        (click)="aceptar(r)"
+        [disabled]="procesando() !== null"
+      >
+        Aceptar
+      </button>
+      <button
+        type="button"
+        class="boton-baja"
+        (click)="rechazar(r)"
+        [disabled]="procesando() !== null"
+      >
+        Rechazar
+      </button>
+      } @if (r.estadoReserva === 'FINALIZADO') { @if (yaResenada(r.id)) {
+      <span class="resenia-enviada">✓ Reseña enviada</span> } @else {
+      <a class="btn" [routerLink]="['/resenias', 'nueva', r.id]"
+        >Reseñar al cliente</a
+      >
+      } }
+    </div>
+  </article>
+  } @empty {
+  <p class="aviso">No hay reservas con los filtros seleccionados.</p>
   }
-</section>
+</div>
+}

@@ -1,120 +1,98 @@
-<a [routerLink]="rutaVolver" [queryParams]="filtrosVolver">
-  Volver al listado
-</a>
-
-<h1>Detalle del trabajador</h1>
-
-@if (mensajeFavoritos()) {
-  <div class="aviso-favoritos">
-    <p role="status">{{ mensajeFavoritos() }}</p>
-
-    <button
-      type="button"
-      aria-label="Cerrar aviso"
-      (click)="mensajeFavoritos.set('')"
-    >
-      ×
-    </button>
-  </div>
-}
-
-@if (cargando()) {
-
-  <p>Cargando ficha...</p>
-
+<a class="volver" [routerLink]="rutaVolver" [queryParams]="filtrosVolver"
+  >← Volver al listado</a
+>
+<h1>Perfil del trabajador</h1>
+@if (mensajeFavoritos()) { @for (numero of [numeroAviso()]; track numero) {
+<div class="aviso-favoritos">
+  <p role="status">{{ mensajeFavoritos() }}</p>
+  <button
+    type="button"
+    aria-label="Cerrar aviso"
+    (click)="mensajeFavoritos.set('')"
+  >
+    ×
+  </button>
+</div>
+} } @if (cargando()) {
+<p role="status">Cargando ficha…</p>
 } @else if (mensaje()) {
-
-  <p role="alert">{{ mensaje() }}</p>
-
+<p role="alert">{{ mensaje() }}</p>
 } @else if (trabajador(); as perfil) {
-
-  <div class="perfil">
-
-  <h2>{{ perfil.nombre }} {{ perfil.apellido ?? '' }}</h2>
-
-    @if (perfil.descripcion) {
-      <p>{{ perfil.descripcion }}</p>
+<div class="perfil-layout">
+  <section class="perfil-identidad">
+    <span class="avatar-persona avatar-grande" aria-hidden="true"
+      >{{ perfil.nombre.slice(0, 1) }}</span
+    >
+    <h2>{{ perfil.nombre }} {{ perfil.apellido ?? '' }}</h2>
+    @if (!cargandoResenias() && !mensajeResenias() && porcentajePuntaje() !==
+    null) {
+    <p class="valoracion">
+      <span
+        class="estrellas"
+        [style.--puntaje]="porcentajePuntaje() + '%'"
+        aria-hidden="true"
+        >★★★★★</span
+      >
+      <span>{{ porcentajePuntaje() }} % · {{ resenias().length }} reseñas</span>
+    </p>
     }
-
-    @if (cargandoResenias()) {
-
-      <p>Cargando valoración...</p>
-
-    } @else if (mensajeResenias()) {
-
-      <p>No se pudo calcular la valoración.</p>
-
-    } @else if (porcentajePuntaje() !== null) {
-
-      <p class="valoracion">
-
-        <span class="estrellas" [style.--puntaje]="porcentajePuntaje() + '%'" aria-hidden="true">
-          ★★★★★
-        </span>
-
-        <span><strong>{{ porcentajePuntaje() }} %</strong> · {{ resenias().length }} reseñas</span>
-      
-      </p>
-
-    } @else {
-      <p>Sin reseñas todavía.</p>
+  </section>
+  <section class="perfil-informacion">
+    <h2>Sobre mí</h2>
+    <p>
+      {{ perfil.descripcion || 'Este trabajador todavía no agregó una
+      descripción.' }}
+    </p>
+    <h3>Servicios que ofrece</h3>
+    <div class="servicios-trabajador">
+      @for (servicio of publicaciones(); track servicio.id) {
+      <div class="servicio-detalle">
+        <div>
+          <h4>{{ servicio.titulo }}</h4>
+          <p>{{ servicio.descripcion }}</p>
+          <p class="categoria">{{ servicio.categoria.nombre }}</p>
+        </div>
+        <div class="acciones">
+          @if (authService.getUserRole()?.toLowerCase() === 'cliente') {
+            <a class="boton-reservar" [routerLink]="['/servicios', servicio.id, 'reservar']">
+              Reservar
+            </a>
+          }
+          @if (authService.getUserRole()?.toLowerCase() === 'cliente') {
+          <button
+            type="button"
+            class="boton-favorito"
+            [attr.aria-pressed]="esFavorito(servicio)"
+            (click)="cambiarFavorito(servicio)"
+          >
+            {{ esFavorito(servicio) ? '★ Quitar de favoritos' : '☆ Guardar en
+            favoritos' }}
+          </button>
+          }
+        </div>
+      </div>
+      }
+    </div>
+  </section>
+</div>
+<section class="resenias">
+  <h2>Reseñas recibidas</h2>
+  @if (cargandoResenias()) {
+  <p role="status">Cargando reseñas…</p>
+  } @else if (mensajeResenias()) {
+  <p role="alert">{{ mensajeResenias() }}</p>
+  } @else {
+  <div class="resenias-grilla">
+    @for (resenia of resenias(); track resenia.id) {
+    <article class="resenia">
+      <strong>{{ resenia.puntaje }}/5</strong>
+      <p>{{ resenia.comentario }}</p>
+      <time>{{ resenia.fechaCreacion | date: 'dd/MM/yyyy' }}</time>
+    </article>
+    } @empty {
+    <p>Todavía no recibió reseñas.</p>
     }
   </div>
-
-  <section class="publicaciones" aria-label="Servicios del trabajador">
-    <h3>Servicios disponibles</h3>
-
-    @for (servicio of publicaciones(); track servicio.id) {
-      <article>
-        <h4>{{ servicio.titulo }}</h4>
-        <p>{{ servicio.descripcion }}</p>
-        <p><strong>Categoría:</strong> {{ servicio.categoria.nombre }}</p>
-        <a [routerLink]="['/servicios', servicio.id, 'reservar']">
-          Reservar
-        </a>
-        @if (authService.getUserRole()?.toLowerCase() === 'cliente') {
-          <button type="button" class="boton-favorito" [attr.aria-pressed]="esFavorito(servicio)" (click)="cambiarFavorito(servicio)">
-            <span aria-hidden="true">{{ esFavorito(servicio) ? '★' : '☆' }}</span>
-            {{ esFavorito(servicio) ? 'Quitar de favoritos' : 'Guardar en favoritos' }}
-          </button>
-        }
-      </article>
-    }
-  </section>
-
-  <section class="resenias" aria-labelledby="titulo-resenias">
-
-    <h3 id="titulo-resenias">Reseñas recibidas</h3>
-
-    @if (cargandoResenias()) {
-
-      <p>Cargando reseñas...</p>
-
-    } @else if (mensajeResenias()) {
-
-      <p role="alert">{{ mensajeResenias() }}</p>
-
-    } @else {
-
-      <div class="resenias-grilla">
-
-        @for (resenia of resenias(); track resenia.id) {
-
-          <article class="resenia">
-
-            <p><strong>{{ resenia.puntaje }}/5</strong></p>
-            <p>{{ resenia.comentario }}</p>
-
-            <time [attr.datetime]="resenia.fechaCreacion">
-              {{ resenia.fechaCreacion | date: 'dd/MM/yyyy' }}
-            </time>
-
-          </article>
-          
-        } @empty {
-          <p>Este trabajador todavía no recibió reseñas.</p>
-        }
-      </div>
-    }
-  </section>
+  }
+</section>
 }

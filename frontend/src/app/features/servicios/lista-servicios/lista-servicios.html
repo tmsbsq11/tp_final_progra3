@@ -1,90 +1,148 @@
-<h1>Servicios disponibles</h1>
+<h1>Servicios</h1>
+
+<p class="subtitulo-pagina">
+  Elegí una categoría para conocer a los trabajadores.
+</p>
 
 @if (mensajeFavoritos()) {
-  <p class="aviso-favoritos" role="status">{{ mensajeFavoritos() }}</p>
+  <p class="aviso-favoritos" role="status">
+    {{ mensajeFavoritos() }}
+  </p>
 }
 
-<section class="filtros" aria-label="Filtros de servicios">
-  <div class="campos">
-    <label for="busqueda">Buscar servicios:</label>
-     <!-- #busqueda permite leer el valor del campo desde el botón Buscar. -->    
-    <input type="search" id="busqueda" #busqueda placeholder="Ej. Plomería" />
+<div class="buscador-catalogo">
+  <input
+    type="search"
+    #busqueda
+    [value]="textoBuscado()"
+    placeholder="Buscar un servicio..."
+    aria-label="Buscar un servicio"
+    (keydown.enter)="buscar(busqueda.value, categoriaBuscada())"
+  />
 
-    <label for="categoria">Categoría:</label>
-    <select id="categoria" #categoria (change)="buscar(busqueda.value, categoria.value ? +categoria.value : undefined)">
-      <option value="">Todas</option>
-      @for (opcion of categorias(); track opcion.id) {
-        <option [value]="opcion.id">{{ opcion.nombre }}</option>
-      }
-    </select>
-  </div>
+  <button
+    type="button"
+    (click)="buscar(busqueda.value, categoriaBuscada())"
+    [disabled]="cargado()"
+  >
+    Buscar
+  </button>
+</div>
 
-  <div class="botones">
+<div class="catalogo-layout">
+  <aside class="panel-filtros">
+    <h2>Categorías</h2>
+
     <button
       type="button"
-      (click)="buscar(busqueda.value, categoria.value ? +categoria.value : undefined)"
-      [disabled]="cargado()"
+      [class.seleccionado]="categoriaBuscada() === undefined"
+      (click)="busqueda.value = ''; limpiarFiltros()"
     >
-      Buscar
+      Todas
     </button>
 
+    @for (categoria of categorias(); track categoria.id) {
+      <button
+        type="button"
+        [class.seleccionado]="categoriaBuscada() === categoria.id"
+        (click)="buscar('', categoria.id)"
+      >
+        {{ categoria.nombre }}
+      </button>
+    }
+
     <button
       type="button"
-      (click)="busqueda.value = ''; categoria.value = ''; limpiarFiltros()"
-      [disabled]="cargado()"
+      class="limpiar"
+      (click)="busqueda.value = ''; limpiarFiltros()"
     >
       Limpiar filtros
     </button>
-  </div>
 
-  @if (mensajeCategoria()) {
-    <p class="mensaje" role="alert">{{ mensajeCategoria() }}</p>
-  }
-</section>
+    @if (mensajeCategoria()) {
+      <p role="alert">{{ mensajeCategoria() }}</p>
+    }
+  </aside>
 
-@if (mostrarResultados()) {
-  <section class="resultados" aria-label="Resultados de la búsqueda">
-    @for (servicio of servicios(); track servicio.id) {
-      <article>
-        
-        <h2>{{ servicio.trabajador.nombre }}</h2>
-        <p><strong>{{ servicio.titulo }}</strong></p>
-        <p><strong>Descripción:</strong> {{ servicio.descripcion }}</p>
-        <p><strong>Categoría:</strong> {{ servicio.categoria.nombre }}</p>
-        
-        <!-- Abre el detalle del trabajador y conserva los filtros para volver al listado. -->
-        <a [routerLink]="['/trabajadores', servicio.trabajador.id]" [queryParams]="{ busqueda: textoBuscado() || null, idCategoria: categoriaBuscada() ?? null }">
-          Ver detalle
-        </a>
+  <section class="catalogo-contenido" aria-label="Catálogo">
+    @if (cargado()) {
+      <p role="status">Cargando servicios…</p>
+    } @else if (mensaje()) {
+      <p role="alert">{{ mensaje() }}</p>
+    } @else if (mostrarResultados()) {
+      <div class="catalogo-grilla">
+        @for (servicio of servicios(); track servicio.id) {
+          <article class="oficio-card">
+            <div class="oficio-contenido">
+              <span class="categoria">
+                {{ servicio.categoria.nombre }}
+              </span>
 
-        <a [routerLink]="['/servicios', servicio.id, 'reservar']">
-          Reservar
-        </a>
+              <h2>{{ servicio.titulo }}</h2>
 
-        @if (authService.getUserRole()?.toLowerCase() === 'cliente') {
-          <button type="button" class="boton-favorito" [attr.aria-pressed]="esFavorito(servicio)" (click)="cambiarFavorito(servicio)">
-          <span aria-hidden="true">{{ esFavorito(servicio) ? '★' : '☆' }}</span>
-            {{ esFavorito(servicio) ? 'Quitar de favoritos' : 'Guardar en favoritos' }}
-          </button>
+              <p>
+                {{ servicio.trabajador.nombre }}
+                {{ servicio.trabajador.apellido ?? '' }}
+              </p>
+
+              <p>{{ servicio.descripcion }}</p>
+
+              <div class="acciones">
+                <a class="btn" [routerLink]="['/trabajadores', servicio.trabajador.id]">
+                  Ver perfil
+                </a>
+
+                @if (authService.getUserRole()?.toLowerCase() === 'cliente') {
+                  <a class="boton-reservar" [routerLink]="['/servicios', servicio.id, 'reservar']">
+                    Reservar
+                  </a>
+
+                  <button
+                    class="boton-favorito"
+                    type="button"
+                    [attr.aria-pressed]="esFavorito(servicio)"
+                    (click)="cambiarFavorito(servicio)"
+                  >
+                    {{ esFavorito(servicio) ? '★ Quitar de favoritos' : '☆ Guardar en favoritos' }}
+                  </button>
+                }
+              </div>
+            </div>
+          </article>
+        } @empty {
+          <p class="aviso">
+            No hay servicios disponibles con los filtros seleccionados.
+          </p>
         }
-      </article>
-} @empty {
-  <p class="mensaje">No hay servicios disponibles.</p>
-}
-  </section>
-} @else {
-  <section class="oficios" aria-label="Oficios disponibles">
-  <h2>Elegí un oficio</h2>
+      </div>
+    } @else {
+      <div class="catalogo-grilla">
+        @for (categoria of categorias(); track categoria.id) {
+          <article class="categoria-card">
+            <h2>{{ categoria.nombre }}</h2>
 
-  <div class="catalogo-grilla">
-    @for (oficio of categorias(); track oficio.id) {
-      <article class="catalogo-tarjeta">
-        <h3>{{ oficio.nombre }}</h3>
-        <a routerLink="/trabajadores" [queryParams]="{ idCategoria: oficio.id }">
-          Ver solicitudes
-        </a>
-      </article>
-}
+            @if (authService.getUserRole()?.toLowerCase() === 'cliente') {
+              <a
+                class="ver-trabajadores"
+                routerLink="/trabajadores"
+                [queryParams]="{ idCategoria: categoria.id }"
+              >
+                Ver trabajadores →
+              </a>
+            } @else {
+              <button
+                type="button"
+                class="ver-trabajadores"
+                (click)="buscar('', categoria.id)"
+              >
+                Ver servicios →
+              </button>
+            }
+          </article>
+        } @empty {
+          <p class="aviso">No hay categorías disponibles.</p>
+        }
+      </div>
+    }
+  </section>
 </div>
-</section>
-}

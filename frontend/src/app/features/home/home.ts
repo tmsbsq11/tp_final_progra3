@@ -1,12 +1,25 @@
 import { Component } from '@angular/core';
-import { AuthService } from '../../core/services/auth.service';
 import { RouterLink } from '@angular/router';
+import { AuthService } from '../../core/services/auth.service';
+import { iconoCategoria } from '../../shared/diseno';
+
 @Component({
-  imports: [RouterLink],
   selector: 'app-home',
-  styleUrl: './home.css',
+  imports: [RouterLink],
   templateUrl: './home.html',
+  styleUrl: './home.css',
 })
 export class Home {
+
+  oficios = [
+    'Plomería',
+    'Electricidad',
+    'Gas',
+    'Jardinería',
+    'Pintura'
+  ];
+
+  iconoCategoria = iconoCategoria;
+
   constructor(public authService: AuthService) {}
 }

@@ -1,49 +1,44 @@
-@let trabajador = trabajadorPerfil();
-
-@if (trabajador) {
-  <header class="perfil-cabecera">
-    <h1 id="nombre-perfil">{{ trabajador.nombre }} {{ trabajador.apellido }}</h1>
-
-    @if (!editando()) {
-      <button type="button" (click)="editando.set(true)">Editar datos</button>
-    }
-  </header>
-
-  <section class="perfil-datos" aria-labelledby="nombre-perfil">
-    <dl>
-      <div>
-        <dt>DNI</dt>
-        <dd>{{ trabajador.dni }}</dd>
-      </div>
-      <div>
-        <dt>Correo</dt>
-        <dd>{{ trabajador.correo }}</dd>
-      </div>
-      <div>
-        <dt>Fecha de alta</dt>
-        <dd>{{ trabajador.fechaCreacion?.slice(0, 10) || '—' }}</dd>
-      </div>
-      <div>
-        <dt>Minutos entre reservas</dt>
-        <dd>{{ trabajador.minutosMinimoEntreReservas }}</dd>
-      </div>
-    </dl>
-
-    @if (trabajador.descripcion) {
-      <p class="perfil-descripcion">{{ trabajador.descripcion }}</p>
-    }
-
+@let trabajador = trabajadorPerfil(); @if (trabajador) {
+<h1>Mi perfil</h1>
+<div class="perfil-layout">
+  <section class="perfil-identidad">
+    <span class="avatar-persona avatar-grande" aria-hidden="true"
+      >{{ trabajador.nombre.slice(0, 1) }}</span
+    >
+    <h2>{{ trabajador.nombre }} {{ trabajador.apellido }}</h2>
+    <p>Trabajador</p>
+    <p class="puntaje-persona">★ {{ trabajador.puntaje }} / 5</p>
+    <button type="button" class="btn" (click)="editando.set(!editando())">
+      {{ editando() ? 'Cerrar edición' : 'Editar datos' }}
+    </button>
+  </section>
+  <section class="perfil-informacion">
+    <h2>Sobre mí</h2>
+    <p>
+      {{ trabajador.descripcion || 'Todavía no agregaste una descripción.' }}
+    </p>
+    <div class="datos-personales">
+      <p><strong>Correo</strong>{{ trabajador.correo }}</p>
+      <p><strong>DNI</strong>{{ trabajador.dni }}</p>
+      <p>
+        <strong>Fecha de alta</strong>{{ trabajador.fechaCreacion?.slice(0, 10)
+        || '—' }}
+      </p>
+      <p>
+        <strong>Minutos entre reservas</strong>{{
+        trabajador.minutosMinimoEntreReservas }}
+      </p>
+    </div>
     @if (editando()) {
-      <app-formulario-perfil
-        [perfil]="trabajador"
-        (guardar)="guardarPerfil($event)"
-        (cancelar)="cancelar()"
-      ></app-formulario-perfil>
+    <app-formulario-perfil
+      [perfil]="trabajador"
+      (guardar)="guardarPerfil($event)"
+      (cancelar)="cancelar()"
+    ></app-formulario-perfil>
     }
   </section>
-
-  <app-resenias-list
-    class="resenias-cliente"
-    [perfil]="{ id: trabajador.id, tipo: 'trabajador' }"
-  ></app-resenias-list>
+</div>
+<app-resenias-list
+  [perfil]="{ id: trabajador.id, tipo: 'trabajador' }"
+></app-resenias-list>
 }

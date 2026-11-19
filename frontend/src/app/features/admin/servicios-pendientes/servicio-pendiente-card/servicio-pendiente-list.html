@@ -1,0 +1,23 @@
+@for(s of serviciosFiltrados();track s.id){
+<article>
+        
+        <h2>{{ s.trabajador.nombre }}</h2>
+        <p><strong>{{ s.titulo }}</strong></p>
+        <p><strong>Descripción:</strong> {{ s.descripcion }}</p>
+        <p><strong>Categoría:</strong> {{ s.categoria.nombre }}</p>
+        <p><strong>Id Servicio:</strong> {{s.id}}</p>
+        <p><strong>Aprobado:</strong> {{s.isApproved}}</p>
+        <!-- Abre el detalle del trabajador y conserva los filtros para volver al listado. -->
+        <a [routerLink]="['/trabajadores', s.trabajador.id]" >
+          Ver detalle
+        </a>
+        
+        <button (click)="validar(s.id)">
+            Validar
+        </button>
+       
+        
+      </article>
+}@empty {
+    <p>No hay servicios pendientes de certificacion</p>
+}

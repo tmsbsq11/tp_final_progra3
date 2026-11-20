@@ -13,7 +13,7 @@ Proyecto organizado para Programación 3.
 - Julian Anchoverri
 - Tomas Corrado Busquets
 - Pedro Gabriel Fernandez Raya
-
+- Irina Benvenutto
 ---
 
 ##  Tecnologías utilizadas

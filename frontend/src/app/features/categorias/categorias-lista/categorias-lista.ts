@@ -35,7 +35,7 @@ export class CategoriasLista implements OnInit {
       .listar()
       .pipe(finalize(() => this.cargando.set(false)))
       .subscribe({
-        next: (lista) => this.categorias.set(lista.filter((c) => c.isActive === true)),
+        next: (lista) => this.categorias.set(lista),
         error: (e) => this.mensaje.set(this.textoError(e, 'No se pudieron cargar las categorías.')),
       });
   }

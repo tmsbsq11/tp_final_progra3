@@ -30,6 +30,7 @@ export const routes: Routes = [
   { path: 'clientes/reserva/:idReserva', loadComponent: () => import('./features/perfil/cliente-detail/cliente-detail').then(m => m.ClienteDetail), canActivate: [authGuard],},
   { path: 'notificaciones', loadComponent: ()=> import('./features/notificaciones/notificaciones').then(m=>m.Notificaciones)},
   { path: 'mis-favoritos', loadComponent: () => import('./features/favoritos/favoritos-list/favoritos-list').then(m => m.FavoritosList), canActivate: [authGuard],},
-  {path: 'admin/pendientes',loadComponent: () => import('./features/admin/servicios-pendientes/servicio-pendiente-card/servicio-pendiente-list').then(m=>m.ServicioPendienteList),canActivate: [authGuard]},
+  { path: 'admin/pendientes',loadComponent: () => import('./features/admin/servicios-pendientes/servicio-pendiente-card/servicio-pendiente-list').then(m=>m.ServicioPendienteList),canActivate: [authGuard]},
+  { path: 'admin/pendientes', loadComponent: () => import('./features/admin/servicios-pendientes/servicio-pendiente-card/servicio-pendiente-list').then(m => m.ServicioPendienteList), canActivate: [adminGuard] },  
   { path: '**',redirectTo: '',pathMatch: 'full'},
 ];

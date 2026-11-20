@@ -1,0 +1,259 @@
+:host {
+  display: block;
+  color: #173f56;
+}
+
+h1 {
+  margin: 0 0 16px;
+}
+
+.aclaracion {
+  color: #62768c;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.solapas-postulaciones {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin: 24px 0;
+  padding-bottom: 14px;
+  border-bottom: 1px solid #cddff0;
+}
+
+.solapas-postulaciones button,
+.acciones-postulacion button,
+.aviso-postulaciones button {
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease,
+    border-color 0.2s ease;
+}
+
+.solapas-postulaciones button {
+  min-height: 44px;
+  padding: 10px 16px;
+  border: 1px solid #bdd5ed;
+  border-radius: 10px;
+  background-color: #ffffff;
+  color: #174f80;
+}
+
+.solapas-postulaciones button:hover:not(:disabled) {
+  border-color: #1c5486;
+  background-color: #1c5486;
+  color: #ffffff;
+}
+
+.solapas-postulaciones button.activa {
+  border-color: #1c5486;
+  background-color: #1c5486;
+  color: #ffffff;
+}
+
+.solapas-postulaciones button.activa:hover:not(:disabled) {
+  border-color: #123b62;
+  background-color: #123b62;
+  color: #ffffff;
+}
+
+.lista-postulaciones {
+  display: grid;
+  gap: 16px;
+}
+
+.postulacion-card {
+  padding: 24px;
+  border: 1px solid #d4e3f2;
+  border-radius: 16px;
+  background-color: #ffffff;
+}
+
+.postulacion-card h2 {
+  margin: 16px 0 10px;
+  font-size: 21px;
+}
+
+.postulacion-card p {
+  overflow-wrap: anywhere;
+}
+
+.estado-postulacion {
+  display: inline-block;
+  padding: 5px 10px;
+  border-radius: 20px;
+  background-color: #fff0c6;
+  color: #795300;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.estado-postulacion[data-estado='ACEPTADA'] {
+  background-color: #d6eee2;
+  color: #205d40;
+}
+
+.estado-postulacion[data-estado='RECHAZADA'] {
+  background-color: #fbe4e8;
+  color: #a02c43;
+}
+
+.detalle-postulacion {
+  margin-top: 16px;
+  padding: 16px;
+  border: 1px solid #dbe7f3;
+  border-radius: 10px;
+  background-color: #f6faff;
+}
+
+.detalle-postulacion summary {
+  padding: 4px 0;
+  color: #174f80;
+  font-weight: 600;
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.detalle-postulacion summary:hover {
+  color: #287dcb;
+}
+
+.acciones-postulacion {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 18px;
+}
+
+.acciones-postulacion button {
+  min-height: 44px;
+  padding: 10px 18px;
+  border: 1px solid transparent;
+  border-radius: 10px;
+}
+
+.acciones-postulacion button.aceptar {
+  border-color: #a7d5b8;
+  background-color: #e3f3e9;
+  color: #205d40;
+}
+
+.acciones-postulacion button.aceptar:hover:not(:disabled) {
+  border-color: #247a44;
+  background-color: #247a44;
+  color: #ffffff;
+}
+
+.acciones-postulacion button.aceptar:active:not(:disabled) {
+  border-color: #18552f;
+  background-color: #18552f;
+  color: #ffffff;
+}
+
+.acciones-postulacion button.rechazar {
+  border-color: #edb4bd;
+  background-color: #fff3f5;
+  color: #ac2942;
+}
+
+.acciones-postulacion button.rechazar:hover:not(:disabled) {
+  border-color: #ac2942;
+  background-color: #ac2942;
+  color: #ffffff;
+}
+
+.acciones-postulacion button.rechazar:active:not(:disabled) {
+  border-color: #802035;
+  background-color: #802035;
+  color: #ffffff;
+}
+
+.aviso-postulaciones {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin: 20px 0 24px;
+  padding: 16px 20px;
+  border: 1px solid #bdd5ed;
+  border-radius: 12px;
+  background-color: #eaf3fc;
+  color: #174f80;
+  animation: desaparecer-aviso 0.6s ease 2.4s forwards;
+}
+
+.aviso-postulaciones span {
+  min-width: 0;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+
+.aviso-postulaciones button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 36px;
+  min-height: 36px;
+  padding: 0;
+  border: 0;
+  border-radius: 8px;
+  background-color: transparent;
+  color: #174f80;
+  font-size: 24px;
+}
+
+.aviso-postulaciones button:hover:not(:disabled) {
+  background-color: #ac2942;
+  color: #ffffff;
+}
+
+button:focus-visible,
+.detalle-postulacion summary:focus-visible {
+  outline: 3px solid #438acb;
+  outline-offset: 3px;
+}
+
+button:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+@keyframes desaparecer-aviso {
+  from {
+    opacity: 1;
+  }
+
+  to {
+    opacity: 0;
+  }
+}
+
+@media (max-width: 600px) {
+  .solapas-postulaciones button {
+    flex: 1 1 100%;
+  }
+
+  .postulacion-card {
+    padding: 18px;
+  }
+
+  .acciones-postulacion button {
+    flex: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  button,
+  .detalle-postulacion summary {
+    transition: none;
+  }
+
+  .aviso-postulaciones {
+    animation: none;
+  }
+}

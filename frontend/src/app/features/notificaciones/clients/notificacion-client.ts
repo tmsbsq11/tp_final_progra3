@@ -5,9 +5,9 @@ import { AuthService } from '../../../core/services/auth.service';
 
 @Service()
 export class NotificacionClient {
-    private readonly http=inject(HttpClient);
-private readonly authService=inject(AuthService);
 
+    private readonly http=inject(HttpClient);
+    private readonly authService=inject(AuthService);
     private readonly url='/api/notificaciones'
 
     obtenerNotificaciones(){

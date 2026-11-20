@@ -31,6 +31,49 @@
 
 <div class="catalogo-layout">
   <aside class="panel-filtros">
+    <div class="filtro-ubicacion">
+      <h2>Ubicación</h2>
+
+      <button
+        type="button"
+        (click)="usarMiUbicacion()"
+        [disabled]="obteniendoUbicacion() || cargado()">
+        {{
+          obteniendoUbicacion()
+            ? 'Buscando ubicación…'
+            : 'Usar mi ubicación'
+        }}
+      </button>
+
+      <label for="radio-ubicacion">
+        Distancia máxima
+      </label>
+
+      <select
+        id="radio-ubicacion"
+        #radio
+        [value]="radioKm()"
+        (change)="cambiarRadio(radio.value)"
+        [disabled]="obteniendoUbicacion() || cargado()"
+      >
+        <option value="5">5 km</option>
+        <option value="10">10 km</option>
+        <option value="20">20 km</option>
+        <option value="50">50 km</option>
+      </select>
+
+      @if (latitud() !== undefined) {
+        <p role="status">
+          Mostrando servicios a {{ radioKm() }} km
+          o menos de tu ubicación.
+        </p>
+      }
+
+      @if (mensajeUbicacion()) {
+        <p role="alert">{{ mensajeUbicacion() }}</p>
+      }
+    </div>
+
     <h2>Categorías</h2>
 
     <button

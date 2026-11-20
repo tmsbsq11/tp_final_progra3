@@ -3,9 +3,11 @@ import { PerfilTrabajadorClient} from '../clients/perfil-trabajador';
 import { FormularioPerfil } from '../formulario-perfil/formulario-perfil';
 import { Cliente, Trabajador } from '../models/perfil.model';
 import { ReseniasList } from '../../resenias/resenias-list/resenias-list';
+import { FormsModule } from '@angular/forms';
+import { finalize } from 'rxjs';
 
 @Component({
-  imports: [FormularioPerfil, ReseniasList],
+  imports: [FormularioPerfil, ReseniasList, FormsModule],
   selector: 'app-perfil-trabajadores',
   styleUrl: '../perfil-clientes/perfilClientes.css',
   templateUrl: './perfil-trabajadores.html',
@@ -15,6 +17,10 @@ export class PerfilTrabajadores implements OnInit {
   
   editando=signal<boolean>(false);
   trabajadorPerfil=signal<Trabajador|null>(null);
+  direccion = '';
+  guardandoUbicacion = signal(false);
+  mensajeUbicacion = signal('');
+
   ngOnInit(){
     this.client.obtenerPerfil().subscribe(
       (trabajador)=>
@@ -35,4 +41,41 @@ export class PerfilTrabajadores implements OnInit {
   cancelar(){
     this.editando.set(false);
   }
+
+  guardarUbicacion(): void {
+    const trabajador = this.trabajadorPerfil();
+    const direccion = this.direccion.trim();
+
+    if (!trabajador || this.guardandoUbicacion()) {
+      return;
+    }
+
+    if (!direccion) {
+      this.mensajeUbicacion.set(
+        'Ingresá una dirección con calle, altura y ciudad.'
+      );
+      return;
+    }
+
+    this.mensajeUbicacion.set('');
+    this.guardandoUbicacion.set(true);
+
+    this.client
+      .actualizarUbicacion(Number(trabajador.id), direccion)
+      .pipe(
+        finalize(() => this.guardandoUbicacion.set(false))
+      )
+      .subscribe({
+        next: () => {
+          this.mensajeUbicacion.set(
+            'Ubicación guardada correctamente.'
+          );
+        },
+        error: () => {
+          this.mensajeUbicacion.set(
+            'No se pudo guardar la ubicación. Revisá la dirección e intentá nuevamente.'
+          );
+        },
+      });
   }
+}

@@ -33,21 +33,39 @@ export class ClienteServicios {
   }
 
   //Si no se ingresa texto, la búsqueda se hace sin filtro de texto
-  buscarServicios(busqueda = '', idCategoria?: number) {
-    //el 1er string es para el nombre y el 2do para el valor del filtro y el ={} es para que empiece en vacio
+  buscarServicios(
+    busqueda = '',
+    idCategoria?: number,
+    lat?: number, // busca por latitud, longitud y radio 
+    lng?: number,
+    radioKm?: number
+  ) {
     const params: Record<string, string> = {};
 
-    const texto = busqueda.trim(); //limpia el texto y agrega lo que este escrito
+    const texto = busqueda.trim();
 
     if (texto) {
-      params['busqueda'] = texto; //si el campo esta vacio el if salta ese filtro
+      params['busqueda'] = texto;
     }
 
     if (idCategoria !== undefined) {
-      params['idCategoria'] = String(idCategoria); //si el campo esta vacio el if salta ese filtro
+      params['idCategoria'] = String(idCategoria);
     }
 
-    return this.cliente.get<Servicio[]>(`${this.url}/buscar`, { params }); //arma la ruta api-servicios-buscar
+    if (
+      lat !== undefined &&
+      lng !== undefined &&
+      radioKm !== undefined
+    ) {
+      params['lat'] = String(lat);
+      params['lng'] = String(lng);
+      params['radioKm'] = String(radioKm);
+    }
+
+    return this.cliente.get<Servicio[]>(
+      `${this.url}/buscar`,
+      { params }
+    );
   }
 
   obtenerCategorias() { //indica los campos que usa, el nombre para el selector y el id para el filtro, y devuelve una lsita

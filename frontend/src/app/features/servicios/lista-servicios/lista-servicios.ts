@@ -25,6 +25,11 @@ export class ListaServicios implements OnInit {
   mostrarResultados = signal(false);
   idsFavoritos = signal<number[]>([]);
   mensajeFavoritos = signal("");
+  latitud = signal<number | undefined>(undefined);
+  longitud = signal<number | undefined>(undefined);
+  radioKm = signal(10);
+  obteniendoUbicacion = signal(false);
+  mensajeUbicacion = signal('');
 
   constructor(
     private clienteServicios: ClienteServicios, //para poder usar los metodos del cliente de servicios
@@ -60,26 +65,37 @@ export class ListaServicios implements OnInit {
     }
   }
 
-  cargarServicios(busqueda = "", idCatalogo?: number): void {
-
-    this.mensaje.set(""); //limpio el mensaje de error
+  cargarServicios( busqueda = '', idCatalogo?: number ): void {
+    this.mensaje.set('');
     this.cargado.set(true);
-    this.clienteServicios
-      .buscarServicios(busqueda, idCatalogo)
-      .pipe(finalize(() => this.cargado.set(false))) //cuando termina de cargar, cambia el estado de cargado a false
-      .subscribe({
-        next: (servicios) => {
-          this.servicios.set(servicios.filter((s) => s.categoria.isActive === true));
-        },
 
+    this.clienteServicios
+      .buscarServicios(
+        busqueda,
+        idCatalogo,
+        this.latitud(),
+        this.longitud(),
+        this.latitud() !== undefined
+          ? this.radioKm()
+          : undefined
+      )
+      .pipe(finalize(() => this.cargado.set(false)))
+      .subscribe({
+        next: servicios => {
+          this.servicios.set(
+            servicios.filter(
+              s => s.categoria.isActive === true
+            )
+          );
+        },
         error: ({ status }) => {
-          if (status === 401 || status === 403) {
-            this.mensaje.set(
-              "Se necesita una sesión autorizada para consultar el catalogo.",
-            );
-          } else {
-            this.mensaje.set("No se pudo cargar el catalogo.");
-          }
+          this.servicios.set([]);
+
+          this.mensaje.set(
+            status === 401 || status === 403
+              ? 'Se necesita una sesión autorizada para consultar el catálogo.'
+              : 'No se pudo cargar el catálogo.'
+          );
         },
       });
   }
@@ -102,25 +118,45 @@ export class ListaServicios implements OnInit {
   textoBuscado = signal("");
   categoriaBuscada = signal<number | undefined>(undefined);
 
-  buscar(busqueda: string, idCategoria?: number): void {
+  buscar( busqueda: string, idCategoria?: number ): void {
     const texto = busqueda.trim();
 
-    if (!texto && idCategoria === undefined) {
+    const tieneUbicacion =
+      this.latitud() !== undefined &&
+      this.longitud() !== undefined;
+
+    if (
+      !texto &&
+      idCategoria === undefined &&
+      !tieneUbicacion
+    ) {
       this.limpiarFiltros();
       return;
     }
 
     this.textoBuscado.set(texto);
     this.categoriaBuscada.set(idCategoria);
+
     this.mostrarResultados.set(true);
     this.cargarServicios(texto, idCategoria);
   }
 
   limpiarFiltros(): void {
-    this.textoBuscado.set("");
+    if (this.obteniendoUbicacion()) {
+      return;
+    }
+
+    this.textoBuscado.set('');
     this.categoriaBuscada.set(undefined);
+
+    this.latitud.set(undefined);
+    this.longitud.set(undefined);
+
+    this.radioKm.set(10);
+    this.mensajeUbicacion.set('');
+
     this.mostrarResultados.set(false);
-    this.mensaje.set("");
+    this.mensaje.set('');
   }
 
   esFavorito(servicio: Servicio): boolean {
@@ -153,6 +189,72 @@ export class ListaServicios implements OnInit {
       );
     } catch {
       this.mensajeFavoritos.set("No se pudieron actualizar los favoritos.");
+    }
+  }
+
+  usarMiUbicacion(): void {
+    if (this.obteniendoUbicacion()) {
+      return;
+    }
+
+    this.mensajeUbicacion.set('');
+
+    if (!navigator.geolocation) {
+      this.mensajeUbicacion.set(
+        'Tu navegador no permite obtener la ubicación.'
+      );
+      return;
+    }
+
+    this.obteniendoUbicacion.set(true);
+
+    navigator.geolocation.getCurrentPosition(
+      posicion => {
+        this.latitud.set(posicion.coords.latitude);
+        this.longitud.set(posicion.coords.longitude);
+
+        this.obteniendoUbicacion.set(false);
+
+        this.buscar(
+          this.textoBuscado(),
+          this.categoriaBuscada()
+        );
+      },
+      error => {
+        this.obteniendoUbicacion.set(false);
+
+        if (error.code === 1) {
+          this.mensajeUbicacion.set(
+            'Permití el acceso a tu ubicación para buscar servicios cercanos.'
+          );
+        } else {
+          this.mensajeUbicacion.set(
+            'No se pudo obtener tu ubicación. Intentá nuevamente.'
+          );
+        }
+      },
+      {
+        enableHighAccuracy: true,
+        timeout: 10000,
+        maximumAge: 60000,
+      }
+    );
+  }
+
+  cambiarRadio(valor: string): void {
+    const radio = Number(valor);
+
+    if (![5, 10, 20, 50].includes(radio)) {
+      return;
+    }
+
+    this.radioKm.set(radio);
+
+    if (this.latitud() !== undefined) {
+      this.buscar(
+        this.textoBuscado(),
+        this.categoriaBuscada()
+      );
     }
   }
 }

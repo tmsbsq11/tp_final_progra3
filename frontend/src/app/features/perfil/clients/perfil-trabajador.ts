@@ -12,4 +12,14 @@ export class PerfilTrabajadorClient {
     actualizarPerfil(perfilActualizado:Trabajador){
         return this.http.put<Trabajador>(this.url,perfilActualizado);
     }
+
+    actualizarUbicacion(id: number, direccion: string) {
+        return this.http.put<Trabajador>(
+            `/api/trabajadores/${id}/ubicacion`,
+            null,
+            {
+            params: { direccion },
+            }
+        );
+    }
 }

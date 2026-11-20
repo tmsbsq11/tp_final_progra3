@@ -68,3 +68,41 @@ a.boton-reservar {
   font-weight: 600;
   text-decoration: none;
 }
+
+.filtro-ubicacion {
+  display: grid;
+  gap: 12px;
+  margin-bottom: 20px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid #cddff0;
+}
+
+.filtro-ubicacion h2 {
+  margin: 0;
+}
+
+.filtro-ubicacion label {
+  font-weight: 600;
+}
+
+.filtro-ubicacion select {
+  box-sizing: border-box;
+  width: 100%;
+  min-height: 44px;
+  padding: 10px;
+  border: 1px solid #b9d4ee;
+  border-radius: 10px;
+  background: #ffffff;
+  color: #173f56;
+  font: inherit;
+}
+
+.filtro-ubicacion p {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.filtro-ubicacion p[role='alert'] {
+  color: #ac2942;
+}

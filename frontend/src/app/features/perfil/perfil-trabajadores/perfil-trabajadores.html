@@ -29,11 +29,48 @@
       </p>
     </div>
     @if (editando()) {
-    <app-formulario-perfil
-      [perfil]="trabajador"
-      (guardar)="guardarPerfil($event)"
-      (cancelar)="cancelar()"
-    ></app-formulario-perfil>
+
+      <app-formulario-perfil [perfil]="trabajador" (guardar)="guardarPerfil($event)" (cancelar)="cancelar()"></app-formulario-perfil>
+        <form #formUbicacion="ngForm" (ngSubmit)="guardarUbicacion()">
+      <h3>Ubicación de trabajo</h3>
+
+      <label for="direccion-trabajador">
+        Dirección
+      </label>
+
+      <input
+        id="direccion-trabajador"
+        name="direccion"
+        type="text"
+        [(ngModel)]="direccion"
+        #campoDireccion="ngModel"
+        placeholder="Ej.: Av. Colón 2500, Mar del Plata, Argentina"
+        autocomplete="street-address"
+        [disabled]="guardandoUbicacion()"
+        required
+      />
+
+      @if (
+        campoDireccion.touched &&
+        !direccion.trim()
+      ) {
+        <p role="alert">
+          Ingresá una dirección con calle, altura y ciudad.
+        </p>
+      }
+
+      <button type="submit" [disabled]=" formUbicacion.invalid || !direccion.trim() || guardandoUbicacion()">
+        {{
+          guardandoUbicacion()
+            ? 'Guardando ubicación…'
+            : 'Guardar ubicación'
+        }}
+      </button>
+
+      @if (mensajeUbicacion()) {
+        <p role="status">{{ mensajeUbicacion() }}</p>
+      }
+      </form>
     }
   </section>
 </div>

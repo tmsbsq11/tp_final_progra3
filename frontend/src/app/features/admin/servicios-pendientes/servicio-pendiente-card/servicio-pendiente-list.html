@@ -1,23 +1,97 @@
-@for(s of serviciosFiltrados();track s.id){
-<article>
-        
-        <h2>{{ s.trabajador.nombre }}</h2>
-        <p><strong>{{ s.titulo }}</strong></p>
-        <p><strong>Descripción:</strong> {{ s.descripcion }}</p>
+<h1>Revisión de postulaciones</h1>
+
+<p class="aclaracion">
+  Las aceptaciones se guardan en el sistema.
+  Los rechazos se guardan para tu cuenta de Admin en este navegador.
+</p>
+
+@if (aviso()) {
+  @for (numero of [numeroAviso()]; track numero) {
+    <div class="aviso-postulaciones" role="status">
+      <span>{{ aviso() }}</span>
+
+      <button
+        type="button"
+        aria-label="Cerrar aviso"
+        (click)="cerrarAviso()"
+      >
+        ×
+      </button>
+    </div>
+  }
+}
+
+@if (cargando()) {
+  <p role="status">Cargando postulaciones…</p>
+} @else if (mensaje()) {
+  <p role="alert">{{ mensaje() }}</p>
+  <button type="button" (click)="cargar()">Reintentar</button>
+} @else {
+  <nav class="solapas-postulaciones" aria-label="Estado de las postulaciones">
+    <button
+      type="button"
+      [class.activa]="solapa() === 'PENDIENTE'"
+      [attr.aria-pressed]="solapa() === 'PENDIENTE'"
+      (click)="solapa.set('PENDIENTE')"
+    >
+      Pendientes ({{ cantidad('PENDIENTE') }})
+    </button>
+
+    <button
+      type="button"
+      [class.activa]="solapa() === 'ACEPTADA'"
+      [attr.aria-pressed]="solapa() === 'ACEPTADA'"
+      (click)="solapa.set('ACEPTADA')"
+    >
+      Aceptadas ({{ cantidad('ACEPTADA') }})
+    </button>
+
+    <button
+      type="button"
+      [class.activa]="solapa() === 'RECHAZADA'"
+      [attr.aria-pressed]="solapa() === 'RECHAZADA'"
+      (click)="solapa.set('RECHAZADA')"
+    >
+      Rechazadas ({{ cantidad('RECHAZADA') }})
+    </button>
+  </nav>
+
+  <div class="lista-postulaciones">
+    @for (s of serviciosFiltrados(); track s.id) {
+      <article class="postulacion-card">
+        <span class="estado-postulacion" [attr.data-estado]="estadoDe(s)">
+          {{ estadoDe(s) }}
+        </span>
+
+        <h2>{{ s.titulo }}</h2>
+
+        <p>
+          {{ s.trabajador.nombre }} {{ s.trabajador.apellido ?? '' }}
+        </p>
+
         <p><strong>Categoría:</strong> {{ s.categoria.nombre }}</p>
-        <p><strong>Id Servicio:</strong> {{s.id}}</p>
-        <p><strong>Aprobado:</strong> {{s.isApproved}}</p>
-        <!-- Abre el detalle del trabajador y conserva los filtros para volver al listado. -->
-        <a [routerLink]="['/trabajadores', s.trabajador.id]" >
-          Ver detalle
-        </a>
-        
-        <button (click)="validar(s.id)">
-            Validar
-        </button>
-       
-        
+
+        <details class="detalle-postulacion">
+          <summary>Ver datos de la postulación</summary>
+
+          <p>{{ s.descripcion }}</p>
+          <p><strong>ID:</strong> {{ s.id }}</p>
+        </details>
+
+        @if (estadoDe(s) === 'PENDIENTE') {
+          <div class="acciones-postulacion">
+            <button type="button" class="aceptar" (click)="aceptar(s)" [disabled]="procesando()">
+              Aceptar
+            </button>
+
+            <button type="button" class="rechazar" (click)="rechazar(s)" [disabled]="procesando()">
+              Rechazar
+            </button>
+          </div>
+        }
       </article>
-}@empty {
-    <p>No hay servicios pendientes de certificacion</p>
+    } @empty {
+      <p>No hay postulaciones en esta solapa.</p>
+    }
+  </div>
 }

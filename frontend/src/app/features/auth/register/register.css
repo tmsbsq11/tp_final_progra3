@@ -157,6 +157,17 @@
   margin-top: 18px;
 }
 
+.acceso .error {
+  margin: 0;
+  color: #ac2942;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.acceso input[aria-invalid='true'] {
+  border-color: #ac2942;
+}
+
 @media (hover: hover) and (prefers-reduced-motion: no-preference) {
   .tarjeta-registro:hover .personaje-registro img {
     animation: mover-personaje 2.5s ease-in-out infinite;

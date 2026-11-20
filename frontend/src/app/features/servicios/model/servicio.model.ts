@@ -7,6 +7,7 @@ export interface Servicio {
     categoria : {
         id : number;
         nombre : string;
+        isActive : boolean;
     };
     titulo : string;
     descripcion : string;

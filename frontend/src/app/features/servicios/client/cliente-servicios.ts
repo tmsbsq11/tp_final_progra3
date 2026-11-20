@@ -51,7 +51,7 @@ export class ClienteServicios {
   }
 
   obtenerCategorias() { //indica los campos que usa, el nombre para el selector y el id para el filtro, y devuelve una lsita
-    return this.cliente.get<{ id: number; nombre: string }[]>('/api/categorias');
+    return this.cliente.get<{ id: number; nombre: string; isActive: boolean }[]>('/api/categorias');
   }
 
   validarServicio(id:number|string|undefined){

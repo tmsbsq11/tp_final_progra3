@@ -51,8 +51,16 @@ export class PostulacionForm implements OnInit {
     }
 
     this.clienteServicios.obtenerCategorias().subscribe({
-      next: categorias => this.categorias.set(categorias),
-      error: () => this.mensajeCategorias.set('No se pudieron cargar las categorías.'),
+      next: categorias => {
+        this.categorias.set(
+          categorias.filter(c => c.isActive === true)
+        );
+      },
+      error: () => {
+        this.mensajeCategorias.set(
+          'No se pudieron cargar las categorías.'
+        );
+      },
     });
 
     const idRuta = this.route.snapshot.paramMap.get('id');

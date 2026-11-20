@@ -69,7 +69,7 @@ export class ListaServicios implements OnInit {
       .pipe(finalize(() => this.cargado.set(false))) //cuando termina de cargar, cambia el estado de cargado a false
       .subscribe({
         next: (servicios) => {
-          this.servicios.set(servicios);
+          this.servicios.set(servicios.filter((s) => s.categoria.isActive === true));
         },
 
         error: ({ status }) => {
@@ -90,7 +90,7 @@ export class ListaServicios implements OnInit {
 
       .subscribe({
         next: (categorias) => {
-          this.categorias.set(categorias);
+          this.categorias.set(categorias.filter((c) => c.isActive === true));
         },
 
         error: () => {
